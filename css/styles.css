@@ -29,3 +29,15 @@ html, body {
 #software-projects {
     margin-left: 50%;
 }
+
+.project-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.project-card {
+    border: 1px solid grey;
+    margin: 5px;
+    padding: 5px;
+}
