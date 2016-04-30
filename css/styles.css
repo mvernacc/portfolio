@@ -10,7 +10,7 @@ html, body {
   height: 100%;
 }
 
-h1, h2 {
+h1, h2, h3 {
   font-family: "Oxygen", sans-serif;
   font-weight: 300;
 }
@@ -64,9 +64,30 @@ hr {
   width: 16em;
 }
 
+#projects {
+  background-color: #ddd;
+  height: 100%;
+}
+
+#projects h1, #projects h2, #projects h3 {
+  text-align: center;
+  color: #001942;
+}
+
+#projects h1 {
+  font-size: 3em;
+  padding: 1em;
+}
+
+#projects h2 {
+  font-size: 2em;
+  padding-bottom: 1em;
+}
+
 #hardware-projects {
   float: left;
   width: 50%;
+  border-right: 1px solid #001942;
 }
 
 #software-projects {
@@ -80,7 +101,24 @@ hr {
 }
 
 .project-card {
-  border: 1px solid grey;
   margin: 5px;
-  padding: 5px;
+  width: 25em;
+  background-color: #fff;
+  box-shadow: 0 0 5px #888;
+}
+
+.project-card img {
+  width: 100%;
+}
+
+.project-card h3 {
+  font-size: 1.3em;
+  padding: 0.5em;
+}
+
+.project-card p {
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  text-align: justify;
 }
