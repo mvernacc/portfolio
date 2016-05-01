@@ -44,9 +44,8 @@ hr {
   width: 16em;
 }
 
-#projects {
+body {
   background-color: #ddd;
-  height: 100%;
 }
 
 #projects h1, #projects h2, #projects h3 {
