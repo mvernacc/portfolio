@@ -86,7 +86,7 @@ body {
 
 .project-card {
   margin: 5px;
-  width: 25em;
+  max-width: 25em;
   background-color: #fff;
   box-shadow: 0 0 5px #888;
 }
