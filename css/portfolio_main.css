@@ -24,7 +24,9 @@
 }
 
 #splash-text p {
-  width: 30em;
+  max-width: 32em;
+  padding-left: 1em;
+  padding-right: 1em;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1em;
