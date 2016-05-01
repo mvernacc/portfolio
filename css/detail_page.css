@@ -58,6 +58,7 @@ figure.right {
 
 figure.center {
   width: 100%;
+  clear: both;
 }
 
 .video-container {
