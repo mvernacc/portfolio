@@ -47,7 +47,7 @@
         <div class="video-container">
           <iframe width="560" height="315" src="https://www.youtube.com/embed/Y7Ui4Hz6x9Q" frameborder="0" allowfullscreen></iframe>
         </div>
-        <figcaption>A water flow test of the re-designed injector.</figcaption>
+        <figcaption>A water flow test of the re-designed injector. Video editing by Andre Kessler.</figcaption>
       </figure>
 
       <figure class="left">
@@ -69,18 +69,51 @@
 
       <p>The thermal liner consists of a cast zirconia ceramic, which has high temperature tolerance and low thermal conductivity. The steel wall is protected partially by the thermal resistance of the liner, and partly by its heat capacity. This thermal design cannot withstand steady-state operation, but our mission requires a relatively short (15 s) burn time.</p>
 
-      <p>The nozzle's spike is made from machinable alumina ceramic. Machinable alumina was selected because of its higher strength and better fabrication tolerances (compared to the cast zirconia used in the liner). James Logan designed a clever web structure to support the nozzle spike within the combustion chamber. I designed the spike's contour using a method of characteristics algorithm.</p>
-
       <figure class="left">
         <img src="../art/images/pyralis/pyralis_cross_section_render_2014_edit.png">
         <figcaption>A CAD rendering cross section showing the nozzle support structure.</figcaption>
       </figure>
 
-      <figure class="right">
+      <p>The nozzle's spike is made from machinable alumina ceramic. Machinable alumina was selected because of its higher strength and better fabrication tolerances (compared to the cast zirconia used in the liner). James Logan designed a clever web structure to support the nozzle spike within the combustion chamber. I designed the spike's contour using a method of characteristics algorithm.</p>
+
+      <figure class="center">
         <img src="../art/images/pyralis/chamber_thermal.png">
         <figcaption>Transient thermal analysis of the combustion chamber wall.</figcaption>
       </figure>
 
+      
+
+      <h2>Testing</h2>
+
+      <figure class="center">
+        <img src="../art/images/pyralis/team_in_blast_chamber.png">
+        <figcaption>Rocket team members pose with the engine and test stand before our first static firing. Our faculty advisor, <a href="http://aeroastro.mit.edu/paulo-lozano">Prof. Lozano</a> stands to the left. James Logan and Ryan Webb wear fire-resistant personal protective equipment, as they will fill the propellant tanks.</figcaption>
+      </figure>
+
+      <p>We tested the engine in a blast chamber in MIT's Gas Turbine Lab. The test stand structure was built from steel uni-strut and reinforced with steel cable. Plywood was used to create mounting panels for valves and tanks; the wood was treated with a flame retardant to reduce the risk of unwanted fire. The engine's exhaust was cooled by a water sprayer, and then routed through a J-shaped steel duct to a vent van in the room's ceiling.</p>
+
+      <p>Together with other team members, I developed safety plans and procedures for the static firing. We researched toxicity, fire and explosion hazards, reviewing papers about test facilities for similar engines operated by JAXA and NASA. We then revised our plans through discussions with the Environment, Health and Safety department (EHS) and experienced tab technicians. We created impact/probability charts to document the hazards present in the test, and selected mitigation strategies. Finally, we wrote and practiced a detailed checklist for the test. The checklist covered the nominal procedure, and also contained various abort procedures to return the system to a safe state after a failure.</p>
+
+      <p>We performed our first static firing attempt in May 2014. This test failed due to a hard start, which destroyed parts of the combustion chamber and some plumbing. On this version of the engine, the ignition system was a simple spark plug sicking into the combustion chamber, and our propellant flow was controlled by non-throttleable solenoid valves, which open to full flow in 30 ms. Writing now, with several more years of experience and grad class in combustion under my belt, it seems obvious that this poor design would hard-start. But sometimes I end up learning things the hard way.</p>
+
+      <p>In response, we spent the summer and fall of 2014 redesigning and rebuilding the engine. We developed a hydrogen / air pilot torch to replace the spark igniter and redesigned the injector. We also built our own servo-controlled throttle valves so we could ramp up the propellant flow more gradually.</p>
+
+      <figure class="center video">
+        <div class="video-container">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/fnRJ-U3l2fM" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <figcaption>A static firing of the Pyralis engine. We fired our pilot torch (air and hydrogen) for 20 seconds before flowing our main propellants. The engine ignites at about 22 seconds according to the timestamp in the video. Video editing by Connie Liu.</figcaption>
+      </figure>
+
+      <p>We tested the new engine in December 2014. Our hard-start remedies were successful - the engine started smoothly! However, it flamed-out after a few seconds of operation. We believe that the L* of the combustion chamber (about 0.7 m) was too short to maintain stable combustion of the propellants</p>
+
+      <h2>Conclusion</h2>
+
+      <p>Unfortunately, we had to cancel the project before we could achieve a full-duration static fire. In a subsequent test in January 2015, we accidentally damaged the blast chamber's ventilation system. Previous maintenance had replaced the room's vent fan with a non-explosion-proof fan. When one of our tests vented unburnt propellant vapor though the fan, a spark from the motor ignited the vapor, and the resulting explosion destroyed the fan. Connie Liu and I conducted a thorough investigation into the incident. Among other analyses, I used the Weibull formula to predict the overpressure from a propellant vapor explosion, and found that this overpressure matched the observed structural damage.</p>
+
+      <p>Because building we were testing in was scheduled for renovations in a few months, MIT decided not to repair the vent. We had lost our test site, and only had a few months remaining before our project deadline (we were planning to fly the engine at the Intercollegiate Rocket Engineering Competition (IREC) in June 2015). Therefore, we decided to cancel further development of Pyralis, and switched to a commercial-of-the-shelf solid rocket motor for IREC 2015. Difficult as it was to make, this ended up being the right call. With the extra manpower freed up from the propulsion system, the team built an excellent rocket and recovery system, which won the basic category of IREC. 
+
+      <p>Although it was disappointing to cut the project short, we learned much from what we were able to accomplish. I loved playing mentor to my younger teammates, and using the project to inspire their excitement about engineering and propulsion. Almost everyone involved has gone on to apply what they learned on Pyralis to other propulsion projects at MIT, SpaceX, Firefly, NASA, ULA, and Northrop Grumman.</p> 
 
     </div>
 
