@@ -101,3 +101,15 @@ body {
   padding-bottom: 1em;
   text-align: justify;
 }
+
+a {
+  text-decoration: none !important;
+}
+
+a p {
+  color: black;
+}
+
+a .project-card:hover {
+  box-shadow: 0 0 15px #444;
+}
