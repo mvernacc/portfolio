@@ -41,17 +41,41 @@
       </figure>
 
       <p>The injector was originally designed by Jeff Mockleman. His design used swirl-flow orifices which achieved very good mixing. However, the swirl orifices were difficult to manufacture accurately, so the tolerance on the orifice area was poor. Water flow tests showed that the area tolerance caused our pressure drop and mass flow rate to be unacceptably far from their design values. To remedy this problem, Connie Liu and I redesigned the injector to use drilled hole orifices in a triplet configuration. The drilled holes could be manufactured to much tighter tolerance that the previous design. Further water flow tests validated the new design.</p>
-      <figure>
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/Y7Ui4Hz6x9Q" frameborder="0" allowfullscreen></iframe>
+      
+      <figure class="left">
+        <iframe src="https://www.youtube.com/embed/Y7Ui4Hz6x9Q" frameborder="0" allowfullscreen></iframe>
         <figcaption>A water flow test of the re-designed injector.</figcaption>
       </figure>
-      <p>I also performed a thermal analysis on the injector. I used Nusselt number techniques to estimate the heat transfer coefficients between the injector and the combustion chamber gases, and between the injector and the liquid propellant flows. These heat transfer coefficients provided boundary conditions for a finite element heat transfer simulation (SolidWorks Simulation). The results of the steady-state thermal analysis indicate a maximum temperature of 1400 K. This is slightly above the operating limit (1100 K) of the injector's steel alloy, indicating that the injector is not suitable for steady-state operation. However, during the short burn time (15 s), the engine does not reach steady state. A more detailed transient thermal analysis should have been performed, but we did not have the computational resources at the time.
+
       <figure class="right">
         <img src="../art/images/pyralis/injector_thermal.png">
         <figcaption>Temperature distribution in a cross section of the injector in steady-state operation.</figcaption>
       </figure>
 
+      <p>I also performed a thermal analysis on the injector. I used Nusselt number techniques to estimate the heat transfer coefficients between the injector and the combustion chamber gases, and between the injector and the liquid propellant flows. These heat transfer coefficients provided boundary conditions for a finite element heat transfer simulation (SolidWorks Simulation). The results of the steady-state thermal analysis indicate a maximum temperature of 1400 K. This is slightly above the operating limit (1170 K) of the injector's steel alloy, indicating that the injector is not suitable for steady-state operation. However, during the short burn time (15 s), the engine does not reach steady state. A more detailed transient thermal analysis should have been performed, but we did not have the computational resources at the time.</p>
+      
+
       <h2>Combustion Chamber and Nozzle</h2>
+      <p>The Pyralis engine’s combustion chamber and convergent nozzle region are contained by a cylindrical structural wall made from 316 steel. Chemical equilibrium analysts predicts a combustion temperature of 1900 K, well above the maximum operating temperature of 316. Therefore walls of the combustion chamber must be thermally protected. We chose an insulating thermal liner, which offer greater simplicity that regenerative cooling, and better re-usability than ablative cooling.</p>
+      <p>The thermal liner consists of a cast zirconia ceramic, which has high temperature tolerance and low thermal conductivity. The steel wall is protected partially by the thermal resistance of the liner, and partly by its heat capacity. This thermal design cannot withstand steady-state operation, but our mission requires a relatively short (15 s) burn time.</p>
+
+      <figure class="left">
+        <img src="../art/images/pyralis/nozzle.png">
+        <figcaption>A view of the Pyralis engine showing the ceramic nozzle.</figcaption>
+      </figure>
+
+      <p>The nozzle's spike is made from machinable alumina ceramic. Machinable alumina was selected because of its higher strength and better fabrication tolerances (compared to the cast zirconia used in the liner). James Logan designed a clever web structure to support the nozzle spike within the combustion chamber. I designed the spike's contour using a method of characteristics algorithm.</p>
+
+      <figure class="left">
+        <img src="../art/images/pyralis/pyralis_cross_section_render_2014_edit.png">
+        <figcaption>A CAD rendering cross section showing the nozzle support structure.</figcaption>
+      </figure>
+
+      <figure class="right">
+        <img src="../art/images/pyralis/chamber_thermal.png">
+        <figcaption>Transient thermal analysis of the combustion chamber wall.</figcaption>
+      </figure>
+
 
     </div>
 
