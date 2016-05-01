@@ -24,13 +24,15 @@
 }
 
 #splash-text p {
-  max-width: 32em;
+  max-width: 30em;
   padding-left: 1em;
   padding-right: 1em;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1em;
   text-align: justify;
+  -moz-text-align-last: center;
+  text-align-last: center;
 }
 
 hr {
