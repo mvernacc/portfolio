@@ -38,13 +38,24 @@ h1, h2, h3 {
   margin: 2em;
 }
 
-.figure {
-  float: left;
-  clear:both;
+#article p {
+  margin: 0.5em;
+}
+
+figure {
   width: 30%;
   margin: 10px;
 }
-.figure img {
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+figure img {
   width: 100%;
 }
 
