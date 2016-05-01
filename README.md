@@ -1,2 +1,4 @@
 # portfolio
-Portfolio of my engineering projects
+A portfolio of my engineering work.
+
+View the site at https://mvernacc.github.io/portfolio
