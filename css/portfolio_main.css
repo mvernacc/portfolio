@@ -29,7 +29,6 @@
   padding-right: 1em;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 1em;
   text-align: justify;
   -moz-text-align-last: center;
   text-align-last: center;
@@ -47,8 +46,8 @@ hr {
   border-top: 1px solid #ccc;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
   padding: 0;
   width: 16em;
 }
@@ -93,6 +92,7 @@ body {
   max-width: 25em;
   background-color: #fff;
   box-shadow: 0 0 5px #888;
+  position: relative;
 }
 
 .project-card img {
@@ -122,4 +122,22 @@ a .project-card p {
 
 a .project-card:hover {
   box-shadow: 0 0 15px #444;
+}
+
+.read-more-tag {
+  display:inline-block;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #001942;
+  font-family: "Oxygen", sans-serif;
+  font-weight: 300;
+  font-size: 1.3rem;
+  padding: 0.5rem;
+  visibility: hidden;
+}
+
+.project-card:hover > .read-more-tag {
+  visibility: visible;
 }
