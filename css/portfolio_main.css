@@ -36,6 +36,10 @@
   font-size: 1rem;
 }
 
+#splash-text a {
+  color: #fff;
+}
+
 hr {
   display: block;
   height: 1px;
@@ -112,7 +116,7 @@ a {
   text-decoration: none !important;
 }
 
-a p {
+a .project-card p {
   color: black;
 }
 
