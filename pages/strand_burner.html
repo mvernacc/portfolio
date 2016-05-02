@@ -67,7 +67,7 @@
       </figure>
       <p>The propellant sample is ignited by a 2.5 W, 455 nm laser. The laser delivers a surface heat flux of 0.8 MW / m$^2$ is delivered, which is sufficient to ignite the propellant.</p>
       <p>The laser is Class IV, so safety measures are required to prevent eye damage. I set up an interlock switch to prevent the laser from being operated when the room's door is open, and we wear laser goggles when focusing and aligning the beam.</p>
-      <p>Previously, we had used pyrotechinic igniters, but these were unreliable, and reloading the igniter between tests took a long time. The laser igniter provides more consistent ignition, reduces the time require to perform an experiment, and improves safety.</p>
+      <p>Previously, we had used pyrotechnic igniters, but these were unreliable, and reloading the igniter between tests took a long time. The laser igniter provides more consistent ignition, reduces the time require to perform an experiment, and improves safety.</p>
 
       <h2>Fabrication</h2>
       <figure class="right">
@@ -82,6 +82,15 @@
       <p>Another new trick I learned on this build was to use grooving tool to cut an O-ring gland into the inner diameter of a tube.</p>
       <p>The remaining parts were fairly straightforward to make with a CNC mill and waterjet.</p>
       
+      <h2>Iteration</h2>
+      <figure class="left">
+        <img src="../assets/images/firefly/FF_SB_assy_iso.png">
+        <img src="../assets/images/firefly/SB1.jpg">
+        <figcaption>A CAD model of strand burner v1, and a photo of the v1 chamber.</figcaption>
+      </figure>
+      <p>The design presented above is the third version of the strand burner. In the first version, the propellant sample was mounted inside the chamber, and the chamber was made from acrylic to permit viewing. However, smoke from the exhaust filled the chamber, blocking the view of the burning sample. Also, the acrylic blistered and discolored after several firings, limiting the useful life of the device.</p>
+      <p>Version 2 of the strand burner solved these issues by mounting the sample on the outside of the chamber. This required the sample tube be loaded with internal pressure. Despite the poor tensile properties of quartz glass, I was able to find a sufficiently thick-walled tube to meet this load. However, v2 revealed a new set of flaws: its backpressure regulator became corroded and clogged with soot, and as the regulator clogged the internal pressure varied. Also, reloading a propellant sample in v2 required removing and replacing several #6 screws, and installing a new pyrotechnic igniter. We wear fire-resistant gloves when handling propellant, so these dexterous operations were slow and frustrating.</p>
+      <p>Version 3 solves these problems: a large chamber reduces pressure variations, a stainless steel backpressure regulator resists corrosion, and filters prevent soot from reaching the regulator. The propellant sample is installed and removed with a toggle clamp, and the laser igniter is safe and reusable.</p>
 
 
     </div>
