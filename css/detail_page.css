@@ -49,11 +49,13 @@ figure {
 figure.left {
   float: left;
   width: 40%;
+  clear: both;
 }
 
 figure.right {
   float: right;
   width: 40%;
+  clear: both;
 }
 
 figure.center {
