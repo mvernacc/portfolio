@@ -1,14 +1,36 @@
 # Hardware Projects
 
+## Hoverjet
+TODO
+
+## Plastic printed rocket
+TODO
+
+## Strand burner for solid propellant testing
+TODO
+
+## Pyralis rocket engine
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/pyralis/engine_components.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/pyralis/nozzle.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/pyralis/n2o_ignition.png"></div>
+</div>
+
+I led the development of a 2 kN thrust, ethanol / nitrous oxide, pressure-fed rocket engine with an aerospike nozzle.
+
+[read more -->](project_pages/pyralis.md)
+
+
 ## Ice ax
-<div class="proj_outer">
-    <div class="proj_image_div"><img src="../assets/images/ice_ax/head_pins.jpg"></div>
-    <div class="proj_text">
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/ice_ax/sketch1.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/ice_ax/head_pins.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/ice_ax/vac_bag.jpg"></div>
+</div>
+
 I built my own ice ax for a trip to Mt. Washington. The ax is constructed from steel and poplar, and is reinforced with composites.
 
 [read more -->](project_pages/ice_ax.md)
-    </div>
-</div>
 
 
 ## High altitude balloon

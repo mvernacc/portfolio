@@ -19,3 +19,21 @@
   width: 100%;
   height: auto;
 }
+
+.proj_image_row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.proj_image_row_image_container {
+  height: 150pt;
+  margin: 5px;
+}
+
+.proj_image_row img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+}
