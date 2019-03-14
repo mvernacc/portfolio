@@ -9,15 +9,7 @@ Finding meaning in my work is important to me. I prefer to work with passionate 
 > Maybe it's a little early - maybe the time is not quite yet - but those other worlds, promising untold opportunities, beckon.   - *Carl Sagan*
 
 
-[resume](assets/docs/vernacchia_resume.pdf) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
+[resume](resume.md) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
 
 
 <div style="text-align:center"><img src="assets/images/matt_with_jet.jpg" width=75%></div>
-
-
-## Education
-<img src="assets/images/MIT_logo.svg" height=50>
-
- - Currently PhD student, Massachusetts Institute of Technology, Dept. of Aeronautics and Astronautics
- - SM, Massachusetts Institute of Technology, Aeronautics and Astronautics, 2017
- - SB, Massachusetts Institute of Technology, Aeronautics and Astronautics, 2015

@@ -45,6 +45,7 @@ markdown_extensions:
 # Page tree
 nav:
   - Overview: index.md
+  - Resume: resume.md
   - Publications: publications.md
   - Hardware Projects: hardware_projects.md
   - Software Projects: software_projects.md
