@@ -6,7 +6,7 @@ I love the process of brining difficult technologies from theory to implementati
 
 Finding meaning in my work is important to me. I prefer to work with passionate teams on projects with the potential to bend the density of humanity towards better outcomes.
 
-> Maybe it's a little early - maybe the time is not quite yet - but those other worlds, promising untold opportunities, beckon.
+> Maybe it's a little early - maybe the time is not quite yet - but those other worlds, promising untold opportunities, beckon.   - *Carl Sagan*
 
 [resume](assets/docs/vernacchia_resume.pdf)
 

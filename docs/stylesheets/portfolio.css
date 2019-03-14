@@ -1,0 +1,21 @@
+.proj_outer {
+  display: flex;
+  flex-flow: row;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.proj_text {
+  margin-left: 15pt;
+  width: 70%;
+}
+
+.proj_image_div {
+  margin-left: 10px;
+  width: 30%;
+}
+
+.proj_image_div img {
+  width: 100%;
+  height: auto;
+}
