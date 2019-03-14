@@ -8,7 +8,9 @@ Finding meaning in my work is important to me. I prefer to work with passionate 
 
 > Maybe it's a little early - maybe the time is not quite yet - but those other worlds, promising untold opportunities, beckon.   - *Carl Sagan*
 
-[resume](assets/docs/vernacchia_resume.pdf)
+
+[resume](assets/docs/vernacchia_resume.pdf) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
+
 
 <div style="text-align:center"><img src="assets/images/matt_with_jet.jpg" width=75%></div>
 
