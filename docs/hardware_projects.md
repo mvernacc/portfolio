@@ -3,17 +3,23 @@
 ## Hoverjet
 TODO
 
-## 100% 3D printed solid rocket motor
+## 3D printed solid rocket motor
 <div class="proj_image_row">
     <div class="proj_image_row_image_container"><img src="../assets/images/plastic_rocket/plastic-rocket-2017-04-212-pixel-1.png"></div>
     <div class="proj_image_row_image_container"><img src="../assets/images/plastic_rocket/diamonds.jpg"></div>
 </div>
-I worked with my Rocket Team teammates and 3D printing startup Markforged to create and fire the world's first successful rocket motor printed from plastic. Markforged's printers place glass fibers into the part during printing, which helps the plastic to (temporarily) withstand the intense heat of the rocket exhaust.
+I worked with my Rocket Team teammates and 3D printing startup Markforged to create and fire the first successful rocket motor printed from plastic. Markforged's printers place glass fibers into the part during printing, which helps the plastic to (temporarily) withstand the intense heat of the rocket exhaust.
 
 [read more -->](http://rocketry.mit.edu/2017/04/100-3d-printed-solid-rocket-motor/) 
 
 ## Strand burner for solid propellant testing
-TODO
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><iframe width="280" height="158" src="https://www.youtube.com/embed/Mh8e3psMqQU?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/sb_subsystems.png"></div>
+</div>
+I designed and built a device to measure the burning rate of solid rocket propellant at elevated pressure. I improved the device though 4 iterations.
+
+[read more -->](project_pages/strand_burner.md)
 
 ## Pyralis rocket engine
 <div class="proj_image_row">
