@@ -1,11 +1,11 @@
 # Resume
 
-[pdf resume](assets/docs/vernacchia_resume.pdf)
+[pdf resume](assets/docs/resume_vernacchia_2019-04-01.pdf)
 
 ## Skills
-*Programming*: git, python, C++
+*Programming*: python, C++, git
 
-*CAD*: Solidworks, Onshape
+*CAD*: Solidworks, Onshape, GD&T
 
 *Fabrication*: 3-axis CNC mill, CNC lathe, additive manufacturing (plastic and metal), composite layups, polymer casting, solid rocket propellant production
 
