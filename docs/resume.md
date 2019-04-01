@@ -30,11 +30,15 @@ team of undergraduate research assistants. Key classes: 22.611 intro to plasma p
 #### Dragon Propulsion Intern
 *July – Sept 2017*. Develop propulsion FDIR algorithms. Automate flight-critical propulsion component tests. Model thermal response of spacecraft thrusters. Design & build pneumatic test hardware.
 
-#### Guidance, Navigation and Control Intern
-*June - Aug 2015, 2014, 2013*.  Model uncertainty in spacecraft docking maneuvers. Simulate human interactions for control interface testing.
-Integrate a flight simulator in C++. Train NASA astronauts to fly a simulator and collect feedback on UI/UX and handling
-qualities. Simulate lighting conditions using ray tracing. Design and execute tests for a LiDAR sensor. Program and
-operate a large (400 kg) robot arm.
+#### Guidance, Navigation and Control Intern (2015)
+*June - Aug 2015*. Model uncertainty in spacecraft docking maneuvers. Simulate human interactions for control interface testing.
+
+#### Guidance, Navigation and Control Intern (2014)
+*June - Aug 2014*. Integrate a flight simulator in C++ for the Crew Dragon spacecraft. Train NASA astronauts to fly a simulator and collect feedback on UI/UX and handling
+qualities. Simulate lighting conditions using ray tracing.
+
+#### Guidance, Navigation and Control Intern (2013)
+*June - Aug 2013*. Design and execute tests for a LiDAR sensor. Program and operate a large (400 kg) robot arm.
 
 ### NASA Jet Propulsion Laboratory Advanced Robotics Controls Group
 #### Robotics Intern
