@@ -11,7 +11,7 @@ Pyralis is a liquid-bipropellant rocket engine created by the [MIT Rocket Team](
 
 ## Design
 
-Our rocket design process started by defining our goals an requirements. We wanted to use the engine to launch a rocket to 10,000 ft in the Intercollegiate Rocket Engineering Competition (IREC), a goal we ultimately did not achieve. We also wanted to learn and inspire our teammates with the project - Rocket Team needs a compelling and exciting project to keep its members coming.
+Our rocket design process started by defining our goals and requirements. We wanted to use the engine to launch a rocket to 10,000 ft in the Intercollegiate Rocket Engineering Competition (IREC), a goal we ultimately did not achieve. We also wanted to learn and inspire our teammates with the project - Rocket Team needs a compelling and exciting project to keep its members coming.
 
 One of our first design tasks was to select the propellants. The need to operate in the Utah desert for IREC motivated the use of storable (not cryogenic) propellants. We selected ethanol and nitrous oxide because it is a low-toxicity and available combination of storable propellants.
 
@@ -53,7 +53,7 @@ I also performed a thermal analysis on the injector. I used Nusselt number techn
 </figure> 
 
 ### Combustion chamber and nozzle
-The Pyralis engine’s combustion chamber and convergent nozzle region are contained by a cylindrical structural wall made from 316 steel. Chemical equilibrium analysts predicts a combustion temperature of 1900 K, well above the maximum operating temperature of 316. Therefore walls of the combustion chamber must be thermally protected. We chose an insulating thermal liner, which offers greater simplicity that regenerative cooling, and better re-usability than ablative cooling.
+The Pyralis engine’s combustion chamber and convergent nozzle region are contained by a cylindrical structural wall made from 316 steel. Chemical equilibrium analysis predicts a combustion temperature of 1900 K, well above the maximum operating temperature of 316. Therefore walls of the combustion chamber must be thermally protected. We chose an insulating thermal liner, which offers greater simplicity than regenerative cooling, and better re-usability than ablative cooling.
 
 <figure>
     <img src="../../assets/images/pyralis/nozzle.png" width=60%>
@@ -81,10 +81,13 @@ The nozzle's spike is made from machinable alumina ceramic. Machinable alumina w
     <figcaption>Rocket team members pose with the engine and test stand before our first static firing. Our faculty advisor, <a href="https://aeroastro.mit.edu/paulo-lozano">Prof. Lozano</a> stands to the left. James Logan and Ryan Webb wear fire-resistant personal protective equipment, as they will fill the propellant tanks.</figcaption>
 </figure>
 
+### Test facilities
 We tested the engine in a blast chamber in MIT's Gas Turbine Lab. The test stand structure was built from steel uni-strut and reinforced with steel cable. Plywood was used to create mounting panels for valves and tanks; the wood was treated with a flame retardant to reduce the risk of unwanted fire. The engine's exhaust was cooled by a water sprayer, and then routed through a J-shaped steel duct to a vent fan in the room's ceiling.
 
-Together with other team members, I developed safety plans and procedures for the static firing. We researched toxicity, fire and explosion hazards, reviewing papers about test facilities for similar engines operated by JAXA and NASA. We then revised our plans through discussions with the Environment, Health and Safety department (EHS) and experienced tab technicians. We created impact/probability charts to document the hazards present in the test, and selected mitigation strategies. Finally, we wrote and practiced a detailed checklist for the test. The checklist covered the nominal procedure, and also contained various abort procedures to return the system to a safe state after a failure.
+### Safety and procedures
+Together with other team members, I developed safety plans and procedures for the static firing. We researched toxicity, fire and explosion hazards, reviewing papers about test facilities for similar engines operated by JAXA and NASA. We then revised our plans through discussions with the Environment, Health and Safety department (EHS) and experienced lab technicians. We created impact/probability charts to document the hazards present in the test, and selected mitigation strategies. Finally, we wrote and practiced a detailed checklist for the test. The checklist covered the nominal procedure, and also contained various abort procedures to return the system to a safe state after a failure.
 
+### First static fire - hard start
 We performed our first static firing attempt in May 2014. This test failed due to a hard start, which destroyed parts of the combustion chamber and some plumbing. On this version of the engine, the ignition system was a simple spark plug sticking into the combustion chamber, and our propellant flow was controlled by non-throttleable solenoid valves, which open to full flow in 30 ms. Writing now, with several more years of experience and grad classes in combustion under my belt, it seems obvious that this poor design would hard-start. But sometimes I end up learning things the hard way.
 
 <figure>
@@ -96,6 +99,7 @@ We performed our first static firing attempt in May 2014. This test failed due t
 
 In response, we spent the summer and fall of 2014 redesigning and rebuilding the engine. We developed a hydrogen / air pilot torch to replace the spark igniter and redesigned the injector. We also built our own servo-controlled throttle valves so we could ramp up the propellant flow more gradually.
 
+### Second static fire - smooth ignition, but flame-out
 We tested the new engine in December 2014. Our hard-start remedies were successful - the engine started smoothly! However, it flamed-out after a few seconds of operation. We believe that the $L^*$ of the combustion chamber (about 0.7 m) was too short to maintain stable combustion of the propellants.
 
 <figure class="center video">
@@ -110,7 +114,7 @@ We tested the new engine in December 2014. Our hard-start remedies were successf
 
 Unfortunately, we had to cancel the project before we could achieve a full-duration static fire. In a subsequent test in January 2015, we accidentally damaged the blast chamber's ventilation system. Previous maintenance had replaced the room's vent fan with a non-explosion-proof fan. When one of our tests vented unburnt propellant vapor though the fan, a spark from the motor ignited the vapor, and the resulting explosion destroyed the fan. Connie Liu and I conducted a thorough investigation into the incident. Among other analyses, I used the Weibull formula to predict the overpressure from a propellant vapor explosion, and found that this overpressure matched the observed structural damage.
 
-Because building we were testing in was scheduled for renovations in a few months, MIT decided not to repair the vent. We had lost our test site, and only had a few months remaining before our project deadline (we were planning to fly the engine at the Intercollegiate Rocket Engineering Competition (IREC) in June 2015). Therefore, we decided to cancel further development of Pyralis, and switched to a commercial-of-the-shelf solid rocket motor for IREC 2015. Difficult as it was to make, this ended up being the right call. With the extra manpower freed up from the propulsion system, the team built an excellent rocket and recovery system, which won the basic category of IREC.
+Because the building we were testing in was scheduled for renovations in a few months, MIT decided not to repair the vent. We had lost our test site, and only had a few months remaining before our project deadline (we were planning to fly the engine at the Intercollegiate Rocket Engineering Competition (IREC) in June 2015). Therefore, we decided to cancel further development of Pyralis, and switched to a commercial-of-the-shelf solid rocket motor for IREC 2015. Difficult as it was to make, this ended up being the right call. With the extra manpower freed up from the propulsion system, the team built an excellent rocket and recovery system, which won the basic category of IREC.
 
 Although it was disappointing to cut the project short, we learned much from what we were able to accomplish. I loved playing mentor to my younger teammates, and using the project to inspire their excitement about engineering and propulsion. Almost everyone involved has gone on to apply what they learned on Pyralis to other propulsion projects at MIT, SpaceX, Firefly, NASA, ULA, and Northrop Grumman.
 

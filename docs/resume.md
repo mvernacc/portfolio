@@ -7,7 +7,7 @@
 
 *CAD*: Solidworks, Onshape
 
-*Fabrication*: 3-axis CNC mill, CNC lathe, composite layups, polymer casting, solid rocket propellant production
+*Fabrication*: 3-axis CNC mill, CNC lathe, additive manufacturing (plastic and metal), composite layups, polymer casting, solid rocket propellant production
 
 ## Education
 <img src="../assets/images/MIT_logo.svg" height=50>

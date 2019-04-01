@@ -70,7 +70,7 @@ The shield works - during static tests we have run the engine at full throttle f
 </figure>
 
 ### Design ideation process
-We started by discussing the goals and requirements as a team. Crash tolerance and modularity/maintainability were the key concerns. I then though about manufacturing constrains - how much money were we willing to spend, what tools were available in my friend's shop, how much of the vehicle could I make on campus and bring with me?
+We started by discussing the goals and requirements as a team. Crash tolerance and modularity/maintainability were the key concerns. I then though about manufacturing constraints - how much money were we willing to spend, what tools were available in my friend's shop, how much of the vehicle could I make on campus and bring with me?
 
 After establishing this context, I made a few design sketches (see below) and discussed them with the team. We selected the dual-tank configuration.
 
@@ -102,7 +102,7 @@ Each Jet Vane Unit consists of a vane, a servo which actuates the vane, a gear t
 
 I sized the vanes using a rough model of the aerodynamic forces on a flat plat. Compensating for a misalignment of the center of mass turned out to be the driving case for the vane size. My vane sizing worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_design.ipynb) (TODO: some of my notes are still on paper and have not been typed into the ipython notebook :( )
 
-I determined required servo speed using a linearized model of the aircraft dynamics. Typically, the required actuator bandwidth would be set by the natural frequencies of a system, but hoverjet does not have any natural frequency (the linear dynamics are just 4 poles at the origin). Instead, the servo speed is set my the required position control resolution. If the vane cane be moved faster, we can drive smaller position oscillations. My servo speed worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_speed.ipynb)
+I determined required servo speed using a linearized model of the aircraft dynamics. Typically, the required actuator bandwidth would be set by the natural frequencies of a system, but hoverjet does not have any natural frequency (the linear dynamics are just 4 poles at the origin). Instead, the servo speed is set by the required position control resolution. If the vane can be moved faster, we can drive smaller position oscillations. My servo speed worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_speed.ipynb)
 
 
 

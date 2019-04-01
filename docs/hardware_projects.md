@@ -57,7 +57,7 @@ I built my own ice ax for a trip to Mt. Washington. The ax is constructed from s
 <div class="proj_outer">
     <div class="proj_image_div"><img src="../assets/images/unified_balloon.bmp"></div>
     <div class="proj_text">
-As a lab assistant for the Unified Engineering class, I developed a new lab project in which students launch a balloon to the upper stratosphere (70 kft). I designed, built, and flew a prototype balloon with an Arduino-based weather sensing payload. I then wrote an instruction manual for building the system, and coached students though the building and launching process.
+As a lab assistant for the Unified Engineering class, I developed a new lab project in which students launch a balloon to the upper stratosphere (70 kft). I designed, built, and flew a prototype balloon with an Arduino-based weather sensing payload. I then wrote an instruction manual for building the system, and coached students though the building and launching process. This photograph was taken by a camera on board one of our baloons.
     </div>
 </div>
 

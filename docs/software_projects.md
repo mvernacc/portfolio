@@ -24,7 +24,7 @@ I'm writing a material properties library in python - so far I have a prototype 
 The engine's ideal sea level specific impulse is 288.7 seconds.
 ```
 
-`proptools` is a python package for preliminary design of rocket propulsion systems. It provides implementations of equations for nozzle flow, turbo-machinery and rocket structures. The project aims to cover most of the commonly used equations in* Rocket Propulsion Elements* *Modern Engineering for Design of Liquid-Propellant Rocket Engines* (Huzel & Huang). It's currently targeted at internal use in my lab, but I am working towards a `v1.0` that could be used by a broader audience.
+`proptools` is a python package for preliminary design of rocket propulsion systems. It provides implementations of equations for nozzle flow, turbo-machinery and rocket structures. The project aims to cover most of the commonly used equations in *Rocket Propulsion Elements* and *Modern Engineering for Design of Liquid-Propellant Rocket Engines* (Huzel & Huang). It's currently targeted at internal use in my lab, but I am working towards a `v1.0` that could be used by a broader audience.
 
 [check it out on readthedocs -->](https://proptools.readthedocs.io/en/latest/)
 
