@@ -1,6 +1,6 @@
 # Matt Vernacchia's Engineering Portfolio
 
-I am currently an Aerospace Engineering PhD student at MIT, where I develop rocket propulsion systems for small, fast aircraft. These aircraft can fly at 1000 km/hr and are 10x smaller than any air vehicle of comparable speed. Along with my labmates, I mix solid rocket propellants, fabricate rocket components with metal additive manufacturing, test-fire solid rocket motors, and simulate combustion and heat transfer. I led the development of our lab's solid rocket capabilities from a clean sheet.
+I am currently an Aerospace Engineering PhD student at MIT, where I develop rocket propulsion systems for small, fast aircraft. These aircraft can fly at 1000 km/hr and are 10x smaller than any air vehicle of comparable speed. Along with my labmates, I fabricate rocket components with metal additive manufacturing, mix solid rocket propellants, test-fire solid rocket motors, and simulate combustion and heat transfer. I led the development of our lab's solid rocket capabilities from a clean sheet.
 
 I love the process of brining difficult technologies from theory to implementation. My capabilities in analysis, mechanical design, and software make me well suited to a fast-paced R&D environment. I built these skills while leading several rocket propulsion projects at MIT, integrating a flight simulator for astronauts at SpaceX, and prototyping new human-robot interfaces at JPL, among other experiences.
 
