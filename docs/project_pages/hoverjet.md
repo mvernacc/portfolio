@@ -50,7 +50,7 @@ I addressed these requirements with a modular design. The main structure is four
 The vehicle is designed to be crash tolerant: The landing legs are sized to absorb a 5 m/s crash from any direction. The most expensive component, the engine, is "caged" by the rest of the structure. The fuel tanks are filled with a open-cell foam, which prevents sloshing and limits severity of a fuel spill if the tanks are ruptured (a technique borrowed from auto racing).
 
 ### Additive manufacturing
-We needed to build and maintain the aircraft in my friend's home machine shop. He does not have CNC cutting machines, so I designed most of the geometrically complicated parts to be made via 3D printing (filament deposition). Below is a time lapse of his Prusa i3 mk3 printing the main frame which holds the jet vanes and frame tubes. The material is a nylon filament filled with chopped carbon fiber (from 3DXTECH). Compared to typical filament plastics (i.e. ABS), it is stronger, stiffer, and maintains it strength up to a higher temperature.
+We needed to build and maintain the aircraft in my friend's home machine shop. He does not have CNC cutting machines, so I designed most of the geometrically complicated parts to be made via 3D printing (filament deposition). Below is a time lapse of his Prusa i3 mk3 printing the main frame which holds the jet vanes and frame tubes. The material is a nylon filament filled with chopped carbon fiber (from [3DXTECH](https://www.3dxtech.com/carbonx-carbon-fiber-nylon-gen-3-3d-printing-filament/)). Compared to typical filament plastics (i.e. ABS), it is stronger, stiffer, and maintains it strength up to a higher temperature.
 
 <figure class="center video">
     <div class="video-container">
@@ -58,6 +58,18 @@ We needed to build and maintain the aircraft in my friend's home machine shop. H
     </div>
     <figcaption>Time lapse of printing the main frame.</figcaption>
 </figure>
+
+Additive manufacturing is not magic - one still has to pay careful attention to the design-for-manufacturing constraints. However, additive processes have a different set of constraints than traditional cutting and forming processes. Some of the constraints which were important for the Hoverjet parts are:
+
+*Overhangs* - Filament deposition printers cannot print large overhangs, or else the part will sag before the plastic filament cools. When designing the parts for Hoverjet, I considered the orientation in which the part would be printed early in the design process, and shaped the details of the geometry to avoid overhangs in that direction. Some filament printers can allow overhangs by printing a soluble support material under the part, but our printer did not have this capability.
+
+*Threads and fine holes* - Most filament deposition printers do not have sufficient resolution to print threads or fine holes. On Hoverjet, I used [heat-set threaded metal inserts](https://www.mcmaster.com/94459a280) to create threads in the printed parts. For holes that needed a close fit around a fastener, I printed the holes undersized, and then drilled them out to the required diameter.
+
+*Anisotropic strength* - Parts made by filament deposition are weaker in the $z$ axis (normal to layers) than in the $xy$ plane (within layers). For loaded parts, the printing orientation was chosen so that the loads would primarily be in the within-layer plane. This sometimes conflicted with the orientation which minimized overhangs, and resolving these conflicts required some judgment.
+
+*Printing environment* - Filament deposition printers are sensitive to the temperature and humidity of the printing environment. Variations in temperature cause the part to cool unevenly, which can distort its geometry or cause layers to peel apart from each other. Many filaments (including nylon) will absorb moisture from humid air, and do not print well when wet. These issues are best managed by printing within an environmentally-controlled build chamber. However, Stratasys Inc. holds a patent on this technology ([US 6,722,872](https://patents.google.com/patent/US6722872B1/en)), so most hobby-grade printers do not use a build chamber. One can work around this limitation by putting the entire printer within a separately-purchased enclosure. We used this approach, and also put desiccant in the enclosure to keep the humidity down (it's the blue substance in the above video). I put a temperature and humidity gage in the enclosure to monitor the environment.
+
+I learned a good deal about additive manufacturing from Prof. John Hart's excellent [2.s998 course](https://news.mit.edu/2016/mit-course-3-d-printing-101-0511). It was fun and instructive to apply what I had learned to this project.
 
 ### Infrared radiation shield
 One interesting feature of the airframe is the IR radiation shield. This reduces the radiative heat transfer from the jet nozzle to the surrounding structural components. These components are composite, and will weaken if they get above 350 K. The nozzle is only a few cm from these components, and will reach 1000 K, hot enough to emit a significant amount of thermal radiation (radiative power $\sim T^4$). To reduce radiative heating of the structure, I surrounded the nozzle with a two-layer radiation shield made of aluminum. Infrared radiation from the nozzle must be absorbed and re-radiated by each layer before reaching the structure. The layers are separated by fiberglass cloth to prevent contact and thermal conduction between the layers. This design is vaguely similar to the multilayer insulation used on spacecraft.
@@ -100,9 +112,9 @@ Each Jet Vane Unit consists of a vane, a servo which actuates the vane, a gear t
     <figcaption>Jet Vane Units.</figcaption>
 </figure>
 
-I sized the vanes using a rough model of the aerodynamic forces on a flat plat. Compensating for a misalignment of the center of mass turned out to be the driving case for the vane size. My vane sizing worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_design.ipynb) (TODO: some of my notes are still on paper and have not been typed into the ipython notebook :( )
+I sized the vanes using a rough model of the aerodynamic forces on a flat plat. Compensating for a misalignment of the center of mass turned out to be the driving case for the vane size. My vane sizing worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_design.ipynb). (TODO: some of my notes are still on paper and have not been typed into the ipython notebook :( )
 
-I determined required servo speed using a linearized model of the aircraft dynamics. Typically, the required actuator bandwidth would be set by the natural frequencies of a system, but hoverjet does not have any natural frequency (the linear dynamics are just 4 poles at the origin). Instead, the servo speed is set by the required position control resolution. If the vane can be moved faster, we can drive smaller position oscillations. My servo speed worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_speed.ipynb)
+I determined required servo speed using a linearized model of the aircraft dynamics. Typically, the required actuator bandwidth would be set by the natural frequencies of a system, but hoverjet does not have any natural frequency (the linear dynamics are just 4 poles at the origin). Instead, the servo speed is set by the required position control resolution. If the vane can be moved faster, we can drive smaller position oscillations. My servo speed worksheet is available [on github as an Ipython notebook](https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_speed.ipynb).
 
 
 
