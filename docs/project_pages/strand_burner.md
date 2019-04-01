@@ -27,7 +27,7 @@ These experiments are performed with a strand burner, a device which burns small
 The design goals for the strand burner were to allow rapid exchange of propellant samples, laser ignition of the propellant, and optical observation of the flame front. The overall design of the apparatus is shown below:
 
 <figure>
-    <img src="../../assets/images/firefly/sb_subsystems.png" width=100%>
+    <img src="../../assets/images/firefly/strand_burner_subsystems.png" width=100%>
     <figcaption>Subsystems of the strand burner apparatus.</figcaption>
 </figure> 
 
@@ -72,6 +72,10 @@ Version 2 of the strand burner solved these issues by mounting the sample on the
 ### Version 3
 Version 3 solved these problems: a large chamber reduces pressure variations, a stainless steel backpressure regulator resists corrosion, and filters prevent soot from reaching the regulator. The propellant sample is installed and removed with a toggle clamp, and the laser igniter is reusable. However, on v3 the laser was mounted across the plenum from the propellant sample. The angular alignment of the laser had to be very precise (< 0.5 deg) to keep the laser spot on the propellant sample. Bumping the apparatus could knock the laser out of alignment.
 
+<figure>
+    <img src="../../assets/images/firefly/SB3_labeled_subasm.svg" width=100%>
+    <figcaption>The version 3 strand burner design drawing. Not that the Laser Mount is on the opposite end of the Chamber from the Sample Holder.</figcaption>
+</figure> 
 <figure>
     <img src="../../assets/images/firefly/SB3.jpg" width=80%>
     <figcaption>The version 3 strand burner, set up in the blast chamber facility.</figcaption>
