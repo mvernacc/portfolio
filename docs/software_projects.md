@@ -46,4 +46,30 @@ For a numerical methods class, I programmed a 2D Euler equation (inviscid Navier
 
 ## Unscented Kalman Filter for 3D attitude estimation
 
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/16.322/16.322_board.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/16.322/gyro_data_allan.png"></div>
+</div>
 
+I developed a 3D attitude estimator based on the Unscented Kalman Filter (UKF) using a MEMS IMU and a magnetometer. The estimator uses a quaternion representation of attitude, and I explored interesting mathematical issues with applying the UKF algorithm to a quaternion state. I also characterized the sensors' noise, bias, and bias walk.
+
+[read the report -->](../assets/docs/16.322/report.pdf)
+
+[check it out on github -->](https://github.com/mvernacc/16322-3d-pose)
+
+## Aerospike nozzle design GUI
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/spike_alg.png"></div>
+</div>
+I implemented a method-of-characteristics aerospike nozzle geometry algorithm in python. I created a GUI which enables users to enter engine parameters and view results. After executing the nozzle design algorithm, the program plots temperature, pressure, and Mach number along the nozzle length, and can export the nozzle geometry in a CAD-compatible format.
+
+[check it out on github -->](https://github.com/mvernacc/aerospike-nozzle-design-gui)
+
+## Crew Dragon flight simulator
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/dragon_display.png"></div>
+</div>
+During 3 internships with SpaceX, I helped to develop a flight simulator for Crew Dragon. I trained several NASA astronauts to fly the simulator, and helped collect their feedback on the display's UI/UX features and on the vehicle's handling qualities. I then worked with human factors experts, designers, and controls engineers to fix issues discovered in these tests. I mostly worked in C++. *I am grateful for the opportunity to have played a small role with the amazing team at SpaceX.*
+
+## LiDAR testing with robotic arm
+During an internship with SpaceX, I developed software to replicate vehicle flight trajectories using a MILO robotic arm. This enabled the GNC group to perform flight-like tests of their new LiDAR sensor. *Thanks to Dr. Andrew Howard for an amazing summer!*
