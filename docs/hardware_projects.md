@@ -23,7 +23,7 @@ I worked with my Rocket Team teammates and 3D printing startup Markforged to cre
 ## Strand burner for solid propellant testing
 <div class="proj_image_row">
     <div class="proj_image_row_image_container"><iframe width="280" height="158" src="https://www.youtube.com/embed/Mh8e3psMqQU?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/sb_subsystems.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/strand_burner_subsystems.png"></div>
 </div>
 I designed and built a device to measure the burning rate of solid rocket propellant at elevated pressure. I improved the device though 4 iterations.
 
