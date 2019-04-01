@@ -1,7 +1,15 @@
 # Hardware Projects
 
 ## Hoverjet
-TODO
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><iframe width="280" height="158" src="https://www.youtube.com/embed/Ia_bQmQX-PA?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/hoverjet/hoverjet_3_view.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/hoverjet/jet_vane_units.jpg"></div>
+</div>
+Hoverjet is a jet-powered, vertical-takeoff-and-landing aircraft. I designed the airframe and control mechanisms, and led the fabrication and assembly of the vehicle.
+
+[read more -->](project_pages/hoverjet.md)
+
 
 ## 3D printed solid rocket motor
 <div class="proj_image_row">
