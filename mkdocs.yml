@@ -1,0 +1,60 @@
+# Copyright 2019 Matthew Vernacchia
+# Based on https://github.com/squidfunk/mkdocs-material/blob/master/mkdocs.yml
+
+# Project information
+site_name: Matt Vernacchia
+site_description: A portfolio of my engineering work.
+site_author: Matt Vernacchia
+site_url: https://mvernacc.github.io/portfolio/
+
+# Repository
+repo_name: mvernacc/portfolio
+repo_url: https://github.com/mvernacc/portfolio/
+edit_uri: ""
+
+# Copyright
+copyright: 'Copyright &copy; 2019 Matthew Vernacchia'
+
+# Configuration
+theme:
+  name: 'material'
+
+extra_css:
+  - 'stylesheets/portfolio.css'
+
+# Customization
+extra:
+  social:
+    - type: github-alt
+      link: https://github.com/mvernacc
+    - type: linkedin
+      link: https://www.linkedin.com/in/matthew-vernacchia-4848023b/
+    - type: researchgate
+      link: https://www.researchgate.net/profile/Matthew_Vernacchia
+
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.smartsymbols
+  - pymdownx.arithmatex
+
+extra_javascript:
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
+
+
+# Page tree
+nav:
+  - Overview: index.md
+  - Resume: resume.md
+  - Publications: publications.md
+  - Hardware Projects: hardware_projects.md
+  - Software Projects: software_projects.md
+
+
+
+
