@@ -87,3 +87,11 @@ As a sophomore on Rocket Team, I designed and built a quadrotor which folded to 
 </div>
 
 I helped my flatmates to design and build loft beds for our apartment. I put some effort into making drawings and instructions, which enabled us to quickly build two identical beds and assemble them without issues. Unlike many loft bed designs, this structure is sufficiently stiff to handle the expected dynamic loads.
+
+## Party blower
+<div class="proj_outer">
+    <div class="proj_image_div"><iframe width="169" height="300" src="https://www.youtube.com/embed/hJyYcieWoN0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    <div class="proj_text">
+A silly device that I designed and printed for my friend's birthday party. Printed on a Form 2 stereo-lithography printer, which can produce gas-tight parts. *In collaboration with Kelly Mathesius.*
+    </div>
+</div>
