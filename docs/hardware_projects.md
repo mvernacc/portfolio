@@ -10,6 +10,16 @@ Hoverjet is a jet-powered, vertical-takeoff-and-landing aircraft. I designed the
 
 [read more -->](project_pages/hoverjet.md)
 
+## Additively manufactured titanium rocket component
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/nozzle_adapter/FF-TC-01-101-adapter-to-flight-nozzle-2019-03-21T1454.svg"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/nozzle_adapter/sintering.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/nozzle_adapter/parts.png"></div>
+</div>
+This is a component of our research rocket motor which I designed and which is manufactured by Renishaw plc. It illustrates my experience interacting with a manufacturing shop and using GD&T to communicate in drawings.
+
+[read more -->](project_pages/nozzle_adapter.md)
+
 
 ## 3D printed solid rocket motor
 <div class="proj_image_row">
