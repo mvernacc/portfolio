@@ -12,9 +12,15 @@ I'm writing a material properties library in python - so far I have a prototype 
 [example for nuclear engineering -->](https://github.com/mvernacc/material-properties-interchange/blob/feature/multi-var-w-state/tutorials/radiation_demo.ipynb)
 
 ## Exploring aircraft design tradeoffs with Geometric Programming
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/gp/GP_mach.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/gp/GP_sweep.png"></div>
+</div>
 [Geometric Programming](https://gpkit.readthedocs.io/en/latest/gp101.html) is an optimization framework for efficiently solving multidiscipliary design optimization problems. As part of my PhD research on small fast aircraft, I am using Geometric Programming to quantify the tradeoffs between range, speed, size, and other aircraft design objectives. This work uses [`gpkit`](https://gpkit.readthedocs.io), a python library for Geometric Programming developed at MIT.
 This is a work in progress as of spring 2019.
 *In collaboration with Chris Courtin, Beldon Lin and Ned Burnell*
+
+[check it out on github -->](https://github.com/convexengineering/gplibrary/tree/compress-aero/gpkitmodels/SP/aircraft/compressible_aero)
 
 ## Rocket propulsion library
 
