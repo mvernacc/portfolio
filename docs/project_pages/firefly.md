@@ -15,7 +15,7 @@
 ## Motivation
 ### The small and fast gap
 
-Small, uncrewed aerial vehicles (UAVs) are expanding the capabilities of aviation. However, a gap exists in the size and speed capability of aircraft: no aircraft are both small (less than 10 kg) and fast (capable of transonic flight). This gap is shown in the figure below, which plots the speed vs. size of representative US military aircraft.
+Small, uncrewed aerial vehicles (UAVs) are expanding the capabilities of aviation. However, a gap exists in the size and speed capability of aircraft: no aircraft are both small (< 10 kg) and fast (> 100 m/s). This gap is shown in the figure below, which plots the speed vs. size of representative US military aircraft.
 
 <figure>
     <img src="../../assets/images/firefly/small_fast_gap.png" width=100%>
@@ -23,7 +23,7 @@ Small, uncrewed aerial vehicles (UAVs) are expanding the capabilities of aviatio
 </figure>
 
 ### Propulsion technology for small, fast aircraft
-A small, fast aircraft requires a propulsion system which is both miniature and high-power; requirements which current UAV propulsion technologies do not meet. To meet this need, we are developing a slow-burn solid rocket motor. Solid rocket motors have a high energy and power density (an advantage over battery-electric systems) and are mechanically simple with no moving parts (an advantage over turbojet engines).
+A small, fast aircraft requires a propulsion system which is both miniature and high-power - requirements which current UAV propulsion technologies do not meet. To meet this need, we are developing a slow-burn solid rocket motor. Solid rocket motors have a high energy and power density (an advantage over battery-electric systems) and are mechanically simple with no moving parts (an advantage over turbojet engines, especially at small sizes). Thus, solid rocket motors are a promising propulsion technology for small, fast aircraft.
 
 ## Our research
 
@@ -53,7 +53,7 @@ Firefly is meant to launch from a larger (crewed) aircraft at high altitude. It 
 </figure>
 
 ### Aircraft components and configuration
-The vehicle's configuration is based around an integration of a solid rocket motor case into an aircraft fuselage. The vehicle's primary structure is the motor case, which is additively manufactured from a titanium alloy. The fuselage is contoured to reduce drag. The wings and tail feature miniature, high-precision deployment and actuation mechanisms. The major components of the current design revision are shown below.
+The vehicle's configuration integrates a solid rocket motor case into an aircraft fuselage. The vehicle's primary structure is the motor case, which is additively manufactured from a titanium alloy. The fuselage is contoured to reduce drag. The wings and tail feature miniature, high-precision deployment and actuation mechanisms. The major components of the current design revision are shown below.
 
 <figure>
     <img src="../../assets/images/firefly/firefly_v2_components.png" width=100%>
@@ -109,7 +109,7 @@ Interestingly, the motor case is a stiffness-limited structure. Packaging constr
     <figcaption>Finite element analysis (left) and hydrostatic tests (right) to measure the stiffness of the motor case.</figcaption>
 </figure>
 
-If we were to relax some of the packaging constraints, we could use a circular tube motor case, which would be much simpler and cheaper. this would come at the cost of higher drag (--> shorter range) and more restricted payload mounting. This trade-off will be revisited in future iterations.
+If we were to relax some of the packaging constraints, we could use a circular tube motor case, which would be much simpler and cheaper. This would come at the cost of higher drag (and therefore shorter range) and more restricted payload mounting. This trade-off will be revisited in future iterations.
 
 
 ### Ablative liner
@@ -119,7 +119,7 @@ their end-burning grain configuration and long burn time. The end-burning grain 
 the interior of the case to be more exposed to combustion gases. This interior
 surface must be protected by an ablative liner. It is desirable to make this liner as thin as
 possible: it adds inert mass to the vehicle and takes up volume which could otherwise be
-allocated to propellant. Thus, it is important understand the ablation process, and make a
+allocated to propellant. Thus, it is important to understand the ablation process, and make a
 good selection of the ablative material.
 
 <figure>
@@ -135,6 +135,6 @@ Motor) are ablatively cooled. However, the amount of ablation recession does not
 with nozzle size, and recession would result in unacceptably large (fractional) changes in the
 nozzle contour and throat area of a small nozzle. New designs are needed.
 
-We are prototyping and testing new nozzle designs. [This page](nozzle_adapter.md) describes a the design and production of a component used in these tests.
+We are prototyping and testing new nozzle designs. [This page](nozzle_adapter.md) describes the design and production of a component used in these tests.
 
 *Copyright 2019 Matthew Vernacchia and Massachusetts Institute of Technology*
