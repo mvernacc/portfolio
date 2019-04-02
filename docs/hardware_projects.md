@@ -79,3 +79,11 @@ As a lab assistant for the Unified Engineering class, I developed a new lab proj
 As a sophomore on Rocket Team, I designed and built a quadrotor which folded to fit within a 6 inch diameter rocket. After being launched to 1 mile altitude, the quadrotor would deploy, unfold, and fly autonomously or under remote control. I machined all of the mechanical components and used a Ardupilot Mega for control and communications. I also built and successfully used an emergency parachute system which saved the quadrotor if it lost control.
     </div>
 </div>
+
+## Loft bed
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/loft_bed_exploded_drawing.svg"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/loft_bed_in_room.jpg"></div>
+</div>
+
+I helped my flatmates to design and build loft beds for our apartment. I put some effort into making drawings and instructions, which enabled us to quickly build two identical beds and assemble them without issues. Unlike many loft bed designs, this structure is sufficiently stiff to handle the expected dynamic loads.
