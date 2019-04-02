@@ -29,7 +29,7 @@ The design goals for the strand burner were to allow rapid exchange of propellan
 <figure>
     <img src="../../assets/images/firefly/strand_burner_subsystems.png" width=100%>
     <figcaption>Subsystems of the strand burner apparatus.</figcaption>
-</figure> 
+</figure>
 
 The strand burner has four subsystems:
 
