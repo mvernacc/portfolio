@@ -1,5 +1,16 @@
 # Hardware Projects
 
+## Rocket-propelled small fast aircraft (Firefly)
+<div class="proj_image_row">
+    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/firefly_render.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/cases_on_build_platform.png"></div>
+    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/motor_v1_static_fire.png"></div>
+</div>
+Firefly is a small, fast aircraft which can fly at 1000 km/hr and is 10x smaller than any air vehicle of comparable speed. My PhD research focuses on developing a novel, slow-burn solid rocket propulsion system for such aircraft.
+
+[read more -->](project_pages/firefly.md)
+
+
 ## Hoverjet
 <div class="proj_image_row">
     <div class="proj_image_row_image_container"><iframe width="280" height="158" src="https://www.youtube.com/embed/Ia_bQmQX-PA?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
