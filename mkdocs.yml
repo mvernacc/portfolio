@@ -25,11 +25,11 @@ extra_css:
 # Customization
 extra:
   social:
-    - type: github-alt
+    - icon: fontawesome/brands/github-alt
       link: https://github.com/mvernacc
-    - type: linkedin
+    - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/matthew-vernacchia-4848023b/
-    - type: researchgate
+    - icon: fontawesome/brands/researchgate
       link: https://www.researchgate.net/profile/Matthew_Vernacchia
 
 
