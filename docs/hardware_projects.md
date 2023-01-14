@@ -39,7 +39,7 @@ This is a component of our research rocket motor which I designed and which is m
 </div>
 I worked with my Rocket Team teammates and 3D printing startup Markforged to create and fire the first successful rocket motor printed from plastic. Markforged's printers place glass fibers into the part during printing, which helps the plastic to (temporarily) withstand the intense heat of the rocket exhaust.
 
-[read more -->](http://rocketry.mit.edu/2017/04/100-3d-printed-solid-rocket-motor/) 
+[read more -->](assets/docs/plastic_rocket_summary_page.pdf) 
 
 ## Strand burner for solid propellant testing
 <div class="proj_image_row">
