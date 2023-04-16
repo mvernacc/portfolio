@@ -8,6 +8,6 @@ I love the process of brining difficult technologies from theory to implementati
 
 Finding meaning in my work is important to me. I prefer to work with passionate teams on projects with the potential to bend the future of humanity towards better outcomes.
 
-[resume](assets/docs/resume_vernacchia-2021-02-14.pdf) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
+[resume](assets/docs/resume_vernacchia_2023-04-16.pdf) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
 
 <div style="text-align:center"><img src="assets/images/matt_with_jet.jpg" width=75%></div>
