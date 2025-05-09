@@ -36,12 +36,18 @@ extra:
 # Extensions
 markdown_extensions:
   - admonition
-  - codehilite:
-      guess_lang: false
+  - pymdownx.details
   - toc:
       permalink: true
   - pymdownx.smartsymbols
   - pymdownx.arithmatex
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 
 extra_javascript:
   - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
@@ -52,6 +58,7 @@ nav:
   - Overview: index.md
   - Resume: resume.md
   - Publications: publications.md
+  - Engineering Notes: engineering_notes.md
   - Hardware Projects: hardware_projects.md
   - Software Projects: software_projects.md
 
