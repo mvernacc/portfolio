@@ -26,6 +26,11 @@ sos = butter(ORDER, Wn=fc, fs=fs, output="sos")
 x_filtered = sosfiltfilt(sos, x_raw)
 ```
 
+The superior characteristics of the forward-backward Butterworth filter are illustrated in the Bode plot below.
+If you are new to Bode plots, or simply want more details, read on below.
+
+<img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/bode.png" width=100%>
+
 ## The task: remove high-frequency noise without distortion
 
 Often, we are trying to measure a relatively slow phenomenon, but our sensors also pick up high-frequency noise.
@@ -69,7 +74,7 @@ For the post-processing application, we want a Bode plot that looks like this:
     <figcaption>Ideal Bode plot for scientific post-processing.</figcaption>
 </figure>
 
-The figure below shows Bode plots of the Butterworth (blue) and Savitzky–Golay (tan) filters.
+Now, we can return to the figure this post started with (it is inlined again below). It is a Bode plot of the Butterworth (blue) and Savitzky–Golay (tan) filters.
 For a fair comparison, but filters are set for a cutoff at 0.01 times the sampling frequency (vertical black line).
 
 <figure>
@@ -102,6 +107,10 @@ Zooming in, we see that the Butterworth forward-backward filter does a better jo
     <img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/example_time_domain_detail.png" width=100%>
     <figcaption>A time scales shorter than the cutoff, the Butterworth-filtered signal is smooth, whereas Savitzky–Golay leaves high-frequency junk in the filtered signal.</figcaption>
 </figure>
+
+## Code
+
+The python scripts that made then figures in this post are available [on github](https://github.com/mvernacc/filters_savgol_vs_butter).
 
 ## Further reading
 
