@@ -19,7 +19,7 @@ from scipy.signal import sosfiltfilt, butter
 fs = ...  # [Hz] TODO sampling frequency
 fc = ...  # [Hz] TODO filter cutoff frequency
 x_raw = ... # TODO your signal
-ORDER = 4  # 4 probably is fine, note that applying the filter forward-backward
+ORDER = 5  # 5 probably is fine, note that applying the filter forward-backward
 # effectively doubles the filter order.
 
 sos = butter(ORDER, Wn=fc, fs=fs, output="sos")
