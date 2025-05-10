@@ -36,6 +36,7 @@ extra:
 # Extensions
 markdown_extensions:
   - admonition
+  - footnotes
   - pymdownx.details
   - toc:
       permalink: true

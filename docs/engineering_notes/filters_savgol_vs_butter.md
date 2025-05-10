@@ -33,7 +33,7 @@ If you are new to Bode plots, or simply want more details, read on below.
 
 ## The task: remove high-frequency noise without distortion
 
-Often, we are trying to measure a relatively slow phenomenon, but our sensors also pick up high-frequency noise.
+Often, we are trying to measure a relatively slow phenomenon, but our sensors also pick up high-frequency noise.[^1]
 For scientific post-processing, it is imperative to remove the high-frequency noise while:
 
 - Accurately preserving the **amplitude of the signal**.
@@ -41,7 +41,7 @@ For scientific post-processing, it is imperative to remove the high-frequency no
 
 In signal processing terms, this means we require a filter with:
 
-- Gain of 1 in the pass band
+- Gain magnitude of 1 in the pass band
 - Zero phase delay
 
 ??? "Zero delay with non-causal filters"
@@ -53,7 +53,8 @@ In signal processing terms, this means we require a filter with:
 ## Meet the contenders
 
 The [Butterworth filter](https://en.wikipedia.org/wiki/Butterworth_filter) has the flattest possible gain in the pass band (for a filter of a given order with monotonically decreasing gain).
-That is a strong theoretical recommendation for our scientific post-processing application. 
+That is a strong theoretical recommendation for our scientific post-processing application.
+
 The parameters of the filter are a cutoff frequency and an order:
 
 - The cutoff frequency should be about 2x the highest frequency you care about in the data, and less than the frequency of known noise sources (e.g. 60 Hz power).
@@ -61,7 +62,9 @@ The parameters of the filter are a cutoff frequency and an order:
 
 The [Savitzky–Golay filter](https://en.wikipedia.org/wiki/Savitzky%E2%80%93Golay_filter) can be thought of as fitting a polynomial to successive windows of the data, but in practice it is implemented as a convolution of the signal with a pre-computed kernel (i.e. a FIR filter).
 Theoretically, the Savitzky–Golay filter does not have much to recommend it.
-Further, the parameters of the filter are specified as a window length and a polynomial order; it is [tricky](https://doi.org/10.1109/DSP-SPE.2011.5739186) to relate these to the more useful cutoff frequency.
+
+Further, the parameters of the filter are specified as a window length and a polynomial order.
+It is tricky to relate these to the more useful cutoff frequency; but the window length for a given cutoff frequency can be approximated using [equation 11 from this paper](https://doi.org/10.1109/DSP-SPE.2011.5739186), which I implemented in python as the [`savgol_window_length`](https://github.com/mvernacc/filters_savgol_vs_butter/blob/main/helpers.py) function.
 
 
 ## Visualize filter performance with Bode plots
@@ -74,8 +77,8 @@ For the post-processing application, we want a Bode plot that looks like this:
     <figcaption>Ideal Bode plot for scientific post-processing.</figcaption>
 </figure>
 
-Now, we can return to the figure this post started with (it is inlined again below). It is a Bode plot of the Butterworth (blue) and Savitzky–Golay (tan) filters.
-For a fair comparison, but filters are set for a cutoff at 0.01 times the sampling frequency (vertical black line).
+Now, we can return to the figure this post started with (it is inlined again below): a Bode plot of the Butterworth (blue) and Savitzky–Golay (tan) filters.
+For a fair comparison, both filters are set for a -3 dB cutoff at 0.01 times the sampling frequency (vertical black line).
 
 <figure>
     <img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/bode.png" width=100%>
@@ -117,3 +120,11 @@ The python scripts that made then figures in this post are available [on github]
  - [`scipy.signal.butter` docs](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html)
  - [`scipy.signal.sosfiltfilt` docs](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.sosfiltfilt.html)
 - [S. W. Smith, *The Scientist and Engineer's Guide to Digital Signal Processing*](https://www.dspguide.com/)
+
+
+---
+
+*Thank you to James Logan for discussing the ideas in this post with me and reviewing the plots. Any errors are my own.*
+
+
+[^1]: This post focuses on removing noise that *is separated from the "true" signal in frequency* (e.g. electrical noise from 60 Hz power, or high-frequency vibrations of the instrument). Other filtering techniques are better if you want to reject noise on other bases (e.g. outliers).
