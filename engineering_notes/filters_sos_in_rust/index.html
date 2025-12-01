@@ -1,0 +1,840 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A portfolio of my engineering work.">
+      
+      
+        <meta name="author" content="Matt Vernacchia">
+      
+      
+        <link rel="canonical" href="https://mvernacc.github.io/portfolio/engineering_notes/filters_sos_in_rust/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>SOS Butterworth filters in Rust - Matt Vernacchia</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/portfolio.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sos-butterworth-filters-in-rust" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Matt Vernacchia" class="md-header__button md-logo" aria-label="Matt Vernacchia" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Matt Vernacchia
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              SOS Butterworth filters in Rust
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mvernacc/portfolio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mvernacc/portfolio
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Matt Vernacchia" class="md-nav__button md-logo" aria-label="Matt Vernacchia" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Matt Vernacchia
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mvernacc/portfolio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mvernacc/portfolio
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../publications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware_projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software_projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#digital-filters-with-f32-are-numerically-challenging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Digital filters with f32 are numerically challenging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpolating-sos-coefficients-for-fast-filter-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpolating SOS coefficients for fast filter creation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#steady-state-dc-gain-formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Steady state (DC) gain formula
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Steady state (DC) gain formula">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uses-gain-correction-after-coefficient-interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uses: Gain correction after coefficient interpolation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uses-set-the-filter-to-steady-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uses: Set the filter to steady state
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#derivation-of-dc-gain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Derivation of DC gain
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benchmarking-and-performance-tricks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmarking and performance tricks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-ai-in-a-new-domain-coach-not-substitute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using AI in a new domain: coach, not substitute
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="sos-butterworth-filters-in-rust">SOS Butterworth filters in Rust<a class="headerlink" href="#sos-butterworth-filters-in-rust" title="Permanent link">&para;</a></h1>
+<p><em>2025-11-30</em></p>
+<p>I recently <a href="https://github.com/jlogan03/flaw/pull/18">contributed</a> a second-order sections (SOS) filter implementation to <a href="https://github.com/jlogan03/flaw">flaw</a>, a digital filtering library for Rust.
+It targets both embedded platforms (<code>f32</code>, no-<code>std</code>, no-<code>panic</code>) and general-purpose platforms (<code>f64</code>, <a href="https://en.wikipedia.org/wiki/Multiply%E2%80%93accumulate_operation#Fused_multiply%E2%80%93add">FMA</a> hardware acceleration).</p>
+<p>My new <code>flaw::sos</code> module provides:</p>
+<ul>
+<li>Implementation of cascaded second-order sections: <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L23"><code>sos::SisoSosFilter</code></a><ul>
+<li>Generic over float type (<code>f32</code>, <code>f64</code>) and number of sections (filter order is up to 2x sections)</li>
+<li>Designed for efficiency and low numerical error:<ul>
+<li>Update uses 9 float operations per section</li>
+<li>Storage is 7 floats per section (2 delays + 5 coefficients)</li>
+<li>Each stage uses <a href="https://en.wikipedia.org/wiki/Digital_biquad_filter#Transposed_direct_form_2">Transposed Direct Form II</a></li>
+</ul>
+</li>
+<li>FMA and non-FMA implementations, configured by the crate's existing <code>fma</code> feature</li>
+</ul>
+</li>
+<li>Functions to generate SOS Butterworth low-pass filters for a given cutoff frequency: <code>sos::{</code> <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/tables/butter2.rs#L55"><code>butter2</code></a>, <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/tables/butter4.rs#L62"><code>butter4</code></a>, <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/tables/butter6.rs#L69"><code>butter6</code></a> <code>}</code><ul>
+<li>Provides orders 2, 4, and 6 for <code>f32</code> and <code>f64</code></li>
+<li>SOS coefficients are interpolated vs cutoff frequency from a lookup table</li>
+<li>Cutoff frequency region of validity is enforced and tested for each combination of filter order and float type</li>
+</ul>
+</li>
+<li>Python script to auto-generate the SOS Butterworth lookup tables from SciPy: <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/scripts/generate_butter_sos_tables.py"><code>scripts/generate_butter_sos_tables.py</code></a></li>
+</ul>
+<p>Example usage:</p>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Create a low-pass filter with (cutoff frequency) / (sample frequency) = 0.01</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">// Butterworth order 4 filter implemented with second-order sections</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">flaw</span><span class="p">::</span><span class="n">sos</span><span class="p">::</span><span class="n">butter4</span><span class="p">::</span><span class="o">&lt;</span><span class="kt">f32</span><span class="o">&gt;</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">loop</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"> </span><span class="c1">// get the next raw measurement</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filter</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">u</span><span class="p">);</span><span class="w"> </span><span class="c1">// update the filter and get its next output</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Below are my reflections on the project. Thanks to <code>flaw</code>'s maintainer, <a href="https://jlogan.dev/">James Logan</a>, for helping me with this!</p>
+<h2 id="digital-filters-with-f32-are-numerically-challenging">Digital filters with <code>f32</code> are numerically challenging<a class="headerlink" href="#digital-filters-with-f32-are-numerically-challenging" title="Permanent link">&para;</a></h2>
+<p>One target of <code>flaw</code> is embedded platforms where 64-bit float operations are slow or unavailable.
+Thus, <code>flaw::sos</code> needs to support filters using <code>f32</code>.</p>
+<p>The resolution of <code>f32</code> is <a href="https://doc.rust-lang.org/std/primitive.f32.html#associatedconstant.EPSILON">only ~7 decimal digits</a>.
+A <code>f32</code>-based filter will have rounding errors if it adds together numbers more than a few orders of magnitude apart.
+Unfortunately, <a href="https://en.wikipedia.org/wiki/Infinite_impulse_response">infinite impulse response (IIR)</a> digital filters can have a large range of coefficient magnitudes, particularly at low cutoff ratio (cutoff frequency / sample frequency) for low-pass filters.</p>
+<figure>
+    <img src="../../assets/images/engineering_notes/filters_sos_in_rust/b0_vs_cutoff.png" width=100%>
+    <figcaption>The large range of filter coefficient magnitudes presents a challenge for 32-bit floats.</figcaption>
+</figure>
+
+<p>An SOS form was chosen to improve numerical issues.
+The same digital filter can be realized in different forms, and these have different robustness to numerical issues. Common forms include:</p>
+<ul>
+<li>The four direct forms: Direct I, Direct II, Transposed Direct I, and Transposed Direct II (<a href="https://www.dsprelated.com/freebooks/filters/Implementation_Structures_Recursive_Digital.html">math reference</a>)<ul>
+<li>Transposed Direct II is most numerically robust</li>
+<li>All are susceptible to numerical instabilities, particularly for higher-order filters</li>
+</ul>
+</li>
+<li>State space (<a href="https://www.dsprelated.com/freebooks/filters/State_Space_Realization.html">math reference</a>)<ul>
+<li>A modified state space form was used in the existing <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/iir.rs#L13"><code>flaw::SisoIirFilter</code></a></li>
+</ul>
+</li>
+<li>Cascaded second-order sections (SOS) (<a href="https://en.wikipedia.org/wiki/Digital_biquad_filter">math reference</a>)</li>
+</ul>
+<p>The SOS form is more numerically robust for filters of order &gt; 2.
+SOS divides a higher-order filter into a cascade of second-order sections.
+Within each section, it tends to add values of similar magnitude, reducing rounding errors.
+In <code>flaw::sos::SisoSosFilter</code>, each section is realized in the numericall-robust Transposed Direct II form.</p>
+<p>Even with SOS, low-pass Butterworth filters have numerical problems for cutoff ratios that are too low.
+<code>flaw::sos</code>'s <code>butter</code> methods protect users from creating bad filters by returning <code>Err</code> if <code>cutoff_ratio</code> is below a minimum value.
+The minimum values are tabulated for each combination of filter order and float precision.
+Tests ensure that each filter has a DC gain of 1.0 ± 1e-4 at the minimum cutoff ratio (numerical issues manifest as the DC gain departs from 1).</p>
+<h2 id="interpolating-sos-coefficients-for-fast-filter-creation">Interpolating SOS coefficients for fast filter creation<a class="headerlink" href="#interpolating-sos-coefficients-for-fast-filter-creation" title="Permanent link">&para;</a></h2>
+<p>In one case, users need to quickly create a new filter with a different cutoff frequency on an embedded platform.
+The filter design algorithms are complicated and would not run in the allotted time.
+Instead, <code>flaw</code> stores lookup tables of the filter coefficients, and interpolates them versus cutoff frequency when creating a new filter.
+The <code>flaw</code> maintainer (James) developed this approach, and I extended it to SOS filters.</p>
+<figure>
+    <img src="../../assets/images/engineering_notes/filters_sos_in_rust/butter4_vs_cutoff.png" width=100%>
+    <figcaption>The coefficients of a Butterworth low-pass filter vary smoothly with cutoff ratio, and thus are suitable for interpolation.</figcaption>
+</figure>
+
+<p>To generate the lookup tables, a Python script calls <code>scipy.signal.butter</code> to calculate the SOS coefficients, and then writes them to a <code>.rs</code> file as a static array. This happens once, before the crate is published.
+At compile time, the lookup tables are compiled into the Rust binary.
+If link-time optimization is enabled, the user's binary will only contain the lookup table(s) their code actually uses.</p>
+<h2 id="steady-state-dc-gain-formula">Steady state (DC) gain formula<a class="headerlink" href="#steady-state-dc-gain-formula" title="Permanent link">&para;</a></h2>
+<p>For a second-order section with <span class="arithmatex"><span class="MathJax_Preview">z</span><script type="math/tex">z</script></span>-transform of</p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+H(z) = \frac{b_0 + b_1 z^{-1} + b_2 z^{-2}}{1 + a_1 z^{-1} + a_2 z^{-2}}
+</div>
+<script type="math/tex; mode=display">
+H(z) = \frac{b_0 + b_1 z^{-1} + b_2 z^{-2}}{1 + a_1 z^{-1} + a_2 z^{-2}}
+</script>
+</div>
+<p>the section's DC gain is</p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+g_{dc} = \frac{b_0 + b_1 + b_2}{1 + a_1 + a_2}
+</div>
+<script type="math/tex; mode=display">
+g_{dc} = \frac{b_0 + b_1 + b_2}{1 + a_1 + a_2}
+</script>
+</div>
+<p>For a cascaded SOS filter, the overall gain is the product of the section gains.</p>
+<h3 id="uses-gain-correction-after-coefficient-interpolation">Uses: Gain correction after coefficient interpolation<a class="headerlink" href="#uses-gain-correction-after-coefficient-interpolation" title="Permanent link">&para;</a></h3>
+<p>*In <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L169"><code>SisoSosFilter::new_interpolated</code></a>, this formula is used to correct the DC gain to 1.
+A DC gain of 1 is vital:
+e.g., in a measurement application, if the input is constantly and exactly 1.000 volt, the filter output should converge to 1.000 V, not 0.999 V or 1.001 V.</p>
+<p>Each set of SOS coefficients in the lookup tables was designed for DC gain of 1, but interpolated coefficients may give a slightly-off-one DC gain.
+After interpolation, <code>new_interpolated</code> calculates the DC gain of the overall filter, calculates a correction factor</p>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">correction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dc_gain</span><span class="p">.</span><span class="n">powf</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">SECTIONS</span><span class="p">);</span>
+</span></code></pre></div>
+<p>and scales the numerator of each section by <code>correction</code>.
+This ensures the overall DC gain is 1 to within <code>1e-6</code>.</p>
+<p>Note that, although the overall DC gain should be 1, the DC gain of each section is often not 1.</p>
+<h3 id="uses-set-the-filter-to-steady-state">Uses: Set the filter to steady state<a class="headerlink" href="#uses-set-the-filter-to-steady-state" title="Permanent link">&para;</a></h3>
+<p>In <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L111"><code>SisoSosFiler::set_steady_state</code></a>, the DC gain formula is used to set the internal state of the filter to its steady-state value for a given input.
+This is useful in initializing the filter.</p>
+<p>First, <code>set_steady_state</code> uses each section's steady state gain to calculate what the section output would be in steady state: <code>output = input * ss_gain</code>.
+With both the input and output known, the section's state can be set using the usual update equations:</p>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// Set the internal states based on the steady state input and output of this section</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span></code></pre></div>
+<h3 id="derivation-of-dc-gain">Derivation of DC gain<a class="headerlink" href="#derivation-of-dc-gain" title="Permanent link">&para;</a></h3>
+<p>The filter's DC gain is its <span class="arithmatex"><span class="MathJax_Preview">z</span><script type="math/tex">z</script></span>-transform evaluated at <span class="arithmatex"><span class="MathJax_Preview">z = 1</span><script type="math/tex">z = 1</script></span>.
+The DC gain is the final value of filter's the step response.
+Let <span class="arithmatex"><span class="MathJax_Preview">H(z)</span><script type="math/tex">H(z)</script></span> be the <span class="arithmatex"><span class="MathJax_Preview">z</span><script type="math/tex">z</script></span>-transform of a second-order section.
+The <span class="arithmatex"><span class="MathJax_Preview">z</span><script type="math/tex">z</script></span>-transform of the section's step response is:</p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+Y(z) = \frac{1}{1 - z^{-1}} H(z)
+</div>
+<script type="math/tex; mode=display">
+Y(z) = \frac{1}{1 - z^{-1}} H(z)
+</script>
+</div>
+<p>The final value theorem for <span class="arithmatex"><span class="MathJax_Preview">z</span><script type="math/tex">z</script></span>-transforms states:</p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\lim_{n \rightarrow \infty} y[n] = \lim_{z-&gt;1} (z - 1) Y(z)
+</div>
+<script type="math/tex; mode=display">
+\lim_{n \rightarrow \infty} y[n] = \lim_{z->1} (z - 1) Y(z)
+</script>
+</div>
+<p>Applying this to the step response gives:</p>
+<div class="arithmatex">
+<div class="MathJax_Preview">
+\lim_{n \rightarrow \infty} y[n] = \lim_{z \rightarrow 1} \frac{z - 1}{1 - z^{-1}} H(z)
+</div>
+<script type="math/tex; mode=display">
+\lim_{n \rightarrow \infty} y[n] = \lim_{z \rightarrow 1} \frac{z - 1}{1 - z^{-1}} H(z)
+</script>
+</div>
+<p>The limit of the first term is 1, so we have:</p>
+<p>$$
+\lim_{n \rightarrow \infty} y[n] = H(1)
+$$
+assuming that <span class="arithmatex"><span class="MathJax_Preview">H(z)</span><script type="math/tex">H(z)</script></span> is stable so the limit exists.
+See <a href="https://en.wikipedia.org/wiki/Z-transform#Properties">the list of z-transform properties</a> for more information.</p>
+<h2 id="benchmarking-and-performance-tricks">Benchmarking and performance tricks<a class="headerlink" href="#benchmarking-and-performance-tricks" title="Permanent link">&para;</a></h2>
+<p>I also wanted to make filter updates fast on a general-purpose CPU with <code>f64</code>.
+Before attempting performance optimization, I set up benchmarking to measure if my changes actually helped.
+This was easy with <a href="https://github.com/bheisler/criterion.rs">criterion</a>.
+Criterion tracks benchmark statistics and reports if a code change had a statistically significant impact on runtime.</p>
+<p>The performance tricks I tried and their effects:</p>
+<ul>
+<li>Using fused-multiply-add (FMA) instructions: ~40% speedup<ul>
+<li>Requires setting the <code>target-cpu=x86-64-v3</code> rustc flag to actually get the hardware acceleration.</li>
+</ul>
+</li>
+<li>Unrolling the loop over sections: ~5% speedup</li>
+<li>Memory-aligning the arrays for coefficient and state storage: no measurable effect<ul>
+<li>Despite no effect on my i7 CPU, I kept this in, as it may help on embedded platforms with less sophisticated memory controllers</li>
+</ul>
+</li>
+</ul>
+<p>To support a range of platforms, the FMA implementation is gated by a feature flag. If the <code>fma</code> feature is not set, the non-FMA implementation is used (code snippet below, and on <a href="https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L71-L88">GitHub</a>).
+The FMA-or-not choice happens at compile time, so there is no performance hit due to added branches.</p>
+<div class="language-rust highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="cp">#[cfg(not(feature = </span><span class="s">&quot;fma&quot;</span><span class="cp">))]</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="p">{</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="c1">// Direct Form II Transposed implementation</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">];</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="c1">// Update the filter delays, they will be used the next time this function is called</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">];</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">a2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1">// The FMA implementation is ~40% faster, with target-cpu=x86-64-v3 on a i7-8550U CPU.</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="cp">#[cfg(feature = </span><span class="s">&quot;fma&quot;</span><span class="cp">)]</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="p">{</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="c1">// Direct Form II Transposed implementation</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b0</span><span class="p">.</span><span class="n">mul_add</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]);</span><span class="w">  </span><span class="c1">// b0 * input + self.z[s][0]</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="c1">// Update the filter delays, they will be used the next time this function is called</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b1</span><span class="p">.</span><span class="n">mul_add</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">a1</span><span class="p">.</span><span class="n">mul_add</span><span class="p">(</span><span class="o">-</span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]));</span><span class="w"> </span><span class="c1">// b1 * input - a1 * output + self.z[s][1]</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">    </span><span class="bp">self</span><span class="p">.</span><span class="n">z</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b2</span><span class="p">.</span><span class="n">mul_add</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="n">a2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">output</span><span class="p">);</span><span class="w"> </span><span class="c1">// b2 * input - a2 * output</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="using-ai-in-a-new-domain-coach-not-substitute">Using AI in a new domain: coach, not substitute<a class="headerlink" href="#using-ai-in-a-new-domain-coach-not-substitute" title="Permanent link">&para;</a></h2>
+<p>Effective and ineffective strategies I've seen for using AI assistants in a new-to-me domain:</p>
+<ul>
+<li><strong>Don't</strong>: ask AI to write everything for me<ul>
+<li>Removes my learning, and I don't yet know enough to tell if the results are bad</li>
+</ul>
+</li>
+<li><strong>Do</strong>: Design and write the code myself, ask AI for explanations to get unstuck faster<ul>
+<li>I spend more time learning and less time looking for information</li>
+</ul>
+</li>
+</ul>
+<p>On this project, I used Codex a lot, but almost exclusively in "chat" mode, not "agent" mode.
+It was my first time extensively using generics in Rust and I often ran into compiler errors I didn't yet understand.
+I found it helpful to give Codex prompts like:</p>
+<blockquote>
+<p>At line {X} in src/{Y}.rs, I'm trying to do {A}. I'm getting rustc error {Z}. Explain why this is happening and some options to resolve it.</p>
+</blockquote>
+<p>This usually got me un-stuck in a few minutes.
+I felt I could trust its answers because it was easy to check their correctness with <code>rustc</code>.</p>
+<p>When learning C++ early in my career, each error like this was a long and frustrating quest -- but no more!
+The combination of Rust's helpful error messages, Rust's strong compile-time checks, and AI explanations is really helpful for learning.</p>
+<p>When I was writing the math logic, Copilot eagerly suggested formula completions. <em>Some</em> of these were correct.
+AI is not a substitute for learning the domain, nor is it a substitute for good tests.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Matthew Vernacchia
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/mvernacc" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/matthew-vernacchia-4848023b/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.researchgate.net/profile/Matthew_Vernacchia" target="_blank" rel="noopener" title="www.researchgate.net" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 32v448h448V32zm262.2 334.4c-6.6 3-33.2 6-50-14.2-9.2-10.6-25.3-33.3-42.2-63.6-8.9 0-14.7 0-21.4-.6v46.4c0 23.5 6 21.2 25.8 23.9v8.1c-6.9-.3-23.1-.8-35.6-.8-13.1 0-26.1.6-33.6.8v-8.1c15.5-2.9 22-1.3 22-23.9V225c0-22.6-6.4-21-22-23.9V193c25.8 1 53.1-.6 70.9-.6 31.7 0 55.9 14.4 55.9 45.6 0 21.1-16.7 42.2-39.2 47.5 13.6 24.2 30 45.6 42.2 58.9 7.2 7.8 17.2 14.7 27.2 14.7zm22.9-135c-23.3 0-32.2-15.7-32.2-32.2V167c0-12.2 8.8-30.4 34-30.4s30.4 17.9 30.4 17.9l-10.7 7.2s-5.5-12.5-19.7-12.5c-7.9 0-19.7 7.3-19.7 19.7v26.8c0 13.4 6.6 23.3 17.9 23.3 14.1 0 21.5-10.9 21.5-26.8h-17.9v-10.7h30.4c0 20.5 4.7 49.9-34 49.9m-116.5 44.7c-9.4 0-13.6-.3-20-.8v-69.7c6.4-.6 15-.6 22.5-.6 23.3 0 37.2 12.2 37.2 34.5 0 21.9-15 36.6-39.7 36.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

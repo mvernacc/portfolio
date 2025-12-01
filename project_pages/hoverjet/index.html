@@ -1,0 +1,724 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A portfolio of my engineering work.">
+      
+      
+        <meta name="author" content="Matt Vernacchia">
+      
+      
+        <link rel="canonical" href="https://mvernacc.github.io/portfolio/project_pages/hoverjet/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Hoverjet - Matt Vernacchia</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/portfolio.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#hoverjet" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Matt Vernacchia" class="md-header__button md-logo" aria-label="Matt Vernacchia" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Matt Vernacchia
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Hoverjet
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/mvernacc/portfolio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mvernacc/portfolio
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Matt Vernacchia" class="md-nav__button md-logo" aria-label="Matt Vernacchia" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Matt Vernacchia
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/mvernacc/portfolio/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    mvernacc/portfolio
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../publications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../engineering_notes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware_projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software_projects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overview">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thrust-vectoring-concept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Thrust vectoring concept
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#airframe-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Airframe design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Airframe design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additive-manufacturing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additive manufacturing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrared-radiation-shield" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrared radiation shield
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#design-ideation-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Design ideation process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jet-vane-control-mechanism" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jet vane control mechanism
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#system-identification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        System identification
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="hoverjet">Hoverjet<a class="headerlink" href="#hoverjet" title="Permanent link">&para;</a></h1>
+<p><em>Collabrorators: Jacob Panikulam, Benjamin Kroop, Mason Turner, Isaac Dykeman &amp; others</em></p>
+<div class="admonition note">
+<p>Hoverjet is a jet-powered, vertical-takeoff-and-landing aircraft. I designed the airframe and control mechanisms, and led the fabrication and assembly of the vehicle.</p>
+</div>
+<p><em>This is a work-in-progress as of March 2019.</em></p>
+<figure class="center video">
+    <div class="video-container">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/Ia_bQmQX-PA?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <figcaption>Starting up Hoverjet's jet engine on our 6-axis thrust stand. The four stainless steel vanes in the jet exhaust can be actuated to steer the aircraft. This test measures the forces and torques produced by the jet and vanes.</figcaption>
+</figure>
+
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Hoverjet is an educational project than I am building with few friends (who work in the robotics industry). They wanted to play around with new algorithms for state estimation and control of hovering vehicles. Rather than building a conventional quadrotor, we decided to make a jet-powered vehicle that is controlled via thrust vectoring. This better mimics the dynamics of some interesting systems, like propulsive landing spacecraft. (and having a jet engine to play with made the project more fun).</p>
+<p>We started designing Hoverjet in the fall of 2018, and met up in Pittsburgh for two weeks over winter break to build the vehicle and begin developing its software. The team in Pittsburgh has done successful static tests, and we are hoping to fly soon!</p>
+<figure class="center video">
+    <div class="video-container">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/M27FfXg9k8k?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <figcaption>A timelapse of the team assembling Hoverjet's airframe.</figcaption>
+</figure>
+
+<h3 id="thrust-vectoring-concept">Thrust vectoring concept<a class="headerlink" href="#thrust-vectoring-concept" title="Permanent link">&para;</a></h3>
+<p>The vehicle controls itself by using vanes in the jet's exhaust stream to change the direction of the thrust vector. The thrust-vectoring concept is illustrated in the figure below, which shows a toy example of translating the vehicle to the right. In order to translate to the right, the vehicle must first tip itself to build horizontal velocity, then tip back to cancel the horizontal velocity and come to rest in a new position. The system is neutrally stable, so a closed-loop control system must constantly make small corrections to keep the vehicle on the desired trajectory.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/thrust_vector_translation_example.png" width=100%>
+    <figcaption>Example of thrust vector control: translation to the right. The jet is illustrated in purple and the vane in black. This 2D example has one vane; the 3D vehicle has four vanes in an 'x' pattern.</figcaption>
+</figure>
+
+<h2 id="airframe-design">Airframe design<a class="headerlink" href="#airframe-design" title="Permanent link">&para;</a></h2>
+<p><em>You can view the CAD model of Hoverjet <a href="https://cad.onshape.com/documents/eeb6df3e4d498ea4a465e30e/v/7283e47d24d7009d197cf654/e/00a5e3dae29f1d99065adad7">on Onshape</a></em></p>
+<p>The airframe needs to hold the jet engine, fuel tanks, avionics enclosures, and jet vane units. The aircraft's mass must be balanced around the center of the jet engine, and must remain balanced as fuel is consumed. Because this is a prototype/testing aircraft, the airframe needs to be reconfigurable (e.g. if we decide to add or move sensors). The aircraft needs to be robust to crashes, and it should be easy to replace components if they break or need to be upgraded.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/hoverjet_3_view.png" width=100%>
+    <figcaption>This CAD 3-views shows mounting locations of the aircraft's critical components.</figcaption>
+</figure>
+
+<p>I addressed these requirements with a modular design. The main structure is four carbon-fiber frame tubes surrounding the engine. All components are held by 3D-printed brackets which clamp on to the frame tubes. Components can be added or relocated by adjusting the bracket locations or printing new brackets. Maintenance is easy: only a single hex key is needed to remove any component (all fasteners are #6 SHCS), and the frequently-accessed avionics bays are on the outside of the vehicle.</p>
+<p>The vehicle is designed to be crash tolerant: The landing legs are sized to absorb a 5 m/s crash from any direction. The most expensive component, the engine, is "caged" by the rest of the structure. The fuel tanks are filled with a open-cell foam, which prevents sloshing and limits severity of a fuel spill if the tanks are ruptured (a technique borrowed from auto racing).</p>
+<h3 id="additive-manufacturing">Additive manufacturing<a class="headerlink" href="#additive-manufacturing" title="Permanent link">&para;</a></h3>
+<p>We needed to build and maintain the aircraft in my friend's home machine shop. He does not have CNC cutting machines, so I designed most of the geometrically complicated parts to be made via 3D printing (filament deposition). Below is a time lapse of his Prusa i3 mk3 printing the main frame which holds the jet vanes and frame tubes. The material is a nylon filament filled with chopped carbon fiber (from <a href="https://www.3dxtech.com/carbonx-carbon-fiber-nylon-gen-3-3d-printing-filament/">3DXTECH</a>). Compared to typical filament plastics (i.e. ABS), it is stronger, stiffer, and maintains it strength up to a higher temperature.</p>
+<figure class="center video">
+    <div class="video-container">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/FzrSr3ATOFE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <figcaption>Time lapse of printing the main frame.</figcaption>
+</figure>
+
+<p>Additive manufacturing is not magic - one still has to pay careful attention to the design-for-manufacturing constraints. However, additive processes have a different set of constraints than traditional cutting and forming processes. Some of the constraints which were important for the Hoverjet parts are:</p>
+<p><em>Overhangs</em> - Filament deposition printers cannot print large overhangs, or else the part will sag before the plastic filament cools. When designing the parts for Hoverjet, I considered the orientation in which the part would be printed early in the design process, and shaped the details of the geometry to avoid overhangs in that direction. Some filament printers can allow overhangs by printing a soluble support material under the part, but our printer did not have this capability.</p>
+<p><em>Threads and fine holes</em> - Most filament deposition printers do not have sufficient resolution to print threads or fine holes. On Hoverjet, I used <a href="https://www.mcmaster.com/94459a280">heat-set threaded metal inserts</a> to create threads in the printed parts. For holes that needed a close fit around a fastener, I printed the holes undersized, and then drilled them out to the required diameter.</p>
+<p><em>Anisotropic strength</em> - Parts made by filament deposition are weaker in the <span class="arithmatex"><span class="MathJax_Preview">z</span><script type="math/tex">z</script></span> axis (normal to layers) than in the <span class="arithmatex"><span class="MathJax_Preview">xy</span><script type="math/tex">xy</script></span> plane (within layers). For loaded parts, the printing orientation was chosen so that the loads would primarily be in the within-layer plane. This sometimes conflicted with the orientation which minimized overhangs, and resolving these conflicts required some judgment.</p>
+<p><em>Printing environment</em> - Filament deposition printers are sensitive to the temperature and humidity of the printing environment. Variations in temperature cause the part to cool unevenly, which can distort its geometry or cause layers to peel apart from each other. Many filaments (including nylon) will absorb moisture from humid air, and do not print well when wet. These issues are best managed by printing within an environmentally-controlled build chamber. However, Stratasys Inc. holds a patent on this technology (<a href="https://patents.google.com/patent/US6722872B1/en">US 6,722,872</a>), so most hobby-grade printers do not use a build chamber. One can work around this limitation by putting the entire printer within a separately-purchased enclosure. We used this approach, and also put desiccant in the enclosure to keep the humidity down (it's the blue substance in the above video). I put a temperature and humidity gage in the enclosure to monitor the environment.</p>
+<p>I learned a good deal about additive manufacturing from Prof. John Hart's excellent <a href="https://news.mit.edu/2016/mit-course-3-d-printing-101-0511">2.s998 course</a>. It was fun and instructive to apply what I had learned to this project.</p>
+<h3 id="infrared-radiation-shield">Infrared radiation shield<a class="headerlink" href="#infrared-radiation-shield" title="Permanent link">&para;</a></h3>
+<p>One interesting feature of the airframe is the IR radiation shield. This reduces the radiative heat transfer from the jet nozzle to the surrounding structural components. These components are composite, and will weaken if they get above 350 K. The nozzle is only a few cm from these components, and will reach 1000 K, hot enough to emit a significant amount of thermal radiation (radiative power <span class="arithmatex"><span class="MathJax_Preview">\sim T^4</span><script type="math/tex">\sim T^4</script></span>). To reduce radiative heating of the structure, I surrounded the nozzle with a two-layer radiation shield made of aluminum. Infrared radiation from the nozzle must be absorbed and re-radiated by each layer before reaching the structure. The layers are separated by fiberglass cloth to prevent contact and thermal conduction between the layers. This design is vaguely similar to the multilayer insulation used on spacecraft.</p>
+<p>The shield works - during static tests we have run the engine at full throttle for several minutes without any damage to the surrounding structure.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/radiation_shield.png" width=75%>
+    <figcaption>A view looking up into hoverjet from below shows the radiation shield surrounding the engine nozzle.</figcaption>
+</figure>
+
+<h3 id="design-ideation-process">Design ideation process<a class="headerlink" href="#design-ideation-process" title="Permanent link">&para;</a></h3>
+<p>We started by discussing the goals and requirements as a team. Crash tolerance and modularity/maintainability were the key concerns. I then though about manufacturing constraints - how much money were we willing to spend, what tools were available in my friend's shop, how much of the vehicle could I make on campus and bring with me?</p>
+<p>After establishing this context, I made a few design sketches (see below) and discussed them with the team. We selected the dual-tank configuration.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/hoverjet_layout_v2.jpg" width=45%>
+    <img src="../../assets/images/hoverjet/hoverjet_layout_v3.jpg" width=45%>
+    <figcaption>Preliminary sketches of two configuration options.</figcaption>
+</figure>
+
+<p>I then asked the team to select or specify dimensions for the major components. I made a rough-cut CAD assembly to make sure all the major components fit. After reviewing this with the team, I preceded to the detailed mechanical design.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/rough_cad.png" width=40%>
+    <figcaption>Rough CAD model to check fit of major components.</figcaption>
+</figure>
+
+<p>Throughout the entire process I kept a mass budget of the vehicle, which I refined as the design matured. The final design came in slightly under the initial mass prediction (9 kg vs 10 kg).</p>
+<h2 id="jet-vane-control-mechanism">Jet vane control mechanism<a class="headerlink" href="#jet-vane-control-mechanism" title="Permanent link">&para;</a></h2>
+<p>Hoverjet has four Jet Vane Units which provide control over the vehicle. The vanes are mounted in the exhaust of the jet in an 'x' pattern. Rotating the vanes deflects or swirls the exhaust jet, which applies forces and torques to the aircraft. By actuating different combinations of the vanes, we can produce all three torque components (roll, pitch, and yaw).</p>
+<p>Each Jet Vane Unit consists of a vane, a servo which actuates the vane, a gear train connecting the servo to the vane, and a body and housing. The bodies were rather complicated, so I outsourced the machining to Protolabs (a rapid-prototyping shop). The other components I machined on-campus or 3D printed. In order to resist the exhaust temperatures, the jet vanes are made from AISI 316 stainless steel. The vanes have held up well to several minutes of operation at full throttle (although the heated portions have developed a beautiful rainbow oxide pattern). The figure below shows the four assembled Jet Vane Units ready to be inspected, tested and installed on the aircraft.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/jet_vane_units.jpg" width=60%>
+    <figcaption>Jet Vane Units.</figcaption>
+</figure>
+
+<p>I sized the vanes using a rough model of the aerodynamic forces on a flat plat. Compensating for a misalignment of the center of mass turned out to be the driving case for the vane size. My vane sizing worksheet is available <a href="https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_design.ipynb">on github as an Ipython notebook</a>. (TODO: some of my notes are still on paper and have not been typed into the ipython notebook :( )</p>
+<p>I determined required servo speed using a linearized model of the aircraft dynamics. Typically, the required actuator bandwidth would be set by the natural frequencies of a system, but hoverjet does not have any natural frequency (the linear dynamics are just 4 poles at the origin). Instead, the servo speed is set by the required position control resolution. If the vane can be moved faster, we can drive smaller position oscillations. My servo speed worksheet is available <a href="https://github.com/build-week/hover-jet/blob/feature/start-design-scripts/design-scripts/jet_vane_speed.ipynb">on github as an Ipython notebook</a>.</p>
+<h2 id="system-identification">System identification<a class="headerlink" href="#system-identification" title="Permanent link">&para;</a></h2>
+<p>Before flying Hoverjet, we need to calibrate the response of the vehicle dynamics to control inputs (System Identification). Specifically, we want to know how the forces and torques applied to the vehicle vary with vane angles and engine throttle setting. A dynamics model derived from this information is used by Hoverjet's Model-Predictive Controller.</p>
+<p>To make these measurements, we made a thrust stand capable of measuring all 3 forces and 3 torques on the vehicle. This could be done by a 6-axis load cell, but those cost many thousands of dollars. Instead, I built a thrust stand which measured the forces an torques using a kinematically exact arrangement of 6 one-axis load cells. These load cells cost $10 each, and the remaining hardware and aluminum extrusion for the stand totaled $600. Kinematically exact constraint is a nifty design principle;  a good introduction can be found in <a href="https://dspace.mit.edu/handle/1721.1/9414">Ch 2.6 of Dr. Layton Hale's PhD thesis</a>.</p>
+<figure>
+    <img src="../../assets/images/hoverjet/hoverjet_on_thrust_stand.png" width=60%>
+    <img src="../../assets/images/hoverjet/kinematically_exact_load_cells.png" width=35%>
+    <figcaption>Left: Hoverjet mounted horizontally on the Thrust Stand. Right: thrust stand uses a kinematically exact arrangement of 6 load cells to measure 3 forces and 3 torques produced by the jet and vanes.</figcaption>
+</figure>
+
+<p>We discovered an important bug during hardware-in-the-loop testing on the Thrust Stand: the magnetic field from the jet engine's fuel pump motor interfered with the navigation system's magnetic compass. This bug would have resulted in a crash had if we had not caught it before flight testing.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Matthew Vernacchia
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/mvernacc" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M202.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1M496 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2m-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3m-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/matthew-vernacchia-4848023b/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.researchgate.net/profile/Matthew_Vernacchia" target="_blank" rel="noopener" title="www.researchgate.net" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M0 32v448h448V32zm262.2 334.4c-6.6 3-33.2 6-50-14.2-9.2-10.6-25.3-33.3-42.2-63.6-8.9 0-14.7 0-21.4-.6v46.4c0 23.5 6 21.2 25.8 23.9v8.1c-6.9-.3-23.1-.8-35.6-.8-13.1 0-26.1.6-33.6.8v-8.1c15.5-2.9 22-1.3 22-23.9V225c0-22.6-6.4-21-22-23.9V193c25.8 1 53.1-.6 70.9-.6 31.7 0 55.9 14.4 55.9 45.6 0 21.1-16.7 42.2-39.2 47.5 13.6 24.2 30 45.6 42.2 58.9 7.2 7.8 17.2 14.7 27.2 14.7zm22.9-135c-23.3 0-32.2-15.7-32.2-32.2V167c0-12.2 8.8-30.4 34-30.4s30.4 17.9 30.4 17.9l-10.7 7.2s-5.5-12.5-19.7-12.5c-7.9 0-19.7 7.3-19.7 19.7v26.8c0 13.4 6.6 23.3 17.9 23.3 14.1 0 21.5-10.9 21.5-26.8h-17.9v-10.7h30.4c0 20.5 4.7 49.9-34 49.9m-116.5 44.7c-9.4 0-13.6-.3-20-.8v-69.7c6.4-.6 15-.6 22.5-.6 23.3 0 37.2 12.2 37.2 34.5 0 21.9-15 36.6-39.7 36.6"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>
