@@ -1,11 +1,63 @@
-# SOS Butterworth filters in Rust
+# Cross-platform digital filters in Rust
 
 *2025-11-30*
 
-I recently [contributed](https://github.com/jlogan03/flaw/pull/18) a second-order sections (SOS) filter implementation to [flaw](https://github.com/jlogan03/flaw), a digital filtering library for Rust.
-It targets both embedded platforms (`f32`, no-`std`, no-`panic`) and general-purpose platforms (`f64`, [FMA](https://en.wikipedia.org/wiki/Multiply%E2%80%93accumulate_operation#Fused_multiply%E2%80%93add) hardware acceleration).
+I recently [contributed](https://github.com/jlogan03/flaw/pull/18) a second-order sections (SOS) and Butterworth filter implementation to [flaw](https://github.com/jlogan03/flaw), a digital filtering library for Rust, targeting both embedded and general-purpose platforms.
+SOS Butterworth filters are a standard good practice for cleaning up noisy sensor readings;
+ this makes them easier to use on embedded devices running Rust.
+Making complicated science and engineering techniques "accessible as an import statement" is one of my favorite parts of working on scientific software.
 
-My new `flaw::sos` module provides:
+Example usage:
+
+```rust
+// Create a low-pass filter with (cutoff frequency) / (sample frequency) = 0.01.
+// Butterworth order 4 filter implemented with second-order sections.
+// Filter creation is suitable for embedded platforms:
+// it does not require dynamic memory allocation and will not panic.
+let mut filter = flaw::sos::butter4::<f32>(0.01)?;
+
+loop {
+  let u = 1.0; // get the next raw measurement
+  // Update the filter and get its next output.
+  // Filter update is efficient, only 18x float ops (for an order 4 filter).
+  let y = filter.update(u);
+}
+```
+
+Here's what I learned from this project about digital filtering, Rust, and using AI as a learning coach.
+Thanks to `flaw`'s maintainer, [James Logan](https://jlogan.dev/), for helping me with this!
+
+## Motivation
+
+!!! Summary
+
+    - Sensor readings are noisy
+    - Low-pass filters clean them up so controllers can make stable decisions
+    - Filters on embedded devices need special consideration for numerical resolution and memory allocation
+    - Rust lets us ship a reusable, tested filter implementation across embedded and general-purpose platforms
+
+Embedded devices run software to measure and control physical systems, like a heat pump, a car's traction control, or a drone.
+Often, sensor noise is higher-frequency than the signal of interest, so a low-pass filter can remove the noise [^1].
+A rudimentary approach would be to average the last few measurements, but a properly designed filter gives better noise rejection (here, a Butterworth filter realized as second-order sections).
+
+Software for embedded devices needs special considerations.
+Embedded targets often lack an operating system, dynamic memory allocation, or fast 64-bit float operations.
+In Rust, this implies `no-std`, supporting `f32` (in addition to `f64`), and no `panic` branches.
+
+Typically, embedded software has been developed in C.
+With poor tools for dependency management and poor cross-platform compatibility,
+it's common for filtering to be re-implemented on each project.
+Getting this right takes a few days of expert-level work.
+
+In contrast, with Rust and [Cargo](https://doc.rust-lang.org/cargo/) we can ship a reusable, tested filter implementation across microcontrollers and general-purpose CPUs.
+Rust can build for a growing number of embedded [platforms](https://doc.rust-lang.org/beta/rustc/platform-support.html) via LLVM,
+and is [qualified for critical systems](https://ferrocene.dev/).
+Rust combines productive developer tooling with the low-level control needed for embedded or performance-critical code[^2].
+
+## Results
+
+The new `flaw::sos` module makes good filtering "accessible as an import statement" on embedded platforms too.
+It provides:
 
 - Implementation of cascaded second-order sections: [`sos::SisoSosFilter`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L23)
     - Generic over float type (`f32`, `f64`) and number of sections (filter order is up to 2x sections)
@@ -13,27 +65,12 @@ My new `flaw::sos` module provides:
         - Update uses 9 float operations per section
         - Storage is 7 floats per section (2 delays + 5 coefficients)
         - Each stage uses [Transposed Direct Form II](https://en.wikipedia.org/wiki/Digital_biquad_filter#Transposed_direct_form_2)
-    - FMA and non-FMA implementations, configured by the crate's existing `fma` feature
+    - Can use hardware-accelerated [fused-multiply-add (FMA)](https://en.wikipedia.org/wiki/Multiply%E2%80%93accumulate_operation#Fused_multiply%E2%80%93add) if available
 - Functions to generate SOS Butterworth low-pass filters for a given cutoff frequency: `sos::{` [`butter2`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/tables/butter2.rs#L55), [`butter4`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/tables/butter4.rs#L62), [`butter6`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/tables/butter6.rs#L69) `}`
     - Provides orders 2, 4, and 6 for `f32` and `f64`
-    - SOS coefficients are interpolated vs cutoff frequency from a lookup table
+    - Fast filter creation: SOS coefficients are interpolated vs cutoff frequency from a lookup table
     - Cutoff frequency region of validity is enforced and tested for each combination of filter order and float type
 - Python script to auto-generate the SOS Butterworth lookup tables from SciPy: [`scripts/generate_butter_sos_tables.py`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/scripts/generate_butter_sos_tables.py)
-
-Example usage:
-
-```rust
-// Create a low-pass filter with (cutoff frequency) / (sample frequency) = 0.01
-// Butterworth order 4 filter implemented with second-order sections
-let mut filter = flaw::sos::butter4::<f32>(0.01)?;
-
-loop {
-  let u = 1.0; // get the next raw measurement
-  let y = filter.update(u); // update the filter and get its next output
-}
-```
-
-Below are my reflections on the project. Thanks to `flaw`'s maintainer, [James Logan](https://jlogan.dev/), for helping me with this!
 
 ## Digital filters with `f32` are numerically challenging
 
@@ -62,7 +99,7 @@ The same digital filter can be realized in different forms, and these have diffe
 The SOS form is more numerically robust for filters of order > 2.
 SOS divides a higher-order filter into a cascade of second-order sections.
 Within each section, it tends to add values of similar magnitude, reducing rounding errors.
-In `flaw::sos::SisoSosFilter`, each section is realized in the numericall-robust Transposed Direct II form.
+In `flaw::sos::SisoSosFilter`, each section is realized in the numerically-robust Transposed Direct II form.
 
 Even with SOS, low-pass Butterworth filters have numerical problems for cutoff ratios that are too low.
 `flaw::sos`'s `butter` methods protect users from creating bad filters by returning `Err` if `cutoff_ratio` is below a minimum value.
@@ -121,7 +158,7 @@ Note that, although the overall DC gain should be 1, the DC gain of each section
 
 ### Uses: Set the filter to steady state
 
-In [`SisoSosFiler::set_steady_state`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L111), the DC gain formula is used to set the internal state of the filter to its steady-state value for a given input.
+In [`SisoSosFilter::set_steady_state`](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L111), the DC gain formula is used to set the internal state of the filter to its steady-state value for a given input.
 This is useful in initializing the filter.
 
 First, `set_steady_state` uses each section's steady state gain to calculate what the section output would be in steady state: `output = input * ss_gain`.
@@ -179,7 +216,9 @@ The performance tricks I tried and their effects:
 - Memory-aligning the arrays for coefficient and state storage: no measurable effect
     - Despite no effect on my i7 CPU, I kept this in, as it may help on embedded platforms with less sophisticated memory controllers
 
-To support a range of platforms, the FMA implementation is gated by a feature flag. If the `fma` feature is not set, the non-FMA implementation is used (code snippet below, and on [GitHub](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L71-L88)).
+FMA hardware acceleration is available on modern general-purpose CPUs, but is usually not available on microcontrollers.
+To support a range of platforms, the FMA implementation is gated by a feature flag.
+If the `fma` feature is not set, the non-FMA implementation is used (code snippet below, and on [GitHub](https://github.com/jlogan03/flaw/blob/8629571642d2e20f0b8e069e65636c3f0b7bd4ed/flaw/src/sos/mod.rs#L71-L88)).
 The FMA-or-not choice happens at compile time, so there is no performance hit due to added branches.
 
 ```rust
@@ -214,15 +253,35 @@ Effective and ineffective strategies I've seen for using AI assistants in a new-
 
 On this project, I used Codex a lot, but almost exclusively in "chat" mode, not "agent" mode.
 It was my first time extensively using generics in Rust and I often ran into compiler errors I didn't yet understand.
-I found it helpful to give Codex prompts like:
+I found it helpful to give Cod_filtersex prompts like:
 
 > At line {X} in src/{Y}.rs, I'm trying to do {A}. I'm getting rustc error {Z}. Explain why this is happening and some options to resolve it.
 
 This usually got me un-stuck in a few minutes.
 I felt I could trust its answers because it was easy to check their correctness with `rustc`.
 
-When learning C++ early in my career, each error like this was a long and frustrating quest -- but no more!
-The combination of Rust's helpful error messages, Rust's strong compile-time checks, and AI explanations is really helpful for learning.
-
+When learning C/C++ early in my career, each error like this was a long and frustrating quest -- but no more!
+fd
 When I was writing the math logic, Copilot eagerly suggested formula completions. *Some* of these were correct.
 AI is not a substitute for learning the domain, nor is it a substitute for good tests.
+
+## Comparison to other crates
+
+- [`iir_filters`](https://docs.rs/iir_filters/latest/iir_filters/index.html)
+    - (+) Filter design in Rust
+    - (-) Dynamic memory allocation, e.g. `Vec` of second-order sections
+    - (-) Does not document and test valid range of cutoff ratio for `f32`
+- [`real_time_fir_irr_filters`](https://docs.rs/real_time_fir_iir_filters/1.4.3/real_time_fir_iir_filters/)
+    - (+) No dynamic memory allocation, designed for embedded
+    - (+) Includes high-pass and peak filters in addition to low-pass
+    - (-) Not using SOS form
+    - (-) Only 2nd and 3rd order Butterworth filters
+    - (-) Does not document and test valid range of cutoff ratio for `f32`
+- [`biquad`](https://docs.rs/biquad/latest/biquad/index.html)
+    - (-) Only implements one second-order filter, not a cascade
+
+---
+
+[^1]: There are more sophisticated uses of digital signal processing; removing high-frequency noise is merely the simplest and most common.
+
+[^2]: Filters are easy to use in Python, e.g. [`scipy.signal.butter`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html) and [`scipy.signal.sosfilt`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.sosfilt.html), but Python is not suitable for embedded systems.
