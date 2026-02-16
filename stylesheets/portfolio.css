@@ -1,0 +1,59 @@
+.proj_outer {
+  display: flex;
+  flex-flow: row;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.proj_text {
+  margin-left: 15pt;
+  width: 70%;
+}
+
+.proj_image_div {
+  margin-left: 10px;
+  width: 30%;
+}
+
+.proj_image_div img {
+  width: 100%;
+  height: auto;
+}
+
+.proj_image_row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.proj_image_row_image_container {
+  height: 150pt;
+  margin: 5px;
+}
+
+.proj_image_row img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+figcaption {
+  font-style: italic;
+  color: #888;
+}
