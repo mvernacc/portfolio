@@ -1,4 +1,4 @@
-# Matt Vernacchia's Engineering Portfolio
+# About
 
 I'm a software engineer excited to build optimization, simulation and analysis tools that help people understand and operate complex systems.
 I love making software to push the limits of what physics allows.
