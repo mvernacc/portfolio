@@ -18,6 +18,8 @@ copyright: 'Copyright &copy; 2025 Matthew Vernacchia'
 # Configuration
 theme:
   name: 'material'
+  features:
+    - content.footnote.tooltips
 
 extra_css:
   - 'stylesheets/portfolio.css'
@@ -56,13 +58,13 @@ extra_javascript:
 
 # Page tree
 nav:
-  - Overview: index.md
+  - About: index.md
   - Resume: resume.md
   - Publications: publications.md
   - Engineering Notes: engineering_notes.md
   - Hardware Projects: hardware_projects.md
   - Software Projects: software_projects.md
 
-
-
-
+plugins:
+  - search
+  - open-in-new-tab
