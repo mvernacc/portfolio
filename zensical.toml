@@ -8,8 +8,8 @@ extra_css = ["stylesheets/portfolio.css"]
 nav = [
   {"About" = "index.md"},
   {"Blog" = "blog.md"},
+  {"Resume" = "assets/docs/resume_Matt_Vernacchia.pdf"},
   {"Publications" = "publications.md"},
-  {"Resume" = "assets/docs/resume_vernacchia_2023-04-16.pdf"},
   {"Projects" = [
     "hardware_projects.md",
     "software_projects.md",

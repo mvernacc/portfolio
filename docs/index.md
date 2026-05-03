@@ -38,6 +38,6 @@ Finding meaning in my work is important to me. I prefer to work with passionate 
 
 ---
 
-[resume](assets/docs/resume_vernacchia_2023-04-16.pdf) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
+[blog](blog.md) - [resume](assets/docs/resume_Matt_Vernacchia.pdf) - [publications](publications.md) - [hardware projects](hardware_projects.md) - [software projects](software_projects.md)
 
 <div style="text-align:center"><img src="assets/images/matt_with_jet.jpg" width=75%></div>
