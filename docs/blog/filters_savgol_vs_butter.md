@@ -29,7 +29,7 @@ x_filtered = sosfiltfilt(sos, x_raw)
 The superior characteristics of the forward-backward Butterworth filter are illustrated in the Bode plot below.
 If you are new to Bode plots, or simply want more details, read on below.
 
-<img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/bode.png" width=100%>
+<img src="../../assets/images/blog/filter_savgol_vs_butter/bode.png" width=100%>
 
 ## The task: remove high-frequency noise without distortion
 
@@ -73,7 +73,7 @@ A [Bode plot](https://en.wikipedia.org/wiki/Bode_plot) visualizes the magnitude 
 For the post-processing application, we want a Bode plot that looks like this:
 
 <figure>
-    <img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/ideal_bode_sketch.png" width=70%>
+    <img src="../../assets/images/blog/filter_savgol_vs_butter/ideal_bode_sketch.png" width=70%>
     <figcaption>Ideal Bode plot for scientific post-processing.</figcaption>
 </figure>
 
@@ -81,7 +81,7 @@ Now, we can return to the figure this post started with (it is inlined again bel
 For a fair comparison, both filters are set for a -3 dB cutoff at 0.01 times the sampling frequency (vertical black line).
 
 <figure>
-    <img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/bode.png" width=100%>
+    <img src="../../assets/images/blog/filter_savgol_vs_butter/bode.png" width=100%>
     <figcaption>The Butterworth filter has a much better looking Bode plot than Savitzky–Golay.</figcaption>
 </figure>
 
@@ -95,7 +95,7 @@ Both filters have zero phase over all frequencies, but that's table stakes for n
 The figure below shows each filter's performance on example time series data. The underlying signal is a Lorentzian pulse at $t$=7 s (black dashed curve), and is contaminated with white noise with a standard deviation of 0.1.
 
 <figure>
-    <img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/example_time_domain.png" width=100%>
+    <img src="../../assets/images/blog/filter_savgol_vs_butter/example_time_domain.png" width=100%>
     <figcaption>The Butterworth forward-backward and Savitzky–Golay both get the time of the peak correct, the Butterworth forward-only filter does not.</figcaption>
 </figure>
 
@@ -107,7 +107,7 @@ With `scipy.signal`, **use `sosfiltfilt`, not `sosfilt`!**
 Zooming in, we see that the Butterworth forward-backward filter does a better job of rejecting high-frequency noise than Savitzky–Golay. This is consistent with what we saw in the Bode plot.
 
 <figure>
-    <img src="../../assets/images/engineering_notes/filter_savgol_vs_butter/example_time_domain_detail.png" width=100%>
+    <img src="../../assets/images/blog/filter_savgol_vs_butter/example_time_domain_detail.png" width=100%>
     <figcaption>A time scales shorter than the cutoff, the Butterworth-filtered signal is smooth, whereas Savitzky–Golay leaves high-frequency junk in the filtered signal.</figcaption>
 </figure>
 

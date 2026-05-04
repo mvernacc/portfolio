@@ -82,7 +82,7 @@ A `f32`-based filter will have rounding errors if it adds together numbers more 
 Unfortunately, [infinite impulse response (IIR)](https://en.wikipedia.org/wiki/Infinite_impulse_response) digital filters can have a large range of coefficient magnitudes, particularly at low cutoff ratio (cutoff frequency / sample frequency) for low-pass filters.
 
 <figure>
-    <img src="../../assets/images/engineering_notes/filters_sos_in_rust/b0_vs_cutoff.png" width=100%>
+    <img src="../../assets/images/blog/filters_sos_in_rust/b0_vs_cutoff.png" width=100%>
     <figcaption>The large range of filter coefficient magnitudes presents a challenge for 32-bit floats.</figcaption>
 </figure>
 
@@ -114,7 +114,7 @@ Instead, `flaw` stores lookup tables of the filter coefficients, and interpolate
 The `flaw` maintainer (James) developed this approach, and I extended it to SOS filters.
 
 <figure>
-    <img src="../../assets/images/engineering_notes/filters_sos_in_rust/butter4_vs_cutoff.png" width=100%>
+    <img src="../../assets/images/blog/filters_sos_in_rust/butter4_vs_cutoff.png" width=100%>
     <figcaption>The coefficients of a Butterworth low-pass filter vary smoothly with cutoff ratio, and thus are suitable for interpolation.</figcaption>
 </figure>
 

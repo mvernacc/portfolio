@@ -1,0 +1,23 @@
+[project]
+site_name = "Matt Vernacchia's blog and portfolio"
+site_description = "A portfolio of my engineering work."
+site_author = "Matt Vernacchia"
+site_url = "https://mvernacc.github.io/portfolio/"
+copyright = "&copy; 2026 Matthew Vernacchia"
+extra_css = ["stylesheets/portfolio.css"]
+nav = [
+  {"About" = "index.md"},
+  {"Blog" = "blog.md"},
+  {"Resume" = "assets/docs/resume_Matt_Vernacchia.pdf"},
+  {"Publications" = "publications.md"},
+  {"Projects" = [
+    "hardware_projects.md",
+    "software_projects.md",
+  ]}
+]
+
+[project.theme]
+variant = "classic"
+features = [
+    "content.footnote.tooltips"
+]
