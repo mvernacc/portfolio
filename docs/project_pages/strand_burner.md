@@ -27,7 +27,7 @@ These experiments are performed with a strand burner, a device which burns small
 The design goals for the strand burner were to allow rapid exchange of propellant samples, laser ignition of the propellant, and optical observation of the flame front. The overall design of the apparatus is shown below:
 
 <figure>
-    <img src="../../assets/images/firefly/strand_burner_subsystems.png" width=100%>
+    <img src="../assets/images/firefly/strand_burner_subsystems.png" width=100%>
     <figcaption>Subsystems of the strand burner apparatus.</figcaption>
 </figure>
 
@@ -45,7 +45,7 @@ A camera is set up to record the progress of the flame front through the sample.
 The sample holder is the most mechanically complex part of the strand burner. Its design is shown in the figure below. The purpose of the sample holder is to hold the propellant sample in alignment with the laser, and to create a sealed, pressurized path from the propellant sample to the plenum.
 
 <figure>
-    <img src="../../assets/images/firefly/sb_sample_holder.png" width=100%>
+    <img src="../assets/images/firefly/sb_sample_holder.png" width=100%>
     <figcaption>Details of the strand burner sample holder. Top: the sample holder opens to change samples and clean the laser window. Middle: a cross section showing the laser beam path and components of the sample holder. Bottom: view of the sample holder during a propellant test. The dashed rectangle on the middle subfigure outlines the image field of view.</figcaption>
 </figure>
 
@@ -61,8 +61,8 @@ The design presented above is the fourth version of the strand burner. Over thes
 In the first version, the propellant sample was mounted inside the chamber, and the chamber was made from acrylic to permit viewing. However, smoke from the exhaust filled the chamber, blocking the view of the burning sample. Also, the acrylic blistered and discolored after several firings, limiting the useful life of the device.
 
 <figure>
-    <img src="../../assets/images/firefly/sb_v1_labeled.png" width=65%>
-    <img src="../../assets/images/firefly/SB1.jpg" width=30%>
+    <img src="../assets/images/firefly/sb_v1_labeled.png" width=65%>
+    <img src="../assets/images/firefly/SB1.jpg" width=30%>
     <figcaption>The version 1 strand burner: CAD model (left), assembled pressure vessel (right).</figcaption>
 </figure>
 
@@ -73,11 +73,11 @@ Version 2 of the strand burner solved these issues by mounting the sample on the
 Version 3 solved these problems: a large chamber reduces pressure variations, a stainless steel backpressure regulator resists corrosion, and filters prevent soot from reaching the regulator. The propellant sample is installed and removed with a toggle clamp, and the laser igniter is reusable. However, on v3 the laser was mounted across the plenum from the propellant sample. The angular alignment of the laser had to be very precise (< 0.5 deg) to keep the laser spot on the propellant sample. Bumping the apparatus could knock the laser out of alignment.
 
 <figure>
-    <img src="../../assets/images/firefly/SB3_labeled_subasm.svg" width=100%>
-    <figcaption>The version 3 strand burner design drawing. Not that the Laser Mount is on the opposite end of the Chamber from the Sample Holder.</figcaption>
+    <img src="../assets/images/firefly/SB3_labeled_subasm.svg" width=100%>
+    <figcaption>The version 3 strand burner design drawing. Note that the Laser Mount is on the opposite end of the Chamber from the Sample Holder.</figcaption>
 </figure> 
 <figure>
-    <img src="../../assets/images/firefly/SB3.jpg" width=80%>
+    <img src="../assets/images/firefly/SB3.jpg" width=80%>
     <figcaption>The version 3 strand burner, set up in the blast chamber facility.</figcaption>
 </figure>
 

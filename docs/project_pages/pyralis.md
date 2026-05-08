@@ -5,7 +5,7 @@
 !!! note ""
     I led the development of a 2 kN thrust, ethanol / nitrous oxide, pressure-fed rocket engine with an aerospike nozzle.
 
-<img src="../../assets/images/pyralis/n2o_ignition.png">
+<img src="../assets/images/pyralis/n2o_ignition.png">
 
 Pyralis is a liquid-bipropellant rocket engine created by the [MIT Rocket Team](http://rocketry.mit.edu/). I lead the development of Pyralis as Team President (2013-14) and Propulsion Lead (2014-15). The engine burns ethanol and nitrous oxide, and produces 2 kN of thrust at a chamber pressure of 8 MPa. The nozzle is an altitude-compensating aerospike made from machinable alumina ceramic. The combustion chamber is uncooled, and is made from 316 stainless steel insulated with zirconia ceramic.
 
@@ -19,7 +19,7 @@ We selected the aerospike nozzle because of our educational and inspirational go
 
 
 <figure>
-    <img src="../../assets/images/pyralis/engine_components.png" width=50%>
+    <img src="../assets/images/pyralis/engine_components.png" width=50%>
     <figcaption>Components of the Pyralis engine</figcaption>
 </figure> 
 
@@ -32,7 +32,7 @@ The following sections describe the design process for the injector and combusti
 The injector is uses a triple-impinging jet pattern. The injector is assembled from 3 plates of 316 steel - the bottom plate contains the injector orifice holes, the middle plate forms 2 annular channels to distribute fuel and oxidizer to the orifices, and the top plate closes the channels and provides attachment points for the thrust frame. Copper gaskets seal between the plates. In addition to distributing propellant, the injector has pass-thoughs for a pressure tap, temperature sensor and the ignition system.
 
 <figure>
-    <img src="../../assets/images/pyralis/triplet_injector.png" width=40%>
+    <img src="../assets/images/pyralis/triplet_injector.png" width=40%>
     <figcaption>Fuel (orange) and oxidizer (green) flow though the triplet injector. Note this figure shows an o-ring seal; the seal design was later changed to use copper gaskets.</figcaption>
 </figure> 
 
@@ -48,7 +48,7 @@ The injector was originally designed by Jeff Mockleman. His design used swirl-fl
 I also performed a thermal analysis on the injector. I used Nusselt number techniques to estimate the heat transfer coefficients between the injector and the combustion chamber gases, and between the injector and the liquid propellant flows. These heat transfer coefficients provided boundary conditions for a finite element heat transfer simulation (SolidWorks Simulation). The results of the steady-state thermal analysis indicate a maximum temperature of 1400 K. This is slightly above the operating limit (1170 K) of the injector's steel alloy, indicating that the injector is not suitable for steady-state operation. However, during the short burn time (15 s), the engine does not reach steady state. A more detailed transient thermal analysis should have been performed, but we did not have the computational resources at the time.
 
 <figure>
-    <img src="../../assets/images/pyralis/injector_thermal.png" width=40%>
+    <img src="../assets/images/pyralis/injector_thermal.png" width=40%>
     <figcaption>Temperature distribution in a cross section of the injector in steady-state operation.</figcaption>
 </figure> 
 
@@ -56,28 +56,28 @@ I also performed a thermal analysis on the injector. I used Nusselt number techn
 The Pyralis engine’s combustion chamber and convergent nozzle region are contained by a cylindrical structural wall made from 316 steel. Chemical equilibrium analysis predicts a combustion temperature of 1900 K, well above the maximum operating temperature of 316. Therefore walls of the combustion chamber must be thermally protected. We chose an insulating thermal liner, which offers greater simplicity than regenerative cooling, and better re-usability than ablative cooling.
 
 <figure>
-    <img src="../../assets/images/pyralis/nozzle.png" width=60%>
+    <img src="../assets/images/pyralis/nozzle.png" width=60%>
     <figcaption>A view of the Pyralis engine showing the ceramic nozzle.</figcaption>
 </figure> 
 
 The thermal liner consists of a cast zirconia ceramic, which has high temperature tolerance and low thermal conductivity. The steel wall is protected partially by the thermal resistance of the liner, and partly by its heat capacity. This thermal design cannot withstand steady-state operation, but our mission requires a relatively short (15 s) burn time.
 
 <figure>
-    <img src="../../assets/images/pyralis/pyralis_cross_section_render_2014_edit.png" width=40%>
+    <img src="../assets/images/pyralis/pyralis_cross_section_render_2014_edit.png" width=40%>
     <figcaption>A CAD rendering cross section showing the nozzle support structure.</figcaption>
 </figure> 
 
 The nozzle's spike is made from machinable alumina ceramic. Machinable alumina was selected because of its higher strength and better fabrication tolerances (compared to the cast zirconia used in the liner). James Logan designed a clever web structure to support the nozzle spike within the combustion chamber. I designed the spike's contour using a method of characteristics algorithm.
 
 <figure>
-    <img src="../../assets/images/pyralis/chamber_thermal.png" width=60%>
+    <img src="../assets/images/pyralis/chamber_thermal.png" width=60%>
     <figcaption>Transient thermal analysis of the combustion chamber wall.</figcaption>
 </figure> 
 
 ## Testing
 
 <figure>
-    <img src="../../assets/images/pyralis/team_in_blast_chamber.png" width=100%>
+    <img src="../assets/images/pyralis/team_in_blast_chamber.png" width=100%>
     <figcaption>Rocket team members pose with the engine and test stand before our first static firing. Our faculty advisor, <a href="https://aeroastro.mit.edu/paulo-lozano">Prof. Lozano</a> stands to the left. James Logan and Ryan Webb wear fire-resistant personal protective equipment, as they will fill the propellant tanks.</figcaption>
 </figure>
 
@@ -91,8 +91,8 @@ Together with other team members, I developed safety plans and procedures for th
 We performed our first static firing attempt in May 2014. This test failed due to a hard start, which destroyed parts of the combustion chamber and some plumbing. On this version of the engine, the ignition system was a simple spark plug sticking into the combustion chamber, and our propellant flow was controlled by non-throttleable solenoid valves, which open to full flow in 30 ms. Writing now, with several more years of experience and grad classes in combustion under my belt, it seems obvious that this poor design would hard-start. But sometimes I end up learning things the hard way.
 
 <figure>
-    <img src="../../assets/images/pyralis/hard_start_unburnt.png" width=60%>
-    <img src="../../assets/images/pyralis/hard_start_explosion.png" width=60%>
+    <img src="../assets/images/pyralis/hard_start_unburnt.png" width=60%>
+    <img src="../assets/images/pyralis/hard_start_explosion.png" width=60%>
     <figcaption>Video stills from the hard start during the May 2014 static fire. At t=0, the spark plug and solenoid valves were energized. At t=+66 ms (top frame), the valve opening and pipe flow transients have passed, and the full propellant flow is passing though the injector. However, the propellant has not ignited, and a strong jet of unburnt propellant mist flows out of the nozzle.
     At t=+99 ms (bottom frame), ignition occurs. Because the fuel and oxidizer are still liquids in the combustion chamber, their density is high and large mass of propellant is in the combustion chamber. When this mixture ignites, a huge amount of energy is released (~1 MJ). The chamber pressure spikes. The incompressible liquid propellants transmit the pressure shock to the engine and plumbing structure. The hose supplying oxidizer to the engine explodes. Glowing wires from the hose’s metal braid can be seen flying away. The pressure exerts a strong downward force on the spike, which structurally fails and is ejected downwards out of the engine.</figcaption>
 </figure>
@@ -119,6 +119,6 @@ Because the building we were testing in was scheduled for renovations in a few m
 Although it was disappointing to cut the project short, we learned much from what we were able to accomplish. I loved playing mentor to my younger teammates, and using the project to inspire their excitement about engineering and propulsion. Almost everyone involved has gone on to apply what they learned on Pyralis to other propulsion projects at MIT, SpaceX, Firefly, NASA, ULA, and Northrop Grumman.
 
 <figure>
-    <img src="../../assets/images/irec2015_launch.png" width=100%>
+    <img src="../assets/images/irec2015_launch.png" width=100%>
     <figcaption>MIT Rocket team's 2015 rocket launches in the IREC competition. Unfortunately, we did not finish the Pyralis engine in time, and flew this rocket on a off-the-shelf solid rocket motor instead. Despite this change, the team built an excellent rocket and won first place in the competition.</figcaption>
 </figure>

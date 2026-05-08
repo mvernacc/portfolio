@@ -6,7 +6,7 @@
     This is a component of our research rocket motor which I designed and which is manufactured by Renishaw plc. It illustrates my experience interacting with a manufacturing shop and using GD&T to communicate in drawings.
 
 <figure>
-    <img src="../../assets/images/nozzle_adapter/FF-TC-01-101-adapter-to-flight-nozzle-2019-03-21T1454.svg" width=100%>
+    <img src="../assets/images/nozzle_adapter/FF-TC-01-101-adapter-to-flight-nozzle-2019-03-21T1454.svg" width=100%>
     <figcaption>Engineering drawing of the component.</figcaption>
 </figure>
 
@@ -15,8 +15,8 @@
 This part enables us to test miniature rocket nozzles on our research rocket motor. The rocket propelled aircraft we are developing requires a nozzle with insulation that can withstand exposure to hot combustion gases for several minutes - a challenging design that must be prototyped and tested. This adapter mimics the mechanical interface on the aft end of the aircraft's motor case, allowing us to mount the flight-like nozzle onto our research rocket motor. Thus, we can flow combustion gases through the nozzle to test its performance.
 
 <figure>
-    <img src="../../assets/images/nozzle_adapter/cad_section.png" width=100%>
-    <img src="../../assets/images/nozzle_adapter/cad_iso.png" width=100%>
+    <img src="../assets/images/nozzle_adapter/cad_section.png" width=100%>
+    <img src="../assets/images/nozzle_adapter/cad_iso.png" width=100%>
     <figcaption>The nozzle adapter (purple) in its assembly context.</figcaption>
 </figure>
 
@@ -41,7 +41,7 @@ I began the discussion with Renishaw by sending a preliminary model of the part 
 Then, I prepared an engineering drawing of the part (see figure at top of article). I also prepared two 3D models: one of the "as printed" near net shape, and one of the final geometry after printing. Mr. Hamann used these files to program the AM system and mill.
 
 <figure>
-    <img src="../../assets/images/nozzle_adapter/sintering.jpg" width=80%>
+    <img src="../assets/images/nozzle_adapter/sintering.jpg" width=80%>
     <figcaption>The parts being sintered in Renishaw's additive manufacturing system.</figcaption>
 </figure>
 
@@ -52,8 +52,8 @@ Renishaw first manufactured one instance of the part and sent it to us for a fit
 However, the o-ring grooves were too shallow, and so the adapter could not be installed into the motor without cutting the o-rings. The cause of the error has been identified, and we expect to receive and fit test a new part in the coming week (as of 2019-04-01).
 
 <figure>
-    <img src="../../assets/images/nozzle_adapter/parts.png" width=45%>
-    <img src="../../assets/images/nozzle_adapter/fit_check.jpg" width=45%>
+    <img src="../assets/images/nozzle_adapter/parts.png" width=45%>
+    <img src="../assets/images/nozzle_adapter/fit_check.jpg" width=45%>
     <figcaption>The first parts assembled for a fit check.</figcaption>
 </figure>
 
