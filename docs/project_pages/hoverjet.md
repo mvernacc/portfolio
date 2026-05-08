@@ -30,7 +30,7 @@ We started designing Hoverjet in the fall of 2018, and met up in Pittsburgh for 
 The vehicle controls itself by using vanes in the jet's exhaust stream to change the direction of the thrust vector. The thrust-vectoring concept is illustrated in the figure below, which shows a toy example of translating the vehicle to the right. In order to translate to the right, the vehicle must first tip itself to build horizontal velocity, then tip back to cancel the horizontal velocity and come to rest in a new position. The system is neutrally stable, so a closed-loop control system must constantly make small corrections to keep the vehicle on the desired trajectory.
 
 <figure>
-    <img src="../../assets/images/hoverjet/thrust_vector_translation_example.png" width=100%>
+    <img src="../assets/images/hoverjet/thrust_vector_translation_example.png" width=100%>
     <figcaption>Example of thrust vector control: translation to the right. The jet is illustrated in purple and the vane in black. This 2D example has one vane; the 3D vehicle has four vanes in an 'x' pattern.</figcaption>
 </figure> 
 
@@ -41,7 +41,7 @@ The vehicle controls itself by using vanes in the jet's exhaust stream to change
 The airframe needs to hold the jet engine, fuel tanks, avionics enclosures, and jet vane units. The aircraft's mass must be balanced around the center of the jet engine, and must remain balanced as fuel is consumed. Because this is a prototype/testing aircraft, the airframe needs to be reconfigurable (e.g. if we decide to add or move sensors). The aircraft needs to be robust to crashes, and it should be easy to replace components if they break or need to be upgraded.
 
 <figure>
-    <img src="../../assets/images/hoverjet/hoverjet_3_view.png" width=100%>
+    <img src="../assets/images/hoverjet/hoverjet_3_view.png" width=100%>
     <figcaption>This CAD 3-views shows mounting locations of the aircraft's critical components.</figcaption>
 </figure>
 
@@ -77,7 +77,7 @@ One interesting feature of the airframe is the IR radiation shield. This reduces
 The shield works - during static tests we have run the engine at full throttle for several minutes without any damage to the surrounding structure.
 
 <figure>
-    <img src="../../assets/images/hoverjet/radiation_shield.png" width=75%>
+    <img src="../assets/images/hoverjet/radiation_shield.png" width=75%>
     <figcaption>A view looking up into hoverjet from below shows the radiation shield surrounding the engine nozzle.</figcaption>
 </figure>
 
@@ -87,15 +87,15 @@ We started by discussing the goals and requirements as a team. Crash tolerance a
 After establishing this context, I made a few design sketches (see below) and discussed them with the team. We selected the dual-tank configuration.
 
 <figure>
-    <img src="../../assets/images/hoverjet/hoverjet_layout_v2.jpg" width=45%>
-    <img src="../../assets/images/hoverjet/hoverjet_layout_v3.jpg" width=45%>
+    <img src="../assets/images/hoverjet/hoverjet_layout_v2.jpg" width=45%>
+    <img src="../assets/images/hoverjet/hoverjet_layout_v3.jpg" width=45%>
     <figcaption>Preliminary sketches of two configuration options.</figcaption>
 </figure>
 
 I then asked the team to select or specify dimensions for the major components. I made a rough-cut CAD assembly to make sure all the major components fit. After reviewing this with the team, I preceded to the detailed mechanical design.
 
 <figure>
-    <img src="../../assets/images/hoverjet/rough_cad.png" width=40%>
+    <img src="../assets/images/hoverjet/rough_cad.png" width=40%>
     <figcaption>Rough CAD model to check fit of major components.</figcaption>
 </figure>
 
@@ -108,7 +108,7 @@ Hoverjet has four Jet Vane Units which provide control over the vehicle. The van
 Each Jet Vane Unit consists of a vane, a servo which actuates the vane, a gear train connecting the servo to the vane, and a body and housing. The bodies were rather complicated, so I outsourced the machining to Protolabs (a rapid-prototyping shop). The other components I machined on-campus or 3D printed. In order to resist the exhaust temperatures, the jet vanes are made from AISI 316 stainless steel. The vanes have held up well to several minutes of operation at full throttle (although the heated portions have developed a beautiful rainbow oxide pattern). The figure below shows the four assembled Jet Vane Units ready to be inspected, tested and installed on the aircraft.
 
 <figure>
-    <img src="../../assets/images/hoverjet/jet_vane_units.jpg" width=60%>
+    <img src="../assets/images/hoverjet/jet_vane_units.jpg" width=60%>
     <figcaption>Jet Vane Units.</figcaption>
 </figure>
 
@@ -125,8 +125,8 @@ Before flying Hoverjet, we need to calibrate the response of the vehicle dynamic
 To make these measurements, we made a thrust stand capable of measuring all 3 forces and 3 torques on the vehicle. This could be done by a 6-axis load cell, but those cost many thousands of dollars. Instead, I built a thrust stand which measured the forces an torques using a kinematically exact arrangement of 6 one-axis load cells. These load cells cost $10 each, and the remaining hardware and aluminum extrusion for the stand totaled $600. Kinematically exact constraint is a nifty design principle;  a good introduction can be found in [Ch 2.6 of Dr. Layton Hale's PhD thesis](https://dspace.mit.edu/handle/1721.1/9414).
 
 <figure>
-    <img src="../../assets/images/hoverjet/hoverjet_on_thrust_stand.png" width=60%>
-    <img src="../../assets/images/hoverjet/kinematically_exact_load_cells.png" width=35%>
+    <img src="../assets/images/hoverjet/hoverjet_on_thrust_stand.png" width=60%>
+    <img src="../assets/images/hoverjet/kinematically_exact_load_cells.png" width=35%>
     <figcaption>Left: Hoverjet mounted horizontally on the Thrust Stand. Right: thrust stand uses a kinematically exact arrangement of 6 load cells to measure 3 forces and 3 torques produced by the jet and vanes.</figcaption>
 </figure>
 

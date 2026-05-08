@@ -2,9 +2,9 @@
 
 ## Rocket-propelled small fast aircraft (Firefly)
 <div class="proj_image_row">
-    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/firefly_render.png"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/cases_on_build_platform.png"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/motor_v1_static_fire.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/firefly/firefly_render.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/firefly/cases_on_build_platform.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/firefly/motor_v1_static_fire.png"></div>
 </div>
 Firefly is a small, fast aircraft which can fly at 1000 km/hr and is 10x smaller than any air vehicle of comparable speed. My PhD research focuses on developing a novel, slow-burn solid rocket propulsion system for such aircraft.
 
@@ -14,8 +14,8 @@ Firefly is a small, fast aircraft which can fly at 1000 km/hr and is 10x smaller
 ## Hoverjet
 <div class="proj_image_row">
     <div class="proj_image_row_image_container"><iframe width="280" height="158" src="https://www.youtube.com/embed/Ia_bQmQX-PA?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/hoverjet/hoverjet_3_view.png"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/hoverjet/jet_vane_units.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/hoverjet/hoverjet_3_view.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/hoverjet/jet_vane_units.jpg"></div>
 </div>
 Hoverjet is a jet-powered, vertical-takeoff-and-landing aircraft. I designed the airframe and control mechanisms, and led the fabrication and assembly of the vehicle.
 
@@ -23,9 +23,9 @@ Hoverjet is a jet-powered, vertical-takeoff-and-landing aircraft. I designed the
 
 ## Additively manufactured titanium rocket component
 <div class="proj_image_row">
-    <div class="proj_image_row_image_container"><img src="../assets/images/nozzle_adapter/FF-TC-01-101-adapter-to-flight-nozzle-2019-03-21T1454.svg"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/nozzle_adapter/sintering.jpg"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/nozzle_adapter/parts.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/nozzle_adapter/FF-TC-01-101-adapter-to-flight-nozzle-2019-03-21T1454.svg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/nozzle_adapter/sintering.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/nozzle_adapter/parts.png"></div>
 </div>
 This is a component of our research rocket motor which I designed and which is manufactured by Renishaw plc. It illustrates my experience interacting with a manufacturing shop and using GD&T to communicate in drawings.
 
@@ -34,8 +34,8 @@ This is a component of our research rocket motor which I designed and which is m
 
 ## 3D printed solid rocket motor
 <div class="proj_image_row">
-    <div class="proj_image_row_image_container"><img src="../assets/images/plastic_rocket/plastic-rocket-2017-04-212-pixel-1.png"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/plastic_rocket/diamonds.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/plastic_rocket/plastic-rocket-2017-04-212-pixel-1.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/plastic_rocket/diamonds.jpg"></div>
 </div>
 I worked with my Rocket Team teammates and 3D printing startup Markforged to create and fire the first successful rocket motor printed from plastic. Markforged's printers place glass fibers into the part during printing, which helps the plastic to (temporarily) withstand the intense heat of the rocket exhaust.
 
@@ -44,7 +44,7 @@ I worked with my Rocket Team teammates and 3D printing startup Markforged to cre
 ## Strand burner for solid propellant testing
 <div class="proj_image_row">
     <div class="proj_image_row_image_container"><iframe width="280" height="158" src="https://www.youtube.com/embed/Mh8e3psMqQU?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/firefly/strand_burner_subsystems.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/firefly/strand_burner_subsystems.png"></div>
 </div>
 I designed and built a device to measure the burning rate of solid rocket propellant at elevated pressure. I improved the device though 4 iterations.
 
@@ -52,9 +52,9 @@ I designed and built a device to measure the burning rate of solid rocket propel
 
 ## Pyralis rocket engine
 <div class="proj_image_row">
-    <div class="proj_image_row_image_container"><img src="../assets/images/pyralis/engine_components.png"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/pyralis/nozzle.png"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/pyralis/n2o_ignition.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/pyralis/engine_components.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/pyralis/nozzle.png"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/pyralis/n2o_ignition.png"></div>
 </div>
 
 I led the development of a 2 kN thrust, ethanol / nitrous oxide, pressure-fed rocket engine with an aerospike nozzle.
@@ -64,7 +64,7 @@ I led the development of a 2 kN thrust, ethanol / nitrous oxide, pressure-fed ro
 
 ## High altitude balloon
 <div class="proj_outer">
-    <div class="proj_image_div"><img src="../assets/images/unified_balloon.bmp"></div>
+    <div class="proj_image_div"><img src="assets/images/unified_balloon.bmp"></div>
     <div class="proj_text">
 As a lab assistant for the Unified Engineering class, I developed a new lab project in which students launch a balloon to the upper stratosphere (70 kft). I designed, built, and flew a prototype balloon with an Arduino-based weather sensing payload. I then wrote an instruction manual for building the system, and coached students though the building and launching process. This photograph was taken by a camera on board one of our baloons.
     </div>
@@ -73,7 +73,7 @@ As a lab assistant for the Unified Engineering class, I developed a new lab proj
 
 ## Rocket-deployed quadrotor
 <div class="proj_outer">
-    <div class="proj_image_div"><img src="../assets/images/rt_quad.jpg"></div>
+    <div class="proj_image_div"><img src="assets/images/rt_quad.jpg"></div>
     <div class="proj_text">
 As a sophomore on Rocket Team, I designed and built a quadrotor which folded to fit within a 6 inch diameter rocket. After being launched to 1 mile altitude, the quadrotor would deploy, unfold, and fly autonomously or under remote control. I machined all of the mechanical components and used a Ardupilot Mega for control and communications. I also built and successfully used an emergency parachute system which saved the quadrotor if it lost control.
     </div>
@@ -83,9 +83,9 @@ As a sophomore on Rocket Team, I designed and built a quadrotor which folded to 
 
 ### Ice ax
 <div class="proj_image_row">
-    <div class="proj_image_row_image_container"><img src="../assets/images/ice_ax/sketch1.jpg"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/ice_ax/head_pins.jpg"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/ice_ax/vac_bag.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/ice_ax/sketch1.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/ice_ax/head_pins.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/ice_ax/vac_bag.jpg"></div>
 </div>
 
 I built my own ice ax for a trip to Mt. Washington. The ax is constructed from steel and poplar, and is reinforced with composites.
@@ -102,8 +102,8 @@ A silly device that I designed and printed for my friend's birthday party. It wa
 
 ### Loft bed
 <div class="proj_image_row">
-    <div class="proj_image_row_image_container"><img src="../assets/images/loft_bed_exploded_drawing.svg"></div>
-    <div class="proj_image_row_image_container"><img src="../assets/images/loft_bed_in_room.jpg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/loft_bed_exploded_drawing.svg"></div>
+    <div class="proj_image_row_image_container"><img src="assets/images/loft_bed_in_room.jpg"></div>
 </div>
 
 I helped my flatmates to design and build loft beds for our apartment. I put some effort into making drawings and instructions, which enabled us to quickly build two identical beds and assemble them without issues. Unlike many loft bed designs, this structure is sufficiently stiff to handle the expected dynamic loads.

@@ -7,7 +7,7 @@
     Firefly is a small, fast aircraft which can fly at 1000 km/hr and is 10x smaller than any air vehicle of comparable speed. My PhD research focuses on developing a novel, slow-burn solid rocket propulsion system for such aircraft.
 
 <figure>
-    <img src="../../assets/images/firefly/firefly_render.png" width=100%>
+    <img src="../assets/images/firefly/firefly_render.png" width=100%>
     <figcaption>Our "artist's concept" of the Firefly aircraft.</figcaption>
 </figure>
 
@@ -18,7 +18,7 @@
 Small, uncrewed aerial vehicles (UAVs) are expanding the capabilities of aviation. However, a gap exists in the size and speed capability of aircraft: no aircraft are both small (< 10 kg) and fast (> 100 m/s). This gap is shown in the figure below, which plots the speed vs. size of representative US military aircraft.
 
 <figure>
-    <img src="../../assets/images/firefly/small_fast_gap.png" width=100%>
+    <img src="../assets/images/firefly/small_fast_gap.png" width=100%>
     <figcaption>The speed vs. size design space currently lacks small, fast aircraft. Data from Jane’s Information Group and manufacturer websites.</figcaption>
 </figure>
 
@@ -39,7 +39,7 @@ Our research enables development of small, fast aircraft through technology deve
 
  - ...
 
-*Design space exploration* - Aircraft design involves complicated trade-offs between range, speed, size, and other metrics. These trade-offs are different for small, fast aircraft than for typical UAVs. We are documenting and quantifying these trade-offs so that future designers can chose the best configuration for their mission and requirements. An optimization technique called [Geometric Programming](../../software_projects#exploring-aircraft-design-tradeoffs-with-geometric-programming) may be a useful tool in this task.
+*Design space exploration* - Aircraft design involves complicated trade-offs between range, speed, size, and other metrics. These trade-offs are different for small, fast aircraft than for typical UAVs. We are documenting and quantifying these trade-offs so that future designers can chose the best configuration for their mission and requirements. An optimization technique called [Geometric Programming](../software_projects#exploring-aircraft-design-tradeoffs-with-geometric-programming) may be a useful tool in this task.
 
 ## The Firefly aircraft concept
 Firefly is concept for a 1-2 kg, Mach 0.8 (1000 km/hr) rocket-propelled aircraft. We are currently doing preliminary design and prototyping of the aircraft, and ground-testing the propulsion system.
@@ -48,7 +48,7 @@ Firefly is concept for a 1-2 kg, Mach 0.8 (1000 km/hr) rocket-propelled aircraft
 Firefly is meant to launch from a larger (crewed) aircraft at high altitude. It then ignites its rocket motor for several minutes of powered flight at Mach 0.8.
 
 <figure>
-    <img src="../../assets/images/firefly/conops.png" width=100%>
+    <img src="../assets/images/firefly/conops.png" width=100%>
     <figcaption>A possible concept of operations for a small, fast UAV on an air-launched mission.</figcaption>
 </figure>
 
@@ -56,12 +56,12 @@ Firefly is meant to launch from a larger (crewed) aircraft at high altitude. It 
 The vehicle's configuration integrates a solid rocket motor case into an aircraft fuselage. The vehicle's primary structure is the motor case, which is additively manufactured from a titanium alloy. The fuselage is contoured to reduce drag. The wings and tail feature miniature, high-precision deployment and actuation mechanisms. The major components of the current design revision are shown below.
 
 <figure>
-    <img src="../../assets/images/firefly/firefly_v2_components.png" width=100%>
+    <img src="../assets/images/firefly/firefly_v2_components.png" width=100%>
     <figcaption>Our candidate design for a small, fast aircraft is built around a slow-burn solid rocket motor.</figcaption>
 </figure>
 
 ## Rocket motor
-Firefly is propelled by a novel slow-burn solid rocket motor. The initial development of this motor and its propellant was the focus of my [Master's thesis](../../publications/#development-modeling-and-testing-of-a-slow-burning-solid-rocket-propulsion-system).
+Firefly is propelled by a novel slow-burn solid rocket motor. The initial development of this motor and its propellant was the focus of my [Master's thesis](../publications/#development-modeling-and-testing-of-a-slow-burning-solid-rocket-propulsion-system).
 
 The motor consists of a solid propellant grain,
 which is surrounded by an ablative liner, and encased in a 2-part motor case. The motor
@@ -72,12 +72,12 @@ in these figures) stands between the combustion gases and the metal motor case t
 the latter from heat.
 
 <figure>
-    <img src="../../assets/images/firefly/firefly_motor_components.png" width=100%>
+    <img src="../assets/images/firefly/firefly_motor_components.png" width=100%>
     <figcaption>The major components of the Firefly solid rocket motor.</figcaption>
 </figure>
 
 <figure>
-    <img src="../../assets/images/firefly/firefly_end_burn.png" width=60%>
+    <img src="../assets/images/firefly/firefly_end_burn.png" width=60%>
     <figcaption>To achieve a long burn time, the Firefly motor uses an end-burning propellant grain. This sequence shows the expected regression of the propellant grain (pink) during the burn.</figcaption>
 </figure>
 
@@ -85,8 +85,8 @@ the latter from heat.
 The purpose of solid rocket propellants is to generate hot gas at high pressure. This gas is then expanded through a nozzle and ejected from the rocket motor to provide propulsive force. We use a type of propellant called "ammonium perchlorate composite propellant" (APCP), which contains a solid oxidizer (ammonium perchlorate) and (optionally) a powdered metal fuel, held together by a rubber-like binder. The binder also serves as a fuel, giving off hydrocarbon vapors during combustion. Despite being a *solid* propellant, the majority of the combustion energy release occurs in a *gas*-phase flame above the propellant surface.
 
 <figure>
-    <img src="../../assets/images/firefly/composite_propellant.png" width=75%>
-    <img src="../../assets/images/flame_structure.png" width=75%>
+    <img src="../assets/images/firefly/composite_propellant.png" width=75%>
+    <img src="../assets/images/flame_structure.png" width=75%>
     <figcaption>The composition and flame structure of ammonium perchlorate composite propellant.</figcaption>
 </figure>
 
@@ -97,15 +97,15 @@ Typical APCP burns too quickly for the Firefly motor, which requires long endura
 The motor case is produced from Ti-6Al-4V via additive manufacturing. This production technology allows us to contour the case to reduce drag, and to include mounting features for the wing, tails, nozzle and payload.
 
 <figure>
-    <img src="../../assets/images/firefly/cases_on_build_platform.png" width=60%>
+    <img src="../assets/images/firefly/cases_on_build_platform.png" width=60%>
     <figcaption>Motor case halves on the build platform after printing.</figcaption>
 </figure>
 
 Interestingly, the motor case is a stiffness-limited structure. Packaging constraints forced the motor case to have an elliptical cross section. When pressurized, it will tend to "squash" into a circle. If the case deforms to much, it will tear the propellant grain, which could cause the motor to fail. Thus, the case must be sufficiently stiff. We assess this with finite element simulations and hydrostatic tests.
 
 <figure>
-    <img src="../../assets/images/firefly/motor_case_fea_displacement.png" width=45%>
-    <img src="../../assets/images/firefly/hydrostatic.png" width=45%>
+    <img src="../assets/images/firefly/motor_case_fea_displacement.png" width=45%>
+    <img src="../assets/images/firefly/hydrostatic.png" width=45%>
     <figcaption>Finite element analysis (left) and hydrostatic tests (right) to measure the stiffness of the motor case.</figcaption>
 </figure>
 
@@ -123,7 +123,7 @@ allocated to propellant. Thus, it is important to understand the ablation proces
 good selection of the ablative material.
 
 <figure>
-    <img src="../../assets/images/firefly/firefly_motor_ablation.png" width=100%>
+    <img src="../assets/images/firefly/firefly_motor_ablation.png" width=100%>
     <figcaption>An ablative liner protects the inside of the motor case from hot combustion gases.</figcaption>
 </figure>
 
