@@ -33,9 +33,33 @@ this post estimates USD/MTok to pay back a datacenter project.
 
 ### Key factors: throughput and cost of computing hardware
 
+*Throughput* measures how many tokens can be served per second per unit-power-rating of IT capacity, with units of MTok/s/MW. Token cost scales like `1 / throughput`. Of our estimate's parameters, throughput has the biggest influence on cost, and is the least constrained from public data.
+
+Throughput depends on model architecture and the inference engine that executes it, together called *algorithmic efficiency*, and hardware efficiency.
+
+- *Architecture's* first-order effect: bigger models have lower throughput (holding constant hardware compute and memory resources). Some architectures, like mixture-of-experts, make models faster by evaluating sections of the model in parallel, or only using some sections to predict each token.
+- The *inference engine* is the software running the model to generate token predictions. A better inference engine can run the same model faster on the same hardware.
+- As *Hardware* improves, more efficient GPUs do more computation per second per installed capacity. (In this post, throughput is normalized per power-rating of installed IT capacity, not per the power the GPU actually consumes in a given moment.)
+
+Architecture, inference engine, and hardware are coupled. For example, recent GPUs can do many more floating-point operations per second, but only on smaller number representations (FP16, FP8 or FP4). Taking advantage of this capability requires a model and inference engine that can use small floats.
+
+Even for the same LLM architecture and same inference engine on the same hardware, throughput is not a single number. Concurrency, how many users the hardware serves at once, creates a trade-off between throughput and per-user latency.
+
+There is public benchmark data for throughput of open-weights models, on open-source inference engines, on modern hardware (e.g. [InferenceX](https://inferencex.semianalysis.com/)), and this post's estimates are calibrated with it [below](#simple-cost-estimates-vs-actual-price-of-open-weights-llms).
+Recent public benchmarks have throughput on the order of 0.1-10 MTok/s/MW (benchmarks run in mid-2026 on late-2024 B200 hardware).
+However, it is not publicly known how the architecture of these open models compares to frontier models. We should assume open inference engines (like vLLM) provide a lower bound on performance for frontier providers, who have both the incentive and resources to develop more efficient inference engines.
+
+
+*Capital expense* also has a large impact on cost, and is better-constrained by public data than throughput. Token cost scales linearly with CAPEX. CAPEX is dominated by GPU costs: B200 GPUs (released late 2024) cost about $26M/MW, the rest of the datacenter might cost around $10-16M/MW.
+
 
 ### Electricity availability matters more than cost
+
+TODO free vs highest US grid rates changes price by TODO percent.
 
 ## Simple cost estimates vs actual price of open-weights LLMs
 
 ## Trends in the key factors
+
+
+TODO footnote on use of AI in this blog post
