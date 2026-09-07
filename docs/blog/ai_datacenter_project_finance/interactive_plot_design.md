@@ -43,45 +43,51 @@ References:
 
 The widget contains assumption sliders, a cashflow plot, and a price-vs-assumption-sweep plot.
 
-Layout: Assumption sliders on the left, ashflow plot on the top right, sweep plot on the bottom right.
+Layout: Assumption sliders on the left, cashflow plot on the top right, sweep plot on the bottom right.
 
 ### Assumption sliders
 
-- Show assumption sliders for `capex`, `throughput`, `pue`, `utilization`, `revenue_fraction`, `non_energy_annual_opex`, `energy_cost_per_MWh`, `construction_years`, `operating_years`, `debt_fraction`, `debt_interest_rate`, and `target_irr`.
-- Use logarithmic slider handling for values that span orders of magnitude, especially `throughput`, `capex`, and `non_energy_annual_opex`.
-- Keep year sliders snapped to whole months so they remain compatible with the existing `years_to_months` constraint.
+- Follow `notes.md` for the model definition and provisional defaults. Use installed IT capacity consistently.
+- Main controls: total CAPEX, initial workload throughput, utilization, non-energy annual OPEX, electricity price (USD/MWh), construction/operating years, debt fraction/rate, and pre-tax equity hurdle.
+- A collapsed native `<details>` with summary **Further details** contains PUE, idle-power fraction, and reserved capacity charge (USD/kW-month). Electricity price is the only initially visible energy control. Help text must distinguish volumetric from all-in tariffs to prevent double counting capacity charges.
+- Put facility CAPEX share, terminal facility residual fraction, revenue fraction (default 100% inference-only), annual price erosion, and annual throughput change in Further details too. Both trend defaults are zero; throughput change can be positive or negative.
+- Use logarithmic controls for positive values spanning orders of magnitude. Allow exact zero for OPEX and other nonnegative costs.
+- Snap durations to whole months. Bound fractions/rates to the model's valid domains; exclude 100% debt.
+- Explain that throughput includes prefill and decode for a fixed workload, while the displayed price includes the input revenue associated with each output token. API comparison inputs must describe that same workload.
 
 ### Cashflow plot
 
 - Use signed stacked monthly cashflow bars at the required price for the selected target IRR, plus a net cashflow line.
 - Plot revenue as positive/upward bars and expenses as negative/downward bars. Use Plotly's `barmode: "relative"` so positive and negative components stack naturally away from zero.
 - Suggested bar categories:
-  - Positive: revenue.
-  - Negative: equity-funded construction CAPEX, non-energy OPEX, energy OPEX, and debt service.
+  - Positive: token revenue and a separate terminal facility proceeds series.
+  - Negative: equity-funded construction CAPEX, non-energy OPEX, volumetric energy OPEX, capacity charges, and debt service.
 - Overlay a black line with markers for net equity cashflow on the same y-axis. Keep the same axis unless readability becomes poor, because the shared axis makes the accounting relationship clear.
 - Add a strong horizontal zero line and a vertical marker at commercial operation date to separate construction from operations.
-- Use `USD / MW / month` for the y-axis and month number for the x-axis.
+- Use `USD / MW installed IT / month` for the y-axis and month number for the x-axis.
 - Do not show debt draws as positive cashflow. In this model the plot should show equity cashflows: equity contributions during construction, then revenue, operating expenses, and debt service during operations.
 - Consider a cumulative undiscounted equity cashflow line only as a later optional addition. The main chart should stay focused on monthly component cashflows and net monthly cashflow.
 
 ### Sweep plot
 
 - Show a dropdown for the sweep variable. Initial options should include `throughput`, `energy_cost_per_MWh`, `construction_years`, `capex`, `debt_interest_rate`, `debt_fraction`, `revenue_fraction`, and `operating_years`.
-- Plot required `price_per_MTok` versus the selected sweep variable, holding all other slider assumptions fixed. Highlight the current slider value on the sweep curve.
-- Gray-fill prices that are below the model's price floor at risk-free-rate for debt and equity with 100% `revenue_fraction`.
-- Optionally overlay the existing API price examples as horizontal reference lines, but keep them easy to update because public prices change.
+- Plot required initial workload revenue per million output tokens (`price_per_MTok`) versus the selected sweep variable, holding all other slider assumptions fixed. Highlight the current slider value on the sweep curve.
+- Gray-fill a **Low-cost financing reference** using 4% effective annual debt/equity returns and 100% billable inference. Convert effective debt return to nominal annual monthly-compounded rate. Apply these overrides after the sweep value so debt-rate and revenue-share sweeps preserve the reference definition. This is a conditional scenario, not a universal price floor.
+- With trends, use actual changing monthly revenue. Show NPV at the selected hurdle; report IRR as unavailable/ambiguous when cashflows are nonconventional. Catch invalid-input/numeric errors and explain them inline.
+- Optionally overlay the dated API price examples as horizontal reference lines, but keep them easy to update because public prices change.
 
 ## Implementation Plan
 
-[ ] Add the self-contained Vite/TypeScript widget package under `widgets/ai_datacenter_project_finance/`.
-[ ] Port the Python finance equations to `src/model.ts`, using a closed-form loan payment function instead of `numpy_financial`.
-[ ] Add deterministic tests comparing TypeScript outputs with frozen reference cases from the Python model.
+[x] Add the self-contained Vite/TypeScript widget package under `widgets/ai_datacenter_project_finance/`.
+[x] Port the Python finance equations to `src/model.ts`, using a closed-form loan payment function instead of `numpy_financial`.
+[x] Add accounting tests and 40 live Python/TypeScript reference comparisons, including each monthly component.
 [ ] Build the custom element with native controls, accessible labels, responsive layout, and Plotly resize handling.
 [ ] Implement lazy Plotly import inside the custom element so non-widget pages do not load Plotly.
-[ ] Configure Vite to emit built assets into `docs/javascripts/ai_datacenter_project_finance_widget/`.
+[x] Configure Vite to emit built assets into `docs/javascripts/ai_datacenter_project_finance_widget/`.
 [ ] Register the built module in `zensical.toml` as an `extra_javascript` module.
 [ ] Insert `<ai-dc-project-finance-widget></ai-dc-project-finance-widget>` into `docs/blog/ai_datacenter_project_finance.md`.
-[ ] Validate with `npm --prefix widgets/ai_datacenter_project_finance run build` and `uv run zensical serve`.
+[x] Validate the model build with `npm --prefix widgets/ai_datacenter_project_finance run build`.
+[ ] Validate the integrated widget with `uv run zensical serve`.
 [ ] Check the widget manually at desktop and mobile widths, including dropdown changes, extreme slider values, and plot resizing.
 
 ## Risks And Decisions

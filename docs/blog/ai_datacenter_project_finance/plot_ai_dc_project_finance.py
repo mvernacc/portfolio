@@ -14,8 +14,8 @@ throughputs = np.logspace(4, 6)  # [Tok/s/MW]
 OUTPUT_PATH = "ai_dc_project_finance.png"
 
 revenue_fraction_colors = [
-    (0.5, "tab:blue"),
-    (0.8, "tab:orange"),
+    (1.0, "tab:blue"),
+    (0.5, "tab:orange"),
 ]
 
 
@@ -33,12 +33,14 @@ def calc_prices_for_throughputs(
 
 fig, ax = plt.subplots()
 
-# First, plot the price floor: debt and equity at risk-free rate, 100% revenue-generating use.
-risk_free_rate = 0.04  # [1/year] Typical 2025-2026 5-year US treasury rate.
+# First, plot the low-cost financing reference: 4% effective debt/equity rates, all inference.
+reference_return = (
+    0.04  # [1/year] Illustrative effective annual return, not a live Treasury quote.
+)
 assumptions = AiDatacenterFinanceModelAssumptions()
 assumptions.revenue_fraction = 1.0
-assumptions.debt_interest_rate = risk_free_rate
-min_prices = calc_prices_for_throughputs(assumptions, throughputs, risk_free_rate)
+assumptions.debt_interest_rate = 12 * ((1 + reference_return) ** (1 / 12) - 1)
+min_prices = calc_prices_for_throughputs(assumptions, throughputs, reference_return)
 ax.fill_between(
     throughputs,
     np.zeros_like(throughputs),
@@ -49,7 +51,7 @@ ax.fill_between(
 ax.text(
     x=0.05,
     y=0.10,
-    s="Below model's\nrisk-free-rate price floor",
+    s="Low-cost financing\nreference",
     fontsize=8,
     ha="left",
     va="bottom",
@@ -97,7 +99,7 @@ for p in PRICE_EXAMPLES:
 ax.text(
     x=0.98,
     y=0.80,
-    s="Prices include input = 3x output",
+    s="May 2026 tariff examples; input = 3x output",
     fontsize=8,
     ha="right",
     va="bottom",
@@ -110,8 +112,8 @@ ax.grid(True, which="minor", axis="x", linewidth=0.2, color=(0.7, 0.7, 0.7))
 ax.legend(loc="upper right")
 ax.set_xlim(throughputs[0], throughputs[-1])
 ax.set_ylim(0.0, 75.0)
-ax.set_ylabel("Price\ndollars / million output tokens")
-ax.set_xlabel("Throughput\noutput tokens / second / megawatt of compute")
+ax.set_ylabel("Initial workload revenue\nUSD / million output tokens")
+ax.set_xlabel("Throughput\noutput tokens / second / MW of installed IT capacity")
 fig.tight_layout()
 fig.savefig(OUTPUT_PATH, dpi=200)
 print(f"Saved plot to {OUTPUT_PATH}")

@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import matplotlib
 import numpy as np
 from ai_datacenter_project_finance_toy_model import (
@@ -14,8 +16,8 @@ capex = np.linspace(1e6, 100e6)  # [USD/MW]
 THROUGHPUT = 1e5  # [Tok s^-1 MW^-1]
 
 revenue_fraction_colors = [
-    (0.5, "tab:blue"),
-    (0.8, "tab:orange"),
+    (1.0, "tab:blue"),
+    (0.5, "tab:orange"),
 ]
 
 
@@ -24,11 +26,12 @@ def calc_prices_for_assumption_values(
     field_name: str,
     field_values: np.ndarray,
     target_irr: float,
+    overrides: dict[str, float] | None = None,
 ) -> np.ndarray:
-    prices = np.zeros_like(field_values)
+    prices = np.zeros_like(field_values, dtype=float)
     for i in range(len(field_values)):
-        setattr(a, field_name, field_values[i])
-        prices[i] = calc_price_per_Mtok_for_target_irr(a, target_irr)
+        scenario = replace(a, **{field_name: field_values[i], **(overrides or {})})
+        prices[i] = calc_price_per_Mtok_for_target_irr(scenario, target_irr)
     return prices
 
 
@@ -40,14 +43,21 @@ def plot_prices_for_assumption_values(
 ) -> None:
     fig, ax = plt.subplots()
 
-    # First, plot the price floor: debt and equity at risk-free rate, 100% revenue-generating use.
-    risk_free_rate = 0.04  # [1/year] Typical 2025-2026 5-year US treasury rate.
+    # First, plot the low-cost financing reference: 4% effective debt/equity rates, all inference.
+    reference_return = 0.04  # [1/year] Illustrative effective annual return, not a live Treasury quote.
     assumptions = AiDatacenterFinanceModelAssumptions()
     assumptions.throughput = THROUGHPUT
     assumptions.revenue_fraction = 1.0
-    assumptions.debt_interest_rate = risk_free_rate
+    assumptions.debt_interest_rate = 12 * ((1 + reference_return) ** (1 / 12) - 1)
     min_prices = calc_prices_for_assumption_values(
-        assumptions, field_name, field_values, risk_free_rate
+        assumptions,
+        field_name,
+        field_values,
+        reference_return,
+        overrides={
+            "revenue_fraction": 1.0,
+            "debt_interest_rate": 12 * ((1 + reference_return) ** (1 / 12) - 1),
+        },
     )
     ax.fill_between(
         field_values,
@@ -59,7 +69,7 @@ def plot_prices_for_assumption_values(
     ax.text(
         x=0.05,
         y=0.02,
-        s="Below model's risk-free-rate price floor",
+        s="Low-cost financing reference",
         fontsize=8,
         ha="left",
         va="bottom",
@@ -103,9 +113,11 @@ def plot_prices_for_assumption_values(
     ax.legend(loc="upper right")
     ax.set_xlim(field_values[0], field_values[-1])
     ax.set_ylim(0.0, ax.get_ylim()[1])
-    ax.set_ylabel("Inference price\ndollars / million output tokens")
+    ax.set_ylabel("Initial workload revenue\nUSD / million output tokens")
     ax.set_xlabel(xlabel)
-    ax.set_title(f"Assumed throughput: {THROUGHPUT:,.0f} output tokens / s / MW")
+    ax.set_title(
+        f"Assumed throughput: {THROUGHPUT:,.0f} output tokens / s / MW installed IT"
+    )
     fig.tight_layout()
     fig.savefig(output_path, dpi=200)
     print(f"Saved plot to {output_path}")
@@ -127,6 +139,6 @@ plot_prices_for_assumption_values(
 plot_prices_for_assumption_values(
     field_name="capex",
     field_values=capex,
-    xlabel="CAPEX\ndollars per megawatt of compute",
+    xlabel="CAPEX\ndollars per MW of installed IT capacity",
     output_path="ai_dc_project_finance_vs_capex.png",
 )
