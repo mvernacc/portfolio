@@ -1,0 +1,63 @@
+{
+  "target_irr": 0.15,
+  "installed_IT_MW_per_server_with_ancillary": 0.015015,
+  "scenario_assumptions_at_one_million_tok_s_MW": {
+    "Lower cost": {
+      "capex": 38704395.604395606,
+      "facility_capex_fraction": 0.2583685869225746,
+      "facility_residual_fraction": 0.5,
+      "throughput": 1000000.0,
+      "throughput_annual_change": 0.0,
+      "price_annual_erosion": 0.0,
+      "pue": 1.2,
+      "utilization": 0.9,
+      "revenue_fraction": 1.0,
+      "idle_power_fraction": 0.2,
+      "non_energy_annual_opex": 1000000.0,
+      "energy_cost_per_MWh": 90.0,
+      "capacity_charge_per_kW_month": 0.0,
+      "construction_years": 2.0,
+      "operating_years": 5,
+      "debt_fraction": 0.65,
+      "debt_interest_rate": 0.085
+    },
+    "Central": {
+      "capex": 40831684.98168498,
+      "facility_capex_fraction": 0.293889414688191,
+      "facility_residual_fraction": 0.5,
+      "throughput": 1000000.0,
+      "throughput_annual_change": 0.0,
+      "price_annual_erosion": 0.0,
+      "pue": 1.2,
+      "utilization": 0.7,
+      "revenue_fraction": 1.0,
+      "idle_power_fraction": 0.2,
+      "non_energy_annual_opex": 1000000.0,
+      "energy_cost_per_MWh": 90.0,
+      "capacity_charge_per_kW_month": 0.0,
+      "construction_years": 2.0,
+      "operating_years": 5,
+      "debt_fraction": 0.65,
+      "debt_interest_rate": 0.085
+    },
+    "Higher cost": {
+      "capex": 50510689.31068931,
+      "facility_capex_fraction": 0.31676463375078123,
+      "facility_residual_fraction": 0.5,
+      "throughput": 1000000.0,
+      "throughput_annual_change": 0.0,
+      "price_annual_erosion": 0.0,
+      "pue": 1.2,
+      "utilization": 0.5,
+      "revenue_fraction": 1.0,
+      "idle_power_fraction": 0.2,
+      "non_energy_annual_opex": 1000000.0,
+      "energy_cost_per_MWh": 90.0,
+      "capacity_charge_per_kW_month": 0.0,
+      "construction_years": 2.0,
+      "operating_years": 3,
+      "debt_fraction": 0.65,
+      "debt_interest_rate": 0.085
+    }
+  }
+}

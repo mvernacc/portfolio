@@ -1,0 +1,133 @@
+{
+  "retrieved_on": "2026-09-07",
+  "model": "Qwen/Qwen3.5-397B-A17B",
+  "prices": [
+    {
+      "provider": "DeepInfra",
+      "model_id": "Qwen/Qwen3.5-397B-A17B",
+      "tier": "Public standard",
+      "input_per_million": 0.45,
+      "output_per_million": 3.0,
+      "cached_input_per_million": 0.22,
+      "source": "https://deepinfra.com/Qwen/Qwen3.5-397B-A17B",
+      "precision": "FP8, exact checkpoint revision and kernel configuration unknown",
+      "plot": true,
+      "plot_label": "DeepInfra standard (FP8)",
+      "color": "#047857"
+    },
+    {
+      "provider": "Alibaba Global",
+      "model_id": "qwen3.5-397b-a17b",
+      "tier": "Virginia / Frankfurt endpoints, Global scope; input <=128K",
+      "input_per_million": 0.172,
+      "output_per_million": 1.032,
+      "source": "https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen3-5-397b-a17b",
+      "precision": "Unspecified",
+      "plot": true,
+      "plot_label": "Alibaba Global (VA / Frankfurt endpoints)",
+      "color": "#9333ea"
+    },
+    {
+      "provider": "Alibaba International",
+      "model_id": "qwen3.5-397b-a17b",
+      "tier": "Singapore endpoint, International scope",
+      "input_per_million": 0.6,
+      "output_per_million": 3.6,
+      "source": "https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen3-5-397b-a17b",
+      "precision": "Unspecified",
+      "plot": true,
+      "plot_label": "Alibaba International (Singapore endpoint)",
+      "color": "#9a3412"
+    }
+  ],
+  "facility_evidence": {
+    "source": "https://reports.turnerandtownsend.com/data-centre-construction-cost-index-2025/data-centre-cost-trends",
+    "methodology": "https://reports.turnerandtownsend.com/data-centre-construction-cost-index-2025/methodology",
+    "benchmark": "Atlanta air-cooled hyperscale facility",
+    "construction_usd_per_MW_IT": 9900000,
+    "excludes": "Land, utility works, abnormal groundworks, site works, active IT, client direct costs and professional fees",
+    "base_facility_usd_per_MW_IT": 12000000,
+    "base_allowance_usd_per_MW_IT": 2100000,
+    "allowance_status": "Author assumption for excluded site costs; not a quotation"
+  },
+  "hardware": {
+    "server_source": "https://configurator.exxactcorp.com/configure/TS4-142487900",
+    "server_usd": 391737.5,
+    "nic_usd": 1815,
+    "gpus_per_server": 8,
+    "installed_server_kW_proxy": 14.3,
+    "power_source": "https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html",
+    "power_caveat": "Maximum of comparable DGX B200, not measured benchmark server or Exxact OEM rating",
+    "ancillary_IT_power_fraction": 0.05,
+    "replication_efficiency": 1.0,
+    "replication_caveat": "Two independent TP4 replicas at reported per-GPU rate fill the eight-GPU server. This replication is assumed, not measured on a concurrently loaded full node."
+  },
+  "scenarios": [
+    {
+      "name": "Lower cost",
+      "server_usd": 390000,
+      "extra_IT_cost_fraction": 0.1,
+      "facility_usd_per_MW_IT": 10000000,
+      "utilization": 0.9,
+      "operating_years": 5
+    },
+    {
+      "name": "Central",
+      "server_usd": 391737.5,
+      "extra_IT_cost_fraction": 0.1,
+      "facility_usd_per_MW_IT": 12000000,
+      "utilization": 0.7,
+      "operating_years": 5
+    },
+    {
+      "name": "Higher cost",
+      "server_usd": 430000,
+      "extra_IT_cost_fraction": 0.2,
+      "facility_usd_per_MW_IT": 16000000,
+      "utilization": 0.5,
+      "operating_years": 3
+    }
+  ],
+  "scenario_note": "Deterministic scenarios, not a statistical confidence interval. Extra IT and facility allowances, utilization, life, power uplift and replication are assumptions.",
+  "common_model_assumptions": {
+    "facility_residual_fraction": 0.5,
+    "throughput_annual_change": 0.0,
+    "price_annual_erosion": 0.0,
+    "pue": 1.2,
+    "revenue_fraction": 1.0,
+    "idle_power_fraction": 0.2,
+    "non_energy_annual_opex": 1000000.0,
+    "energy_cost_per_MWh": 90.0,
+    "capacity_charge_per_kW_month": 0.0,
+    "construction_years": 2.0,
+    "debt_fraction": 0.65,
+    "debt_interest_rate": 0.085
+  },
+  "comparison": {
+    "benchmark_file": "qwen35_b200_benchmarks.json",
+    "artifact_prefix": "qwen35_397b",
+    "csv_prefix": "qwen35_comparison",
+    "title": "Qwen3.5-397B-A17B",
+    "subtitle": "B200 \u00b7 SGLang \u00b7 FP8 / TP4 \u00b7 nominal 8K input / 1K output \u00b7 uncached",
+    "benchmark_date": "2026-07-05",
+    "tensor_parallel_size": 4,
+    "precision": "fp8",
+    "concurrencies": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "concurrency_label": "Labels: requests per four-GPU replica \u00b7 stream interval: 50 tokens",
+    "power_note": "Two TP4 replicas/server are assumed. Installed IT proxy: 14.3 kW/server + 5% ancillary capacity.",
+    "latency_label": "p99 first response\nchunk (s)",
+    "spec_method": "none"
+  },
+  "release_date": "2026-02-16",
+  "release_source": "https://home.alibabagroup.com/en-US/document-1960233590314762240",
+  "model_card": "https://huggingface.co/Qwen/Qwen3.5-397B-A17B",
+  "fp8_model_card": "https://huggingface.co/Qwen/Qwen3.5-397B-A17B-FP8"
+}

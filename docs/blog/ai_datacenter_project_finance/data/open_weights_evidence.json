@@ -1,0 +1,147 @@
+{
+  "retrieved_on": "2026-09-07",
+  "model": "openai/gpt-oss-120b",
+  "prices": [
+    {
+      "provider": "DeepInfra",
+      "tier": "Public API",
+      "model_id": "openai/gpt-oss-120b",
+      "input_per_million": 0.037,
+      "output_per_million": 0.17,
+      "source": "https://deepinfra.com/openai/gpt-oss-120b",
+      "precision": "Ambiguous: page badge bfloat16; description native MXFP4",
+      "plot": true,
+      "plot_label": "DeepInfra public API",
+      "color": "#047857"
+    },
+    {
+      "provider": "Together",
+      "tier": "Serverless",
+      "model_id": "openai/gpt-oss-120b",
+      "input_per_million": 0.15,
+      "output_per_million": 0.6,
+      "source": "https://docs.together.ai/docs/serverless/models",
+      "precision": "MXFP4",
+      "plot": true,
+      "plot_label": "Together / Fireworks standard",
+      "color": "#9a3412"
+    },
+    {
+      "provider": "Fireworks",
+      "tier": "Standard",
+      "model_id": "accounts/fireworks/models/gpt-oss-120b",
+      "input_per_million": 0.15,
+      "output_per_million": 0.6,
+      "cached_input_per_million": 0.015,
+      "source": "https://docs.fireworks.ai/serverless/pricing",
+      "precision": "Not established for serverless deployment",
+      "plot": false
+    },
+    {
+      "provider": "Groq",
+      "tier": "On-demand",
+      "model_id": "openai/gpt-oss-120b",
+      "input_per_million": 0.15,
+      "output_per_million": 0.6,
+      "cached_input_per_million": 0.075,
+      "source": "https://console.groq.com/docs/model/openai/gpt-oss-120b",
+      "precision": "TruePoint; LPU, not benchmark GPU hardware",
+      "plot": false
+    },
+    {
+      "provider": "Cerebras",
+      "tier": "Public API",
+      "model_id": "gpt-oss-120b",
+      "input_per_million": 0.35,
+      "output_per_million": 0.75,
+      "source": "https://api.cerebras.ai/public/v1/models/gpt-oss-120b",
+      "precision": "FP16/8 weights only; cross-hardware reference",
+      "plot": false
+    }
+  ],
+  "facility_evidence": {
+    "source": "https://reports.turnerandtownsend.com/data-centre-construction-cost-index-2025/data-centre-cost-trends",
+    "methodology": "https://reports.turnerandtownsend.com/data-centre-construction-cost-index-2025/methodology",
+    "benchmark": "Atlanta air-cooled hyperscale facility",
+    "construction_usd_per_MW_IT": 9900000,
+    "excludes": "Land, utility works, abnormal groundworks, site works, active IT, client direct costs and professional fees",
+    "base_facility_usd_per_MW_IT": 12000000,
+    "base_allowance_usd_per_MW_IT": 2100000,
+    "allowance_status": "Author assumption for excluded site costs; not a quotation"
+  },
+  "hardware": {
+    "server_source": "https://configurator.exxactcorp.com/configure/TS4-142487900",
+    "server_usd": 391737.5,
+    "nic_usd": 1815,
+    "gpus_per_server": 8,
+    "installed_server_kW_proxy": 14.3,
+    "power_source": "https://docs.nvidia.com/dgx/dgxb200-user-guide/introduction-to-dgxb200.html",
+    "power_caveat": "Maximum of comparable DGX B200, not measured benchmark server or Exxact OEM rating",
+    "ancillary_IT_power_fraction": 0.05,
+    "replication_efficiency": 1.0,
+    "replication_caveat": "Eight independent TP1 replicas at reported per-GPU rate is an ideal scaling assumption, not a measured full-node result."
+  },
+  "scenarios": [
+    {
+      "name": "Lower cost",
+      "server_usd": 390000,
+      "extra_IT_cost_fraction": 0.1,
+      "facility_usd_per_MW_IT": 10000000,
+      "utilization": 0.9,
+      "operating_years": 5
+    },
+    {
+      "name": "Central",
+      "server_usd": 391737.5,
+      "extra_IT_cost_fraction": 0.1,
+      "facility_usd_per_MW_IT": 12000000,
+      "utilization": 0.7,
+      "operating_years": 5
+    },
+    {
+      "name": "Higher cost",
+      "server_usd": 430000,
+      "extra_IT_cost_fraction": 0.2,
+      "facility_usd_per_MW_IT": 16000000,
+      "utilization": 0.5,
+      "operating_years": 3
+    }
+  ],
+  "scenario_note": "Deterministic scenarios, not a statistical confidence interval. Extra IT and facility allowances, utilization, life, power uplift and replication are assumptions.",
+  "common_model_assumptions": {
+    "facility_residual_fraction": 0.5,
+    "throughput_annual_change": 0.0,
+    "price_annual_erosion": 0.0,
+    "pue": 1.2,
+    "revenue_fraction": 1.0,
+    "idle_power_fraction": 0.2,
+    "non_energy_annual_opex": 1000000.0,
+    "energy_cost_per_MWh": 90.0,
+    "capacity_charge_per_kW_month": 0.0,
+    "construction_years": 2.0,
+    "debt_fraction": 0.65,
+    "debt_interest_rate": 0.085
+  },
+  "comparison": {
+    "benchmark_file": "gpt_oss_120b_b200_benchmarks.json",
+    "artifact_prefix": "gpt_oss_120b",
+    "csv_prefix": "open_weights_comparison",
+    "title": "GPT-OSS-120B",
+    "subtitle": "B200 \u00b7 vLLM \u00b7 nominal 8,192 input / 1,024 output tokens \u00b7 uncached workload",
+    "benchmark_date": "2026-05-31",
+    "tensor_parallel_size": 1,
+    "precision": "fp4",
+    "concurrencies": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "concurrency_label": "Point labels: concurrent requests per single-GPU replica",
+    "power_note": "Eight-replica scaling is assumed. IT power uses 14.3 kW/server + 5% ancillary capacity; neither is measured fleet power.",
+    "latency_label": "p99 time to\nfirst token (s)",
+    "spec_method": "none"
+  }
+}

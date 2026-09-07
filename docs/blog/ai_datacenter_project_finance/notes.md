@@ -335,3 +335,17 @@ for cross-language comparisons of terms, prices, and every monthly cashflow
 component. Node 24+ can execute the TypeScript model directly. Independent checks
 cover capital/loan accounting, terminal discounting, annual trend timing, tariff
 units, target-rate NPV, historical zero-trend behavior, and invalid inputs.
+
+## 10. Public-data comparison
+
+The first [open-weights comparison](open_weights_comparison.md) uses a saved
+GPT-OSS-120B/B200 benchmark sweep, direct provider tariffs, and independent
+server/construction evidence. Its plot, evidence JSON, derived CSV, and script
+are separate from the generic model defaults. Refer to that document for the
+measurement-to-installed-capacity conversion and remaining calibration gaps.
+
+The second [Qwen3.5-397B-A17B comparison](qwen35_comparison.md) uses Alibaba's
+February 2026 release, an FP8 four-GPU benchmark, and explicit regional API
+tariffs. It reuses the first case's cost scenarios, with two TP4 replicas per
+server replacing eight TP1 replicas. Its chunked streaming setting requires
+a different interpretation of the latency panel.
