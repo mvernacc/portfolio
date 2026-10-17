@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     lib: {
-      entry: resolve(packageDir, "src/model.ts"),
+      entry: resolve(packageDir, "src/widget.ts"),
       formats: ["es"],
       fileName: () => "ai-datacenter-project-finance-widget.js",
     },

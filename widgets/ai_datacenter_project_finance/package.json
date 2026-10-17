@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "node --test tests/model.test.mjs"
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "plotly.js-dist-min": "^3.0.0"

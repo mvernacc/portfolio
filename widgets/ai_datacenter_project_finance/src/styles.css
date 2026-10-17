@@ -1,0 +1,53 @@
+:host { display: block; color: #263640; font: 14px/1.5 system-ui, sans-serif; margin: 1.5rem 0; container-type: inline-size; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+section { min-width: 0; }
+:host > section { padding: 20px; border: 1px solid #cbd7dd; border-radius: 12px; background: #f9fbfc; }
+header { display: flex; justify-content: space-between; gap: 15px; align-items: center; }
+h2 { margin: 0; font-size: 23px; line-height: 1.2; letter-spacing: -.5px; }
+h3 { font-size: 17px; margin: 0 0 10px; }
+p { margin: 10px 0; }
+.eyebrow { text-transform: uppercase; color: #526a76; font-size: 11px; font-weight: 700; letter-spacing: 1px; margin: 0 0 7px; }
+button, select, input { font: inherit; color: inherit; }
+button { padding: 8px 12px; background: white; border: 1px solid #b4c5ce; border-radius: 6px; cursor: pointer; }
+button:hover { background: #edf4f8; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid #2682ad; outline-offset: 3px; }
+.intro { color: #4f626d; }
+.result { background: #e9f3f7; border-left: 4px solid #006e9c; padding: 12px 16px; margin: 18px 0; display: grid; gap: 2px; }
+.result strong { font-size: 34px; line-height: 1.2; color: #005c83; }
+.result small { margin-top: 5px; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; align-content: start; }
+.control { display: grid; grid-template-columns: minmax(0, 1fr) 70px; align-items: start; column-gap: 8px; }
+.control label { font-weight: 600; line-height: 1.3; }
+.control label span { display: block; font-weight: 400; font-size: 11px; color: #526a76; margin-top: 3px; }
+input[type=number] { width: 100%; border: 1px solid #b4c5ce; border-radius: 4px; padding: 4px; background: white; }
+input[type=range] { grid-column: 1 / -1; width: 100%; margin: 8px 0 0; accent-color: #006e9c; min-height: 24px; }
+.control small { grid-column: 1 / -1; font-size: 11px; color: #526a76; }
+form > details { grid-column: 1 / -1; border-top: 1px solid #d8e2e7; padding-top: 10px; }
+summary { cursor: pointer; font-weight: 600; }
+form details .control { margin: 14px 0; }
+.charts { min-width: 0; display: grid; gap: 24px; align-content: start; }
+.charts > section { background: white; border: 1px solid #d8e2e7; border-radius: 8px; padding: 14px 10px; }
+.sweep-label { display: flex; align-items: center; gap: 8px; }
+select { border: 1px solid #b4c5ce; border-radius: 5px; padding: 5px; background: white; max-width: 90%; }
+.plot { width: 100%; height: 370px; }
+.chart-note, .footnote { font-size: 12px; color: #52616a; }
+.footnote { border-top: 1px solid #d8e2e7; padding-top: 12px; }
+.data { font-size: 12px; margin-top: 10px; }
+.table-scroll { overflow: auto; max-height: 260px; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid #d8e2e7; white-space: nowrap; }
+th { position: sticky; top: 0; background: #edf4f8; }
+#error { background: #fff1e9; border: 1px solid #b54a21; padding: 10px; color: #843318; }
+[aria-invalid=true] { border-color: #b54a21 !important; }
+@container (min-width: 950px) { .workspace { grid-template-columns: 280px minmax(0, 1fr); } form { grid-template-columns: minmax(0, 1fr); } }
+@container (max-width: 460px) { :host > section { padding: 12px; } header { align-items: flex-start; flex-direction: column; } h2 { font-size: 21px; } form { grid-template-columns: minmax(0, 1fr); } .charts > section { padding: 12px 2px; } .plot { height: 410px; } }
+/* Plotly injects these SVG layout rules into document.head, outside this shadow
+   root. Its layered canvases must share an origin for axes, hover, and data. */
+.js-plotly-plot .main-svg { position: absolute; top: 0; left: 0; pointer-events: none; }
+.js-plotly-plot .main-svg .draglayer { pointer-events: all; }
+.js-plotly-plot .crisp { shape-rendering: crispEdges; }
+.js-plotly-plot .user-select-none { user-select: none; }
+.js-plotly-plot .cursor-crosshair { cursor: crosshair; }
+.js-plotly-plot .cursor-pointer { cursor: pointer; }

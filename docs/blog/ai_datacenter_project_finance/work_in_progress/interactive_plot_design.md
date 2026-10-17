@@ -81,14 +81,14 @@ Layout: Assumption sliders on the left, cashflow plot on the top right, sweep pl
 [x] Add the self-contained Vite/TypeScript widget package under `widgets/ai_datacenter_project_finance/`.
 [x] Port the Python finance equations to `src/model.ts`, using a closed-form loan payment function instead of `numpy_financial`.
 [x] Add accounting tests and 40 live Python/TypeScript reference comparisons, including each monthly component.
-[ ] Build the custom element with native controls, accessible labels, responsive layout, and Plotly resize handling.
-[ ] Implement lazy Plotly import inside the custom element so non-widget pages do not load Plotly.
+[x] Build the custom element with native controls, accessible labels, responsive layout, and Plotly resize handling.
+[x] Implement lazy Plotly import inside the custom element so non-widget pages do not load Plotly.
 [x] Configure Vite to emit built assets into `docs/javascripts/ai_datacenter_project_finance_widget/`.
-[ ] Register the built module in `zensical.toml` as an `extra_javascript` module.
-[ ] Insert `<ai-dc-project-finance-widget></ai-dc-project-finance-widget>` into `docs/blog/ai_datacenter_project_finance.md`.
+[x] Register the built module in `zensical.toml` as an `extra_javascript` module.
+[x] Insert `<ai-dc-project-finance-widget></ai-dc-project-finance-widget>` into `docs/blog/ai_datacenter_project_finance.md`.
 [x] Validate the model build with `npm --prefix widgets/ai_datacenter_project_finance run build`.
-[ ] Validate the integrated widget with `uv run zensical serve`.
-[ ] Check the widget manually at desktop and mobile widths, including dropdown changes, extreme slider values, and plot resizing.
+[x] Validate the integrated widget with `uv run zensical serve`.
+[x] Check the widget manually at desktop and mobile widths, including dropdown changes, extreme slider values, and plot resizing.
 
 ## Risks And Decisions
 
@@ -97,3 +97,11 @@ Layout: Assumption sliders on the left, cashflow plot on the top right, sweep pl
 - Zensical navigation: current config does not enable instant navigation, but the Web Component approach should still work if it is enabled later because newly inserted custom elements upgrade automatically.
 - Numeric edge cases: zero interest, zero/near-zero billable output, and invalid monthly durations should be explicitly handled in the TypeScript model.
 - Publish workflow: built widget assets should be committed unless the GitHub Pages workflow is updated to run the npm build before `zensical build`.
+
+## Implemented design
+
+The widget is now integrated in the draft post. Controls stack above the charts
+in the blog column and on mobile; a side-by-side layout is reserved for wide
+containers. A pure `scenario.ts` boundary owns project summaries and sensitivity
+comparisons so the renderer does not repeat financial conventions. Numeric data
+tables accompany both plots. See the widget README for build and parity commands.

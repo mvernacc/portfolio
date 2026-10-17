@@ -305,8 +305,8 @@ fraction, and capacity charge (USD/kW-month). Show enough help to prevent
 capacity charges being added twice to an all-in rate. Facility split/residual,
 nonbillable allocation, and the two trend rates also belong in further details.
 The charts must use initial workload revenue per million output tokens, installed
-IT capacity, and separate terminal proceeds from token revenue. The widget is
-currently a model module and placeholder page; UI implementation is a later step.
+IT capacity, and separate terminal proceeds from token revenue. The widget implements both monthly equity cashflows and assumption sweeps, with
+keyboard-accessible controls and numeric tables for both charts.
 
 Before drawing empirical conclusions:
 
@@ -325,7 +325,7 @@ Before drawing empirical conclusions:
 Run from the repository root (Python dependencies are isolated by uv):
 
 ```sh
-uv run --no-project --with numpy --with numpy-financial python docs/blog/ai_datacenter_project_finance/test_model.py
+uv run --no-project --with numpy --with numpy-financial python -m docs.blog.ai_datacenter_project_finance.work_in_progress.test_model
 npm --prefix widgets/ai_datacenter_project_finance test
 npm --prefix widgets/ai_datacenter_project_finance run build
 ```

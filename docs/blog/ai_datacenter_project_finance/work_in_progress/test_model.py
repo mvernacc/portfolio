@@ -17,7 +17,7 @@ from docs.blog.ai_datacenter_project_finance.work_in_progress.ai_datacenter_proj
     PriceExample,
 )
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 
 
 def camel(name):

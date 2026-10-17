@@ -20,7 +20,7 @@ This post is meant for technical- or business-minded readers seeking an introduc
 
 ## A simple estimate of datacenter project finance
 
-TODO widget here
+<ai-dc-project-finance-widget>Enable JavaScript to explore the interactive cost model. The model and its assumptions are described below.</ai-dc-project-finance-widget>
 
 TODO "visual abstract" diagram explaining the cost-estimate method to a reader at a glance.
 
