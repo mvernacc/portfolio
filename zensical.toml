@@ -15,6 +15,9 @@ nav = [
     "software_projects.md",
   ]}
 ]
+exclude_docs = """
+work_in_progress/
+"""
 
 [project.theme]
 variant = "classic"

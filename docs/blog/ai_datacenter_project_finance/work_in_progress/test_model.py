@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 import numpy as np
-from ai_datacenter_project_finance_toy_model import (
+from docs.blog.ai_datacenter_project_finance.work_in_progress.ai_datacenter_project_finance_toy_model import (
     AiDatacenterFinanceModelAssumptions as Assumptions,
     calc_project_finance_terms,
     calc_price_per_Mtok_for_target_irr,

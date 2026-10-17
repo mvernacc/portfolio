@@ -19,7 +19,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import numpy as np
 
-from ai_datacenter_project_finance_toy_model import (
+from docs.blog.ai_datacenter_project_finance.work_in_progress.ai_datacenter_project_finance_toy_model import (
     AiDatacenterFinanceModelAssumptions,
     PriceExample,
     calc_monthly_cashflows,
