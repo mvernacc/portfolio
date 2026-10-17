@@ -1,18 +1,37 @@
 # What are the costs of serving a language model?
 
-TODO summary bullets
-TODO motivating question
+!!! abstract "Summary: TODO one sentence summary"
+    - TODO summary bullets
+
+As LLMs become useful tools for research and engineering,
+questions of cost become important:
+
+> - Might prices rise as providers pursue profitability, squeezing customers who become reliant?
+> - Might declining costs make these tools more accessible in lower-purchasing-power regions?
+> - How might changes in compute hardware, algorithms, energy, and financing change costs?
+
+We can't know for sure, particularly looking at frontier models from public data.
+
+Instead, this post helps you explore the cost factors for yourself.
+We'll make a simple estimate of the costs of building an AI datacenter and serving inference on a language model (assuming the model is already trained).
+We'll then compare this estimate to actual market prices for inference on open-weights models.
+
+This post is meant for technical- or business-minded readers seeking an introduction to the infrastructure behind their chat / coding agent interface, and what it costs to run.
 
 ## A simple estimate of datacenter project finance
+
+TODO widget here
+
+TODO "visual abstract" diagram explaining the cost-estimate method to a reader at a glance.
 
 To understand the factors that influence cost, we'll use a *project finance*
 model of an AI datacenter. The project starts with capital expenses (CAPEX: GPUs,
 networking equipment, land, concrete, construction worker's wages, etc.).
 During the construction period the project makes no revenue, so CAPEX is
-covered by a mix of cash put in by the project's equity investors and loans.
+covered by a mix of cash from the project's equity investors and loans.
 
-Then, the operational period, in which the project makes revenue by selling
-inference services (tokens) and pays operating costs, like electricity and
+Then, in the operational period, the project makes revenue by selling
+inference (tokens) and pays operating costs, like electricity and
 maintenance work. The *throughput* and *utilization* of the computing equipment
 determine how many tokens the project serves each month.
 
@@ -22,14 +41,18 @@ that will re-use the site).
 To keep the model simple, it neglects taxes and government incentives.
 
 We set up the above cashflows as a system of equations, and solve for one unknown:
-what price-per-token would the project need to charge
-to cover its operating costs, make its debt payments, and pay back
-its investors at their expected *internal rate of return*(IRR)?
+the price-per-token needed to cover operating costs, make debt payments, and pay back investors at their expected *internal rate of return* (IRR).
 
 This method is based on [Lazard's Levelized-Cost-of-Energy (LCOE)](https://www.lazard.com/research-insights/levelized-cost-of-energyplus-lcoeplus/) analysis,
 the industry-standard method for modeling the cost of energy generation.
 Lazard's LCOE estimates USD/MW-hr to pay back an energy project;
 this post estimates USD/MTok to pay back a datacenter project.
+
+??? info "Training costs not included"
+    This method only accounts for the costs of inference, not the costs of research and model training.
+    That's accurate for open-weights inference providers: they get the model weights for free.
+    Within this method, one way to simulate paying back training costs is to require a higher IRR.
+    Another way is to assume only a fraction of the datacenter's operating capacity is sold for revenue, with the remainder used internally for training.
 
 ### Key factors: throughput and cost of computing hardware
 
@@ -37,29 +60,41 @@ this post estimates USD/MTok to pay back a datacenter project.
 
 Throughput depends on model architecture and the inference engine that executes it, together called *algorithmic efficiency*, and hardware efficiency.
 
-- *Architecture's* first-order effect: bigger models have lower throughput (holding constant hardware compute and memory resources). Some architectures, like mixture-of-experts, make models faster by evaluating sections of the model in parallel, or only using some sections to predict each token.
+- *Architecture's* first-order effect: bigger models have lower throughput (holding constant compute and memory resources). Some architectures, like mixture-of-experts, make models faster by evaluating sections of the model in parallel, or only using some sections to predict each token.
 - The *inference engine* is the software running the model to generate token predictions. A better inference engine can run the same model faster on the same hardware.
-- As *Hardware* improves, more efficient GPUs do more computation per second per installed capacity. (In this post, throughput is normalized per power-rating of installed IT capacity, not per the power the GPU actually consumes in a given moment.)
+- As *hardware* improves, more efficient GPUs do more computation per second per installed capacity. (In this post, throughput is normalized per power-rating of installed IT capacity, not per the power the GPU actually consumes in a given moment.)
 
-Architecture, inference engine, and hardware are coupled. For example, recent GPUs can do many more floating-point operations per second, but only on smaller number representations (FP16, FP8 or FP4). Taking advantage of this capability requires a model and inference engine that can use small floats.
+Architecture, inference engine, and hardware are coupled. For example, some GPUs can do many more operations per second on number representations with fewer bits (e.g. [BF16](https://en.wikipedia.org/wiki/Bfloat16_floating-point_format) or 8-bit integers). This requires *quantization*: making the model and inference engine use fewer-bit representations.
 
-Even for the same LLM architecture and same inference engine on the same hardware, throughput is not a single number. Concurrency, how many users the hardware serves at once, creates a trade-off between throughput and per-user latency.
+Even for the same LLM architecture and same inference engine on the same hardware, throughput is not a single number. *Concurrency*, how many users the hardware serves at once, creates a trade-off between throughput and per-user latency.
 
 There is public benchmark data for throughput of open-weights models, on open-source inference engines, on modern hardware (e.g. [InferenceX](https://inferencex.semianalysis.com/)), and this post's estimates are calibrated with it [below](#simple-cost-estimates-vs-actual-price-of-open-weights-llms).
 Recent public benchmarks have throughput on the order of 0.1-10 MTok/s/MW (benchmarks run in mid-2026 on late-2024 B200 hardware).
 However, it is not publicly known how the architecture of these open models compares to frontier models. We should assume open inference engines (like vLLM) provide a lower bound on performance for frontier providers, who have both the incentive and resources to develop more efficient inference engines.
 
-
 *Capital expense* also has a large impact on cost, and is better-constrained by public data than throughput. Token cost scales linearly with CAPEX. CAPEX is dominated by GPU costs: B200 GPUs (released late 2024) cost about $26M/MW, the rest of the datacenter might cost around $10-16M/MW.
-
 
 ### Electricity availability matters more than cost
 
 TODO free vs highest US grid rates changes price by TODO percent.
 
+### Financing costs
+
+TODO sensitivity to interest rates.
+How might rising interest rates increase the break-even price of projects wiht very front-loaded costs?
+
 ## Simple cost estimates vs actual price of open-weights LLMs
+
+TODO
+
+Competitive commodity market --> prices likely reflect costs.
 
 ## Trends in the key factors
 
+TODO link to cost-per-intelligence-tier vs time data from https://artificialanalysis.ai/trends#language-model-cost-per-intelligence-index-task-by-intelligence-index-threshold-over-time
+
+---
 
 TODO footnote on use of AI in this blog post
+
+TODO final editing pass per *Style: Lessons in Clarity and Grace*.
