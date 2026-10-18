@@ -25,15 +25,3 @@ export function sweepPrices(assumptions: AiDatacenterFinanceModelAssumptions, hu
     } catch { return { value, selected: null }; }
   });
 }
-
-/** Undiscounted recovery of all capital and operating expenses, net of resale.
- * No equity IRR is defined for the hypothetical 100%-debt, zero-interest project.
- * Using zero debt in the cashflow helper exposes operating costs without debt service;
- * the numerator separately recovers the entire initial investment.
- */
-export function favorableReferencePrice(assumptions: AiDatacenterFinanceModelAssumptions): number {
-  const c = calcMonthlyCashflows({ ...assumptions, debtFraction: 0, debtInterestRate: 0 }, 1);
-  const total = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
-  return (assumptions.capex - total(c.nonEnergyOpex) - total(c.energyOpex)
-    - total(c.capacityOpex) - total(c.terminalValue)) / total(c.revenue);
-}

@@ -291,11 +291,8 @@ merchant service has different risks. Leverage sweeps hold rates fixed and
 therefore omit the feedback from leverage to required investor returns.
 
 The widget shows a conditional Monte Carlo band from independent plausible-range
-samples alongside the selected-input sweep. Its hatched reference assumes zero
-interest and zero required capital return, with favorable plausible endpoints for
-other inputs. This is a favorable scenario, not a proven lower bound. Section 11
-specifies sampling, endpoint conventions, financing-axis overrides, and the
-undiscounted capital-recovery formula.
+samples alongside the selected-input sweep. Section 11 specifies sampling and
+benchmark presets. The favorable-reference region has been removed.
 
 ## 8. Widget presentation and remaining calibration
 
@@ -360,8 +357,8 @@ that every combination inside those limits is realistic. Plausible ranges are
 working scenario choices, not calibrated statistical estimates.
 
 At each horizontal-axis value, the widget fixes that input and samples all other
-inputs independently. Samples are uniform in displayed units, except throughput
-is log-uniform and duration is discrete-uniform over whole months. Billable share
+inputs independently. Samples are uniform in displayed units; durations are
+discrete-uniform over whole months. Billable share
 has a zero-width plausible range at 100%, unless it is the horizontal-axis input.
 Independence omits correlations between capital costs and throughput, financing
 terms, or facility resale and operating life. The 5th–95th percentile band is the
@@ -374,24 +371,30 @@ it does not remove failures before calculating quantiles. Generated arrays are
 bundled into the widget, so slider changes only recompute the selected scenario,
 its one-parameter sweep, and monthly cashflows. A new axis selects another band.
 
-The favorable reference has zero interest and zero required return on all capital,
-equivalent to 100% debt at zero interest with project-wide capital recovery. It
-uses no equity IRR. Its required initial workload revenue is
+### Model and service presets
 
-\[
-P_{0,\mathrm{ref}} =
-\frac{C_0 + \sum_m O_m - V_T}
-     {\sum_m Q_m(1-e)^{a_m}},
-\]
+`presets.ts` chooses the highest aggregate throughput in a saved model/hardware
+sweep meeting a 25, 50 or 100 output tok/s/request target (inverse mean TPOT) and
+p99 first client response ≤10s. This is a mean-speed benchmark filter, not a
+minimum for every request. The first-response constraint is an illustrative fixed
+assumption. For Qwen, first response is a chunk under stream interval 50; mean
+TPOT is not inter-chunk latency. The selected GPT concurrencies are 128/64/32;
+Qwen's are 32/32/8. The Qwen tie is intentional.
 
-where `C_0` is initial CAPEX, `O_m` includes energy, capacity charges and other
-operating expense, `V_T` is terminal facility proceeds, `Q_m` is billable output
-in millions of tokens, and `a_m` is operating age in years. The throughput trend
-is included in `Q_m`. Favorable plausible endpoints are selected explicitly in
-configuration. The horizontal input is held at x, except debt share/rate and the
-equity hurdle always retain zero-financing-cost treatment, giving flat references
-on those axes. Shorter construction is irrelevant without financing costs.
-Longer life is a stipulated favorable choice, not necessarily the cheapest when
-prices erode. The hatched area below this curve is therefore **below the favorable
-reference scenario**, not a proven lower bound or a region of unprofitability.
-Selected values outside plausible ranges may fall inside the hatching.
+Both cases use nominal 8192/1024 text workloads on B200: GPT-OSS-120B FP4/vLLM/TP1
+and Qwen3.5-397B-A17B FP8/SGLang/TP4. Aggregate output per GPU is multiplied by 8
+and divided by 0.015015 MW of installed IT capacity (14.3 kW plus 5%). Whole-server
+replication is assumed, not measured. Throughput plausible ranges are 75–100%
+of the selected benchmark, a uniform **assumed deployment-transfer allowance**,
+not empirical confidence limits. The allowance is aggregate replication loss,
+not an assertion that every request slows by 25%; latency under replication is
+unverified. It replaces mixing unrelated models and concurrency operating choices
+into one huge uncertainty range. Selected throughput can still be edited.
+
+Capital cost defaults to $40.83m/MW IT with plausible range $38.70–50.51m from the
+saved quote/facility scenarios. Model/speed changes reset throughput while
+preserving financial edits. Other ranges remain provisional and independent.
+Benchmark IDs and provenance are kept in saved data and exposed in widget fine print.
+The UI has shared assumptions and sensitivity/cashflow tabs, no numerical price
+headline, and no favorable-reference curve. Values remain available in hovers
+and tables with roughly two significant figures.
