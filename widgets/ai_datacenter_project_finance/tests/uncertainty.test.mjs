@@ -1,10 +1,12 @@
+import { retirementPrice, RETIREMENT_POLICY } from '../src/retirement.ts';
+import { TRAJECTORIES } from '../src/trajectories.ts';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { PRESETS, BENCHMARK_POLICY, benchmarkFor, scenarioPreset } from '../src/presets.ts';
 import { Pcg32 } from '../src/random.ts';
 import { CONTROLS, DEFAULT_SELECTION, axisValues } from '../src/config.ts';
-import { buildUncertainty, sampleValue } from '../src/uncertainty.ts';
+import { buildUncertainty, rescaleThroughputBands, sampleValue } from '../src/uncertainty.ts';
 
 test('PCG32 matches official seed42 sequence54 reference vector', () => {
   const rng = new Pcg32(42n, 54n);
@@ -45,6 +47,8 @@ test('committed precomputation matches current configuration fingerprint', () =>
   const data=JSON.parse(readFileSync(new URL('../src/uncertainty.generated.json',import.meta.url)));
   assert.deepEqual(data.policy, BENCHMARK_POLICY);
   for (const p of PRESETS) {
+    assert.equal(data.presets[p.id].metadata.retirementPolicy, RETIREMENT_POLICY);
+    assert.deepEqual(data.presets[p.id].metadata.trajectory, p.trajectory);
     assert.equal(data.presets[p.id].metadata.configuration, JSON.stringify(p.controls));
     for (const c of p.controls) assert.deepEqual(data.presets[p.id].axes[c.key].x, axisValues(c));
   }
@@ -70,4 +74,47 @@ test('preset ranges follow the selected benchmark, with independent uniform depl
   const low=buildUncertainty(8,scenarioPreset('qwen35',100).controls);
   const high=buildUncertainty(8,scenarioPreset('gpt-oss',100).controls);
   assert.ok(low.axes.capex.p05[10] > high.axes.capex.p05[10]);
+});
+
+test('paired trajectories remain fixed and rescaled bands equal independent computations', () => {
+  for (const t of TRAJECTORIES) {
+    const baseline = scenarioPreset('gpt-oss', 25, t);
+    const base = buildUncertainty(4, baseline.controls, t);
+    for (const model of ['gpt-oss', 'qwen35']) for (const speed of [25, 50, 100]) {
+      const preset = scenarioPreset(model, speed, t);
+      assert.equal(preset.defaults.priceAnnualErosion, t.priceAnnualErosion);
+      assert.equal(preset.defaults.throughputAnnualChange, t.throughputAnnualChange);
+      assert.ok(!preset.controls.some(c => ['priceAnnualErosion', 'throughputAnnualChange'].includes(c.key)));
+      const scaled = rescaleThroughputBands(base, preset.controls);
+      const direct = buildUncertainty(4, preset.controls, t);
+      for (const c of preset.controls) {
+        assert.deepEqual(scaled.axes[c.key].x, direct.axes[c.key].x);
+        for (const percentile of ['p05', 'p95']) direct.axes[c.key][percentile].forEach((value, i) => {
+          assert.ok(Math.abs(scaled.axes[c.key][percentile][i] - value) < 1e-10 * Math.max(1, value));
+        });
+      }
+    }
+  }
+});
+test('band reuse rejects unrelated configuration changes', () => {
+  const base = buildUncertainty(4);
+  const altered = CONTROLS.map(c => c.key === 'capex' ? {...c, plausible: [40,50]} : c);
+  assert.throws(() => rescaleThroughputBands(base, altered), /Only proportionally/);
+});
+
+test('fixed trajectory bands use the same paired rates as selected project pricing', () => {
+  for (const t of TRAJECTORIES) {
+    const preset = scenarioPreset('qwen35', 50, t);
+    const controls = preset.controls.map(c => {
+      const value = preset.defaults[c.key] / (c.scale ?? 1);
+      return {...c, plausible: [value, value]};
+    });
+    const bands = buildUncertainty(2, controls, t);
+    const axis = bands.axes.energyCostPerMWh;
+    axis.x.forEach((value, i) => {
+      const expected = retirementPrice({...preset.defaults, energyCostPerMWh: value}, preset.defaults.equityHurdle);
+      assert.ok(Math.abs(axis.p05[i] / expected - 1) < 1e-12);
+      assert.ok(Math.abs(axis.p05[i] / axis.p95[i] - 1) < 1e-12);
+    });
+  }
 });

@@ -120,7 +120,7 @@ Names are Python identifiers; TypeScript uses their camelCase equivalents.
 | `capacity_charge_per_kW_month` | $0/kW-month | Separate charge on reserved facility capacity |
 | `non_energy_annual_opex` | $1m/year/MW IT | Cash OPEX excluding electricity and capital recovery; uncalibrated |
 | `construction_years` | 2 | Equal end-of-month CAPEX installments |
-| `operating_years` | 5 | Economic horizon before IT replacement |
+| `operating_years` | 5 | Maximum operating life and original loan maturity |
 | `debt_fraction` | 65% | Debt share of initial CAPEX, before capitalized interest |
 | `debt_interest_rate` | 8.5% | Nominal annual debt rate, compounded monthly |
 | Target equity return (function argument) | 15% | Effective annual pre-tax NPV hurdle |
@@ -153,12 +153,13 @@ commissioning would require a different draw schedule.
 
 ## 4. Monthly timing and operating trends
 
-Let C = construction months, N = operating months, H = C+N. Both durations must
-be positive whole months. There is no cashflow at month 0. Construction spending
+Let C = construction months, N = maximum operating months, and T = chosen
+retirement month counted from operation start, with 1 <= T <= N. The project ends
+at H = C+T. Construction and maximum operating durations must be positive whole months. There is no cashflow at month 0. Construction spending
 occurs at ends of months 1..C. Operation starts immediately thereafter, with
 cash received/paid at ends of months C+1..H. Each month has 365.25*24/12 hours.
 
-For operating month k=1..N, use age t_k=(k-1)/12 years. The first operating
+For operating month k=1..T, use age t_k=(k-1)/12 years. The first operating
 month uses the initial price and throughput; month 13 is one annual step later.
 We use beginning-of-month operating levels and end-of-month cash settlement.
 There is no erosion/growth during construction: price and throughput are quoted
@@ -221,14 +222,22 @@ construction interest is financed with additional debt. Consequently L is not
 the final debt balance divided by initial CAPEX. There are no financing fees,
 interest reserves, debt-service reserves, taxes, or working-capital requirements.
 
-The construction balance converts to a fully amortizing N-month loan:
+The construction balance converts to a fully amortizing N-month loan. This
+original maturity stays fixed while evaluating different retirement dates:
 
     D = B_C*j / [1-(1+j)^(-N)]     when j > 0
     D = B_C/N                     when j = 0
 
-D is the monthly payment. The loan has zero remaining principal after the final
-payment. Borrowing rate and debt fraction remain fixed, with no refinancing or
-automatic credit-risk adjustment.
+D is the monthly payment. After each scheduled operating payment, the remaining
+balance is:
+
+    B_(C+k) = B_(C+k-1)*(1+j) - D
+
+At retirement T, the remaining balance B_(C+T) is repaid as a separate terminal
+cash outflow, after the scheduled payment. At T=N it is zero (up to floating-point
+roundoff). Borrowing rate and debt fraction remain fixed, with no refinancing,
+prepayment fee, or automatic credit-risk adjustment. Early retirement does not
+erase debt or recalculate the original monthly payment.
 
 If f is facility CAPEX fraction and s is terminal facility residual fraction:
 
@@ -236,35 +245,59 @@ If f is facility CAPEX fraction and s is terminal facility residual fraction:
 
 V is received once, at month H, as net realizable proceeds after disposition
 costs but before taxes (the entire model is pre-tax). It is not annual income,
-depreciation, or a reduction in initial CAPEX/debt. No debt repayment is subtracted
-again at sale because scheduled amortization has already retired the loan.
-The residual fraction is specified **at the chosen horizon**, not an annual
-retention rate. When sweeping operating life, holding s fixed is a conditional
-comparison; reassess the terminal value for each life in calibrated scenarios.
+depreciation, or a reduction in initial CAPEX/debt. The outstanding debt is paid separately at sale.
+The residual fraction is **constant for every possible retirement date**, not an
+annual retention rate. This assumes the reusable site's value largely comes from
+completed construction, permitting and grid connection, rather than depreciation
+over the few modeled years. It is an explicit simplifying assumption, not an
+appraisal. There are no shutdown fees or operating costs after retirement. Compute
+hardware has zero terminal value; its replacement belongs to the successor project.
 
 ## 7. Equity NPV, required initial revenue, and IRR
 
-Equity cashflow F_m is:
+For a candidate retirement month T, equity cashflow F_m is:
 
     -(1-L)*A/C                         m=1..C
-    R_k - monthly_operating_cost - D   m=C+k, k=1..N
-    plus V                            only at m=H
+    R_k - monthly_operating_cost - D   m=C+k, k=1..T
+    plus V - B_(C+T)                  only at m=C+T
 
 At effective annual hurdle h, discount month m by w_m=(1+h)^(-m/12).
 The nominal debt convention differs intentionally from effective annual equity
 returns. To compare identical effective debt/equity rates h, set nominal debt
 to 12*((1+h)^(1/12)-1).
 
-Because R_k is linear in P0, solve directly:
+Revenue is linear in initial price P0. For each possible retirement date define:
 
-    P0 = [sum_construction(equity_contribution*w_m)
-          + sum_operations((monthly_operating_cost+D)*w_m) - V*w_H]
-         / sum_operations(Q_k * (1-e)^t_k * w_(C+k))
+    a_T = sum_(k=1..T)(Q_k * (1-e)^t_k * w_(C+k))
+    b_T = sum_construction(equity_contribution*w_m)
+          + sum_(k=1..T)((monthly_operating_cost+D)*w_(C+k))
+          + (B_(C+T) - V)*w_(C+T)
+    NPV(P0,T) = P0*a_T - b_T
+    P0_required(T) = max(0, b_T/a_T)
 
-The denominator includes both throughput change and price erosion. Discounting
-output alone would solve the wrong initial price when prices change. The code
-uses the revenue series at unit initial price as this coefficient, and evaluates
-costs and proceeds from the same monthly components used by the cashflow chart.
+Discounting output alone would solve the wrong initial price when prices change.
+The denominator includes both throughput change and price erosion. The terminal
+debt payoff is additional to scheduled debt payments, not a duplicate payment.
+
+Evaluate every whole operating month T=1..N and select the lowest required
+nonnegative initial price. This jointly solves the initial price and retirement
+date; it does not stop at the first negative equity cashflow. For positive valid
+prices, the chosen date has zero NPV and all other dates have NPV no greater than
+zero at that price. Prefix sums of revenue and operating costs allow all dates to
+be checked in linear time, rather than constructing a full cashflow per candidate.
+If sale proceeds already cover discounted costs, required price is zero and the
+hurdle is exceeded rather than forcing a negative token price. Among zero-price
+candidates choose the largest NPV; otherwise exact ties choose the earliest month.
+
+The maximum-life slider also sets original loan maturity. Changing that slider
+therefore changes financing as well as the latest permitted retirement date;
+comparing candidate dates *within* a slider setting leaves the loan fixed.
+
+Each selected scenario and each Monte Carlo draw independently optimizes its own
+retirement with **perfect foreknowledge** of its price and throughput trajectory.
+The band thus describes an optimistic ability to adapt within every scenario,
+not uncertainty around a common retirement policy. There is no explicit hardware
+replacement, stochastic learning, or option to postpone investment.
 
 For conventional negative-then-positive equity cashflows, the solved price
 produces IRR h. Price erosion and terminal proceeds can create multiple sign
@@ -369,7 +402,7 @@ those same scenarios at successive x values. Percentiles linearly interpolate
 between adjacent sorted observations. Generation fails on any invalid scenario;
 it does not remove failures before calculating quantiles. Generated arrays are
 bundled into the widget, so slider changes only recompute the selected scenario,
-its one-parameter sweep, and monthly cashflows. A new axis selects another band.
+its one-parameter sweep, and monthly cashflows. Every evaluated scenario chooses its own retirement month with perfect foreknowledge. A new axis selects another band.
 
 ### Model and service presets
 
@@ -419,3 +452,30 @@ streaming target. Hardware, precision, service quality, margins, actual token
 ratios, caching and fees limit comparability. Prices do not establish costs or
 validate the model. References stay fixed when financial inputs or speed targets
 change; cashflows use the solved revenue as before.
+
+## 12. Evolving workload mix and historical figures
+
+The project covers one compute-hardware cohort's economically useful life. No
+compute replacement is modeled within the project. Terminal value represents
+net proceeds from transferring reusable non-compute facility assets to a new
+project; compute equipment retains zero residual value.
+
+The selected LLM should anchor initial operations, rather than imply unchanged
+weights and workload over the entire life. Future effective prices and throughput
+must describe the same evolving service mix. The widget now fixes their annual changes jointly through the selected trajectory;
+only the remaining uncertain inputs are independently sampled, as described in
+section 11. Adaptation (30% erosion, 20% throughput growth) is the default.
+
+The [trajectory research and recommendations](research/trajectory_recommendations.md)
+collect dated public price/benchmark evidence, distinguish observed improvements
+from scenario judgments, propose paired rate sensitivities, and outline figure
+ideas for the author's Trends section. Detailed provider and throughput evidence
+are linked there. The three scenarios from the main recommendation table are now
+implemented; the harder-service-mix alternative is not. The Trends section contains
+three historical figures and factual captions, leaving interpretation to the author.
+
+`plot_historical_trends.py` regenerates SVG/PNG figures from saved CSV/JSON inputs
+in `data/` without network access (requires matplotlib). Epoch's source is pinned
+to a repository commit; its cost records are retrospective release-date comparisons,
+not archived launch tariffs. Provider tariff observations and separate H100 gains
+retain their own dates and comparison qualifications.

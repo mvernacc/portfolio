@@ -1,3 +1,4 @@
+import { TRAJECTORIES, DEFAULT_TRAJECTORY, trajectoryRates, type Trajectory } from './trajectories.ts';
 /** Owns benchmark selection and deployment-transfer assumptions. Neither the UI
  * nor Monte Carlo needs to know how replica counts or latency metrics are stored.
  */
@@ -25,12 +26,12 @@ export function benchmarkFor(modelId: string, target: number) {
   return { model, row, throughput };
 }
 
-export function scenarioPreset(modelId: string, target: number) {
+export function scenarioPreset(modelId: string, target: number, trajectory: Trajectory = DEFAULT_TRAJECTORY) {
   const { model, row, throughput } = benchmarkFor(modelId, target);
   const controls: Control[] = CONTROLS.map(c => c.key === 'throughput'
     ? { ...c, plausible: BENCHMARK_POLICY.deploymentFraction.map(f => f * throughput / 1e6) as [number, number] }
     : c.key === 'capex' ? { ...c, plausible: [38.70, 50.51] } : { ...c });
-  return { id: `${modelId}-${target}`, model, row, controls,
-    defaults: { ...DEFAULT_SELECTION, throughput, capex: 41e6, facilityCapexFraction: .29 } };
+  return { id: `${modelId}-${target}-${trajectory.id}`, model, row, controls, trajectory,
+    defaults: { ...DEFAULT_SELECTION, ...trajectoryRates(trajectory), throughput, capex: 41e6, facilityCapexFraction: .29 } };
 }
-export const PRESETS = MODELS.flatMap(m => STREAMING_TARGETS.map(target => scenarioPreset(m.id, target)));
+export const PRESETS = MODELS.flatMap(m => STREAMING_TARGETS.flatMap(target => TRAJECTORIES.map(t => scenarioPreset(m.id, target, t))));

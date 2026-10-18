@@ -1,3 +1,4 @@
+import { TRAJECTORIES, trajectoryFor, trajectoryRates } from './trajectories';
 import { type AiDatacenterFinanceModelAssumptions } from './model';
 import { evaluateProject, sweepPrices } from './scenario';
 import styles from './styles.css?inline';
@@ -32,7 +33,9 @@ class FinanceWidget extends HTMLElement {
         <section aria-label="Interactive inference cost model">
           <header><h2>Explore inference costs</h2><button type="button" id="reset">Reset</button></header>
           <p class="intro">How do assumptions change the initial workload revenue needed to recover investment?</p>
-          <div class="preset-controls"><label for="model">Model and hardware<select id="model">${MODELS.map(m => `<option value="${m.id}">${m.label}</option>`).join('')}</select></label><label for="streaming">Minimum benchmark streaming speed<select id="streaming">${STREAMING_TARGETS.map(v => `<option value="${v}" ${v === 50 ? 'selected' : ''}>${v} output tokens/s/request</option>`).join('')}</select></label></div>
+          <div class="preset-controls"><label for="model">Starting model and hardware<select id="model">${MODELS.map(m => `<option value="${m.id}">${m.label}</option>`).join('')}</select></label><label for="streaming">Minimum benchmark streaming speed<select id="streaming">${STREAMING_TARGETS.map(v => `<option value="${v}" ${v === 50 ? 'selected' : ''}>${v} output tokens/s/request</option>`).join('')}</select></label></div>
+          <label class="trajectory-label" for="trajectory">Price and throughput trajectory<select id="trajectory">${TRAJECTORIES.map(t => `<option value="${t.id}">${t.label}</option>`).join('')}</select></label>
+          <p class="chart-note" id="trajectory-summary"></p>
           <p id="error" role="alert" hidden></p>
           <div class="workspace"><form aria-label="Project assumptions" novalidate>
             <div id="main-controls">${this.controls.filter(c => !c.advanced).map(c => this.controlMarkup(c)).join('')}</div>
@@ -42,20 +45,20 @@ class FinanceWidget extends HTMLElement {
             <section id="panel-sensitivity" role="tabpanel" aria-labelledby="tab-sensitivity">
               <label class="sweep-label" for="sweep">Vary <select id="sweep">${this.controls.map(c => `<option value="${c.key}">${c.label}</option>`).join('')}</select></label>
               <div id="sensitivity" class="plot" role="img" aria-label="Required initial revenue versus the selected assumption"></div>
-              <div class="plot-key" aria-label="Chart key"><span><i class="point-key"></i> Selected values</span><span><i class="line-key"></i> Vary horizontal input</span><span><i class="market-key"></i> Provider prices</span><span><i class="plausible-key"></i> Plausible horizontal range</span><span><i class="band-key"></i> Other inputs: 5th–95th percentiles</span></div><p class="chart-note">Independent plausible-range scenarios; not a confidence interval. Model and speed set the band; sliders move the point and line.</p>
+              <div class="plot-key" aria-label="Chart key"><span><i class="point-key"></i> Selected values</span><span><i class="line-key"></i> Vary horizontal input</span><span><i class="market-key"></i> Provider prices</span><span><i class="plausible-key"></i> Plausible horizontal range</span><span><i class="band-key"></i> Other inputs: 5th–95th percentiles</span></div><p class="chart-note">Conditional on the trajectory, with retirement optimized in each scenario; other uncertain inputs sampled independently. Not a confidence interval. Model, speed and trajectory set the band; sliders move the point and line.</p>
               <p id="market-status" class="chart-note"></p>
               <p id="sweep-note" class="chart-note"></p>
               <details class="data"><summary>View sensitivity values</summary><div class="table-scroll"><table><thead><tr><th id="sweep-heading">Assumption</th><th>Selected sweep<br>USD/MTok</th><th>5th percentile<br>USD/MTok</th><th>95th percentile<br>USD/MTok</th></tr></thead><tbody id="sweep-data"></tbody></table></div></details>
             </section>
-            <section id="panel-cashflow" role="tabpanel" aria-labelledby="tab-cashflow" hidden><div id="cashflow" class="plot" role="img" aria-label="Monthly revenue, terminal proceeds, expenses, and net equity cashflow"></div><p class="chart-note">Cashflows use your selected assumptions and the initial revenue that meets the equity hurdle. Construction uses equity contributions; operating costs include debt service. Facility proceeds arrive in the last month.</p>
-              <details class="data"><summary>View monthly cashflows</summary><div class="table-scroll"><table><thead><tr><th>Month</th><th>Revenue</th><th>Facility sale</th><th>Equity CAPEX</th><th>Other OPEX</th><th>Energy</th><th>Capacity</th><th>Debt service</th><th>Net</th></tr></thead><tbody id="cashflow-data"></tbody></table></div><p class="chart-note">USD per MW IT per month; expenses are negative.</p></details>
+            <section id="panel-cashflow" role="tabpanel" aria-labelledby="tab-cashflow" hidden><div id="cashflow" class="plot" role="img" aria-label="Monthly revenue, terminal proceeds, expenses, and net equity cashflow"></div><p class="chart-note" id="retirement-note" aria-live="polite"></p>
+              <details class="data"><summary>View monthly cashflows</summary><div class="table-scroll"><table><thead><tr><th>Month</th><th>Revenue</th><th>Facility sale</th><th>Equity CAPEX</th><th>Other OPEX</th><th>Energy</th><th>Capacity</th><th>Debt service</th><th>Debt payoff</th><th>Net</th></tr></thead><tbody id="cashflow-data"></tbody></table></div><p class="chart-note">USD per MW IT per month; expenses are negative.</p></details>
             </section>
           </div></div>
-          <details class="method"><summary>Benchmark and modeling assumptions</summary><p id="benchmark-note"></p><div id="market-note"></div>
+          <details class="method"><summary>Benchmark and modeling assumptions</summary><p id="benchmark-note"></p><p id="trajectory-note"></p><div id="market-note"></div>
             <p>Text-only workload: nominal 8,192 input / 1,024 output tokens (sampled lengths). The highest aggregate-throughput saved configuration meeting the speed target and p99 first-response time ≤10 seconds is selected. Streaming speed means reciprocal mean time per output token, not a minimum guaranteed for every request. First response may include hidden reasoning. Qwen's 25 and 50 targets select the same measured configuration.</p>
             <p>Installed capacity: eight B200 GPUs per 15.015 kW IT (14.3 kW server plus 5% ancillary allowance). Throughput samples are uniform from 75–100% of the selected benchmark's aggregate output. This is an assumed deployment/replication allowance, not observed variation. It does not assert a 25% slowdown per request; service quality under replication remains unverified. Edited throughput values explore deviations from the benchmark and do not certify the streaming target.</p>
-            <p>Capital cost range: $38.70–50.51 million/MW IT, default $41 million, based on the saved server quote and facility scenarios. Other ranges are provisional assumptions. All inputs are sampled independently, even where real-world correlations are likely. ${MONTE_CARLO.samples.toLocaleString()} reproducible PCG32 draws; uniform in displayed units, discrete-uniform whole months, billable inference share fixed at 100% unless it is the horizontal-axis input. The same draws are reused across each curve. The highlighted slider strips show plausible ranges; selections may lie outside them. Changing model or speed resets throughput to its benchmark; other edits remain.</p>
-            <p>Revenue includes associated input revenue per million generated output tokens; it is not an output-only API tariff. Aggregate throughput includes prefill and decode over the full serving interval. Price erosion and throughput changes compound annually from operation start. All costs are per MW of installed IT capacity. Taxes and training costs are excluded.</p>
+            <p>Capital cost range: $38.70–50.51 million/MW IT, default $41 million, based on the saved server quote and facility scenarios. Other ranges are provisional assumptions. Price erosion and throughput growth are fixed together by the selected trajectory; all remaining uncertain inputs are sampled independently, even where real-world correlations are likely. Trajectories are not pooled or assigned probabilities. ${MONTE_CARLO.samples.toLocaleString()} reproducible PCG32 draws; uniform in displayed units, discrete-uniform whole months, billable inference share fixed at 100% unless it is the horizontal-axis input. The same draws are reused across each curve. The highlighted slider strips show plausible ranges; selections may lie outside them. Changing model or speed resets throughput to its benchmark; other edits remain.</p>
+            <p>Revenue includes associated input revenue per million generated output tokens; it is not an output-only API tariff. Aggregate throughput includes prefill and decode over the full serving interval. Price erosion and throughput changes compound annually from operation start. The starting model anchors the initial workload, then the service mix may evolve on the same compute hardware. Retirement is chosen monthly, from the first operating month through the maximum life, to minimize the initial revenue meeting the equity hurdle. Each selected or sampled scenario assumes perfect foreknowledge of its trajectory; this is an optimistic adaptation assumption, not a retirement policy under uncertainty. Loan amortization stays fixed to the maximum life; retirement repays any remaining debt after that month’s scheduled payment. Facility proceeds are the same residual fraction of initial facility cost at every retirement date. No hardware replacement is included: the compute cohort has zero resale value and the reusable facility transfers to a successor project. No operating costs or shutdown fees are modeled after retirement. All costs are per MW of installed IT capacity. Taxes and training costs are excluded.</p>
           </details>
         </section>`;
       this.root.querySelector('form')!.addEventListener('submit', event => event.preventDefault());
@@ -74,6 +77,7 @@ class FinanceWidget extends HTMLElement {
         this.assumptions = { ...this.preset.defaults }; this.hurdle = DEFAULT_HURDLE;
         this.syncControls(); this.scheduleRender();
       });
+      this.element('trajectory').addEventListener('change', () => this.changePreset(false));
       for (const id of ['model', 'streaming']) this.element(id).addEventListener('change', () => this.changePreset());
       this.root.querySelectorAll<HTMLButtonElement>('[data-tab]').forEach(button => {
         button.addEventListener('click', () => this.selectTab(button.dataset.tab!));
@@ -107,9 +111,10 @@ class FinanceWidget extends HTMLElement {
     }
     this.scheduleRender();
   }
-  private changePreset() {
-    this.preset = scenarioPreset((this.element('model') as HTMLSelectElement).value, Number((this.element('streaming') as HTMLSelectElement).value));
-    this.assumptions.throughput = this.preset.defaults.throughput;
+  private changePreset(resetThroughput = true) {
+    this.preset = scenarioPreset((this.element('model') as HTMLSelectElement).value, Number((this.element('streaming') as HTMLSelectElement).value), trajectoryFor((this.element('trajectory') as HTMLSelectElement).value));
+    if (resetThroughput) this.assumptions.throughput = this.preset.defaults.throughput;
+    Object.assign(this.assumptions, trajectoryRates(this.preset.trajectory));
     this.element('main-controls').innerHTML = this.controls.filter(c => !c.advanced).map(c => this.controlMarkup(c)).join('');
     this.element('advanced-controls').innerHTML = this.controls.filter(c => c.advanced).map(c => this.controlMarkup(c)).join('');
     this.syncControls(); this.updateBenchmarkNote(); this.scheduleRender();
@@ -173,6 +178,11 @@ class FinanceWidget extends HTMLElement {
   private async render() {
     if (!this.plotly || !this.isConnected || this.root.querySelector('[aria-invalid="true"]')) return;
     try {
+      const t = this.preset.trajectory;
+      const multiplier = (1 - t.priceAnnualErosion) * (1 + t.throughputAnnualChange);
+      this.element('trajectory-summary').textContent = `Illustrative annual path: price −${Math.round(t.priceAnnualErosion * 100)}%; throughput +${Math.round(t.throughputAnnualChange * 100)}%; revenue per active capacity −${Math.round((1 - multiplier) * 100)}%.`;
+      const years = this.assumptions.operatingYears;
+      this.element('trajectory-note').textContent = `${t.description} These paired rates are author-chosen sensitivities informed by historical evidence, not fitted forecasts. They compound from operation start, with power and other operating costs held constant. At the maximum life of ${Number(years.toPrecision(2))} operating years (if not retired earlier): price ×${Number(((1 - t.priceAnnualErosion) ** years).toPrecision(2))}, throughput ×${Number(((1 + t.throughputAnnualChange) ** years).toPrecision(2))}, revenue per active capacity ×${Number((multiplier ** years).toPrecision(2))}. Sustained gains are unverified; retirement can precede this limit. Market overlays compare initial revenue only, not future contracts. Changing trajectory preserves other edits; Reset restores defaults within the selected model, speed and trajectory.`;
       const project = evaluateProject(this.assumptions, this.hurdle);
       const market = marketComparison(this.preset.model.id);
       const prices = market.providers.map(p => p.workloadRevenue);
@@ -190,10 +200,12 @@ class FinanceWidget extends HTMLElement {
       const sweep = sweepPrices(this.assumptions, this.hurdle, control.key, xs.map(v => v * (control.scale ?? 1)));
       const tableSweep = sweepPrices(this.assumptions, this.hurdle, control.key, band.x.map(v => v * (control.scale ?? 1)));
       this.element('error').hidden = true;
-      this.element('sweep-note').textContent = `${sweep.some(p => p.selected === null) ? 'Gaps indicate no finite nonnegative price meets the return hurdle. ' : ''}${control.key === 'operatingYears' ? 'Facility resale fraction is held fixed across operating lives; reassess it when calibrating a scenario.' : ''}`;
+      this.element('sweep-note').textContent = `${sweep.some(p => p.selected === null) ? 'Gaps indicate no finite nonnegative price meets the return hurdle. ' : ''}${control.key === 'operatingYears' ? 'Changing maximum life also changes the original loan maturity. Retirement is optimized within that limit; facility resale proceeds do not depend on retirement date.' : ''}`;
       this.element('sweep-heading').textContent = `${control.label} (${control.unit})`;
       this.element('sweep-data').innerHTML = tableSweep.map((p, i) => `<tr><td>${Number(band.x[i].toPrecision(2))}</td><td>${p.selected === null ? 'Not feasible' : money.format(p.selected)}</td><td>${money.format(band.p05[i])}</td><td>${money.format(band.p95[i])}</td></tr>`).join('');
       const c = project.cashflows;
+      const retirementMonth = c.months[c.months.length - 1];
+      this.element('retirement-note').textContent = `Chosen retirement: ${project.retirementMonths} operating months (maximum ${project.maximumOperatingMonths}); month ${retirementMonth} from construction start. Initial revenue and retirement jointly meet the equity hurdle with perfect foreknowledge. Facility sale and remaining debt payoff occur at retirement.`;
       const series = [
         { key: 'revenue', name: 'Token revenue', color: '#17876b' },
         { key: 'terminalValue', name: 'Facility sale', color: '#95c9a6' },
@@ -202,6 +214,7 @@ class FinanceWidget extends HTMLElement {
         { key: 'energyOpex', name: 'Electricity', color: '#dbb55e' },
         { key: 'capacityOpex', name: 'Power capacity', color: '#a76c52' },
         { key: 'debtService', name: 'Debt service', color: '#6389b2' },
+        { key: 'debtPayoff', name: 'Debt payoff', color: '#334f77' },
       ] as const;
       this.element('cashflow-data').innerHTML = c.months.slice(1).map(month => `<tr><td>${month}</td>${[...series.map(s => c[s.key][month]), c.net[month]].map(v => `<td>${money.format(v)}</td>`).join('')}</tr>`).join('');
       const common = { autosize: true, paper_bgcolor: '#ffffff', plot_bgcolor: '#ffffff', font: { family: 'system-ui, sans-serif', color: '#263640', size: 12 }, margin: { l: 62, r: 12, t: 16, b: 110 }, legend: { orientation: 'h', y: -.27, x: 0, font: { size: 11 } }, hovermode: 'closest' };
@@ -217,7 +230,7 @@ class FinanceWidget extends HTMLElement {
       else await this.plotly.react(this.element('cashflow'), [
           ...series.map(s => ({ x: c.months.slice(1), y: c[s.key].slice(1).map(v => v / 1e6), type: 'bar', name: s.name, marker: { color: s.color }, hovertemplate: 'Month %{x}<br>$%{y:.2g}m / MW IT<extra>%{fullData.name}</extra>' })),
           { x: c.months.slice(1), y: c.net.slice(1).map(v => v / 1e6), type: 'scatter', mode: 'lines', name: 'Net equity cashflow', line: { color: '#20262c', width: 2 }, hovertemplate: 'Month %{x}<br>$%{y:.2g}m / MW IT<extra>Net equity cashflow</extra>' },
-        ], { ...common, barmode: 'relative', bargap: .08, xaxis: { title: { text: 'Month from construction start' } }, yaxis: { title: { text: 'million USD / MW IT / month' }, zeroline: true, zerolinewidth: 2, zerolinecolor: '#555', automargin: true }, shapes: [{ type: 'line', x0: this.assumptions.constructionYears * 12 + .5, x1: this.assumptions.constructionYears * 12 + .5, y0: 0, y1: 1, yref: 'paper', line: { color: '#777', dash: 'dot' } }], annotations: [{ x: this.assumptions.constructionYears * 12 + .5, y: 1, yref: 'paper', text: 'Operations begin', showarrow: false, xanchor: 'left', font: { size: 10 } }] }, config);
+        ], { ...common, barmode: 'relative', bargap: .08, xaxis: { title: { text: 'Month from construction start' } }, yaxis: { title: { text: 'million USD / MW IT / month' }, zeroline: true, zerolinewidth: 2, zerolinecolor: '#555', automargin: true }, shapes: [{ type: 'line', x0: this.assumptions.constructionYears * 12 + .5, x1: this.assumptions.constructionYears * 12 + .5, y0: 0, y1: 1, yref: 'paper', line: { color: '#777', dash: 'dot' } }, { type: 'line', x0: retirementMonth, x1: retirementMonth, y0: 0, y1: 1, yref: 'paper', line: { color: '#777', dash: 'dot' } }], annotations: [{ x: this.assumptions.constructionYears * 12 + .5, y: 1, yref: 'paper', text: 'Operations begin', showarrow: false, xanchor: 'left', font: { size: 10 } }, { x: retirementMonth, y: .9, yref: 'paper', text: 'Retirement', showarrow: false, xanchor: 'right', font: { size: 10 } }] }, config);
     } catch (error) { this.showError(error instanceof Error ? error.message : 'Unable to calculate this scenario.'); }
   }
 }

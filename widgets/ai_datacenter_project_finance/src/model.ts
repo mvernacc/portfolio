@@ -28,7 +28,7 @@ export interface AiDatacenterFinanceModelAssumptions {
   energyCostPerMWh: number;
   /** [year] Time from first major expenses and loan start to operations. */
   constructionYears: number;
-  /** [year] Duration of revenue-generating operations. */
+  /** [year] Maximum operating life; original loan maturity uses this horizon. */
   operatingYears: number;
   /** [dimensionless] Fraction of CAPEX financed with debt. */
   debtFraction: number;
@@ -76,6 +76,8 @@ export interface MonthlyCashflowSeries {
   terminalValue: number[];
   /** [USD month^-1 MW^-1] Negative debt service. */
   debtService: number[];
+  /** Negative outstanding principal repaid at early retirement, after scheduled payment. */
+  debtPayoff: number[];
   /** [USD month^-1 MW^-1] Net equity cashflow. */
   net: number[];
 }
@@ -257,8 +259,9 @@ export function calcProjectFinanceTerms(
 export function calcIrr(
   assumptions: AiDatacenterFinanceModelAssumptions,
   pricePerMTok: number,
+  retirementMonths?: number,
 ): number {
-  const cashflows = calcMonthlyCashflows(assumptions, pricePerMTok);
+  const cashflows = calcMonthlyCashflows(assumptions, pricePerMTok, retirementMonths);
   const monthlyIrr = calcIrrFromCashflows(cashflows.net);
   return (1 + monthlyIrr) ** MONTHS_PER_YEAR - 1;
 }
@@ -308,27 +311,34 @@ export function calcPricePerMTokForTargetIrr(
 export function calcMonthlyCashflows(
   assumptions: AiDatacenterFinanceModelAssumptions,
   pricePerMTok: number,
+  retirementMonths = yearsToMonths(assumptions.operatingYears),
 ): MonthlyCashflowSeries {
   const terms = calcProjectFinanceTerms(assumptions);
+  const maximumOperatingMonths = yearsToMonths(assumptions.operatingYears);
+  if (!Number.isInteger(retirementMonths) || retirementMonths < 1 || retirementMonths > maximumOperatingMonths)
+    throw new Error("Retirement must be a whole operating month within the maximum life.");
+  const endMonth = terms.constructionMonths + retirementMonths;
   if (!Number.isFinite(pricePerMTok) || pricePerMTok < 0) {
     throw new Error("Initial price must be finite and nonnegative.");
   }
 
-  const months = rangeInclusive(0, terms.cashflowDurationMonths);
+  const months = rangeInclusive(0, endMonth);
   const revenue = new Array<number>(months.length).fill(0.0);
   const equityConstructionCapex = new Array<number>(months.length).fill(0.0);
   const nonEnergyOpex = new Array<number>(months.length).fill(0.0);
   const energyOpex = new Array<number>(months.length).fill(0.0);
   const capacityOpex = new Array<number>(months.length).fill(0.0);
   const terminalValue = new Array<number>(months.length).fill(0.0);
-  terminalValue[terms.projectDurationMonths] = terms.terminalFacilityValue;
+  terminalValue[endMonth] = terms.terminalFacilityValue;
   const debtService = new Array<number>(months.length).fill(0.0);
+  const debtPayoff = new Array<number>(months.length).fill(0.0);
+  let balance = terms.debtBalanceAtOperationsStart;
   const net = new Array<number>(months.length).fill(0.0);
 
   for (const month of months) {
     const isConstructionMonth = month > 0 && month <= terms.constructionMonths;
     const isOperatingMonth =
-      month > terms.constructionMonths && month <= terms.projectDurationMonths;
+      month > terms.constructionMonths && month <= endMonth;
 
     if (isConstructionMonth) {
       equityConstructionCapex[month] = -terms.equityMonthlyConstructionCapex;
@@ -345,6 +355,8 @@ export function calcMonthlyCashflows(
       nonEnergyOpex[month] = -assumptions.nonEnergyAnnualOpex / MONTHS_PER_YEAR;
       energyOpex[month] = -terms.energyAnnualOpex / MONTHS_PER_YEAR;
       debtService[month] = -terms.termLoanMonthlyPayment;
+      balance = Math.max(0, balance * (1 + assumptions.debtInterestRate / 12) - terms.termLoanMonthlyPayment);
+      if (month === endMonth && retirementMonths < maximumOperatingMonths) debtPayoff[month] = -balance;
     }
 
     net[month] =
@@ -354,6 +366,7 @@ export function calcMonthlyCashflows(
       energyOpex[month] +
       debtService[month] +
       capacityOpex[month] +
+      debtPayoff[month] +
       terminalValue[month];
   }
 
@@ -364,6 +377,7 @@ export function calcMonthlyCashflows(
     energyOpex,
     capacityOpex,
     debtService,
+    debtPayoff,
     terminalValue,
     net,
   ];
@@ -383,6 +397,7 @@ export function calcMonthlyCashflows(
     capacityOpex,
     terminalValue,
     debtService,
+    debtPayoff,
     net,
   };
 }

@@ -21,7 +21,7 @@ The build precomputes conditional Monte Carlo bands and can take several minutes
 
 The UI has shared controls and Cost sensitivity / Cashflows tabs. Four sliders
 are initially visible: aggregate throughput, capital cost, electricity price and
-operating life. Additional parameters expands into page flow on desktop, with the chart sticky below the site header. On narrow screens, the additional inputs have a bounded scroll area above the chart. Selected results
+maximum operating life. Additional parameters expands into page flow on desktop, with the chart sticky below the site header. On narrow screens, the additional inputs have a bounded scroll area above the chart. Selected results
 appear on the chart and in optional tables, rounded to two significant figures;
 there is no precise headline price or favorable-reference region.
 
@@ -81,7 +81,7 @@ remain. Reset restores the current preset's defaults.
 
 ## Conditional sampling
 
-All inputs are independent, including parameters that could correlate in reality.
+Within each fixed trajectory, the remaining uncertain inputs are independent, including parameters that could correlate in reality.
 Continuous parameters are uniform in displayed units, durations discrete-uniform
 whole months, and billable share fixed at 100% unless it is the swept input.
 A logarithmic throughput **slider** does not imply logarithmic sampling.
@@ -89,7 +89,7 @@ Non-throughput plausible ranges remain provisional scenario assumptions.
 
 The build reuses 2,048 PCG32 draws across each axis, with seed 42 and sequence 54
 verified against the official reference vector. It fixes the horizontal parameter
-and samples all others. Quantiles interpolate ordered observations; invalid samples
+and samples the remaining uncertain inputs, keeping the trajectory pair fixed. Quantiles interpolate ordered observations; invalid samples
 fail generation rather than being silently dropped. Bands are the central 90%
 of stipulated scenarios, **not confidence intervals**. Tests verify fingerprints
 for every preset's generated data. Sliders do not trigger sampling.
@@ -120,3 +120,60 @@ prices do not establish production costs or validate assumptions. Cashflows stil
 use the model-required price. `presentation.ts` owns viewport policy separately
 from slider geometry and sampling. This iteration leaves Monte Carlo unchanged;
 `npx tsc && npx vite build` rebuilds presentation without redoing precomputation.
+
+## Coupled operating trajectories
+
+`trajectories.ts` owns three illustrative annual pairs: adaptation (30% effective
+price erosion, 20% aggregate throughput growth; default), faster repricing
+(60%, 50%), and rapid obsolescence (90%, 50%; stress case). These are judgments
+informed by the research memos, not fitted rates, scenario probabilities, or a
+forecast that the same model runs for the entire project. The starting benchmark
+anchors an evolving workload mix on one compute cohort. Terminal proceeds cover
+reusable facility assets only; compute replacement belongs to a successor project.
+
+The selector fixes both rates in selected cashflows and each conditional Monte
+Carlo band. Neither is independently sampled or offered as a slider/sweep. Other
+inputs retain their provisional independent ranges. The selector preserves slider
+edits; Reset restores defaults within the current model, speed and trajectory.
+Fine print shows lifetime multipliers and distinguishes the initial provider-price
+comparison from future contracts.
+
+Precomputation runs once for each trajectory. Benchmark presets differ only in
+initial throughput ranges: the solver has throughput-independent costs and revenue
+linear in initial throughput, so required price is exactly proportional to its
+reciprocal. `rescaleThroughputBands` transforms each trajectory's bands for the
+other benchmarks and evaluates the reciprocal throughput curve at their grid
+points. It rejects other configuration differences. Regression tests compare this
+transformation with full independent Monte Carlo runs across all 18 presets. If
+costs begin depending on throughput, remove this reuse or derive and test a new rule.
+
+## Retirement and initial price
+
+The maximum operating life also sets the original loan amortization period.
+For each candidate retirement month from 1 through that limit, the solver computes
+the initial price meeting the equity hurdle and chooses the lowest feasible price.
+Scheduled payments remain unchanged between candidates; remaining principal is
+paid at retirement after that month's payment. Facility proceeds are a constant
+fraction of initial facility capital at every retirement date. Compute resale,
+replacement CAPEX, shutdown fees and operating costs after retirement are zero.
+
+Retirement is optimized independently in every Monte Carlo draw and selected
+sweep point. This assumes perfect foreknowledge of each scenario's price and
+throughput trajectory, an optimistic adaptation assumption rather than a policy
+under uncertainty. Cashflows end at the chosen date, identify it on the plot, and
+separate terminal debt payoff from scheduled debt service in bars and the table.
+The sensitivity axis for maximum life changes loan maturity too; it is not purely
+a comparison of retirement dates under one unchanged loan.
+
+The initial-throughput scaling used in precomputation remains valid: all candidate
+required prices scale by the same reciprocal throughput factor, so their minimum
+does too. Any change making costs or retirement eligibility depend on initial
+throughput requires revisiting that reuse.
+
+The widget's retirement solver is `src/retirement.ts`. The fixed-horizon
+`calcPricePerMTokForTargetIrr` helper in `model.ts` and the earlier Python prototype
+remain reference calculations; the widget, sweeps and Monte Carlo all use the
+retirement solver. `calcMonthlyCashflows` accepts the chosen operating-month
+count without changing original loan terms. A zero required price means asset
+recovery already meets/exceeds the hurdle; exact positive-price ties choose the
+earlier retirement month.

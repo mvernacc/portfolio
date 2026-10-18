@@ -88,3 +88,7 @@ th { position: sticky; top: 0; background: #edf4f8; }
 
 .plot-key .plausible-key { height: 10px; background: rgba(23,135,107,.1); border: 1px solid #17876b; }
 .plot-key .market-key { border-top: 2px dashed #a36b21; }
+
+.trajectory-label { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 12px; font-weight: 600; }
+.trajectory-label select { min-width: 0; max-width: 100%; font-weight: 400; }
+#trajectory-summary { margin: 5px 0 12px; }

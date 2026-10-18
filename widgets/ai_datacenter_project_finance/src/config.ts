@@ -1,3 +1,4 @@
+import { DEFAULT_TRAJECTORY, trajectoryRates } from './trajectories.ts';
 import { DEFAULT_ASSUMPTIONS } from './model.ts';
 import type { SweepKey } from './scenario.ts';
 
@@ -5,7 +6,7 @@ import type { SweepKey } from './scenario.ts';
 // One definition owns labels, units, valid ranges, and display-to-model conversion.
 // Log sliders use exponent positions; numeric fields always show physical units.
 export interface Control {
-  key: SweepKey; label: string; unit: string; min: number; max: number;
+  key: Exclude<SweepKey, 'priceAnnualErosion' | 'throughputAnnualChange'>; label: string; unit: string; min: number; max: number;
   plausible: readonly [number, number]; sampling?: "log" | "months";
   step: number; scale?: number; log?: boolean; advanced?: boolean; help?: string;
 }
@@ -16,7 +17,7 @@ export const CONTROLS: Control[] = [
   { key: 'energyCostPerMWh', plausible: [40, 150],  label: 'Electricity price', unit: 'USD/MWh', min: 0, max: 300, step: 1 },
   { key: 'nonEnergyAnnualOpex', advanced: true, plausible: [.5, 2],  label: 'Other annual operating cost', unit: 'million USD/MW IT/year', min: 0, max: 5, step: .1, scale: 1e6 },
   { key: 'constructionYears', advanced: true, plausible: [12, 36], sampling: 'months',  label: 'Construction time', unit: 'months', min: 1, max: 60, step: 1, scale: 1 / 12 },
-  { key: 'operatingYears', plausible: [36, 84], sampling: 'months',  label: 'Operating life', unit: 'months', min: 12, max: 120, step: 1, scale: 1 / 12 },
+  { key: 'operatingYears', plausible: [36, 84], sampling: 'months',  label: 'Maximum operating life', unit: 'months', min: 12, max: 120, step: 1, scale: 1 / 12, help: 'Retirement is chosen within this limit. Loan payments amortize over the full maximum life.' },
   { key: 'debtFraction', advanced: true, plausible: [40, 80],  label: 'Debt share of capital', unit: '%', min: 0, max: 95, step: 1, scale: .01 },
   { key: 'debtInterestRate', advanced: true, plausible: [5, 12],  label: 'Annual debt interest', unit: '% nominal, monthly compounding', min: 0, max: 20, step: .5, scale: .01 },
   { key: 'equityHurdle', advanced: true, plausible: [10, 25],  label: 'Equity return hurdle', unit: '% effective annual, pre-tax', min: 0, max: 30, step: .5, scale: .01 },
@@ -24,14 +25,12 @@ export const CONTROLS: Control[] = [
   { key: 'idlePowerFraction', plausible: [10, 40],  label: 'Idle IT power', unit: '% of installed IT capacity', min: 0, max: 100, step: 1, scale: .01, advanced: true },
   { key: 'capacityChargePerKWMonth', plausible: [0, 20],  label: 'Reserved power charge', unit: 'USD/kW facility/month', min: 0, max: 50, step: 1, advanced: true, help: 'Use the volumetric electricity rate above when adding this charge. Do not add it again to an all-in tariff.' },
   { key: 'facilityCapexFraction', plausible: [10, 35],  label: 'Reusable facility share', unit: '% of total capital', min: 0, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'facilityResidualFraction', plausible: [20, 70],  label: 'Facility resale value', unit: '% of initial facility cost', min: 0, max: 100, step: 1, scale: .01, advanced: true, help: 'Net proceeds at the end of the selected life. IT equipment has zero resale value.' },
+  { key: 'facilityResidualFraction', plausible: [20, 70],  label: 'Facility resale value', unit: '% of initial facility cost', min: 0, max: 100, step: 1, scale: .01, advanced: true, help: 'Same net facility proceeds at any retirement date. Compute hardware has zero resale value.' },
   { key: 'revenueFraction', plausible: [100, 100],  label: 'Billable share of active capacity', unit: '%', min: 10, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'priceAnnualErosion', plausible: [0, 30],  label: 'Annual price erosion', unit: '% decline', min: 0, max: 80, step: 1, scale: .01, advanced: true },
-  { key: 'throughputAnnualChange', plausible: [-10, 20],  label: 'Annual throughput change', unit: '% change', min: -50, max: 100, step: 1, scale: .01, advanced: true },
 ];
 
 export const DEFAULT_HURDLE = .15;
-export const DEFAULT_SELECTION = { ...DEFAULT_ASSUMPTIONS, equityHurdle: DEFAULT_HURDLE };
+export const DEFAULT_SELECTION = { ...DEFAULT_ASSUMPTIONS, ...trajectoryRates(DEFAULT_TRAJECTORY), equityHurdle: DEFAULT_HURDLE };
 export const MONTE_CARLO = { samples: 2048, seed: '42', sequence: '54', points: 61 };
 
 export function axisValues(c: Control): number[] {
@@ -57,7 +56,7 @@ export function validateConfiguration(controls: readonly Control[] = CONTROLS): 
     }
     keys.add(c.key);
   }
-  if (keys.size !== Object.keys(DEFAULT_SELECTION).length) throw new Error('Missing parameter configuration');
+  if (keys.size + 2 !== Object.keys(DEFAULT_SELECTION).length) throw new Error('Missing parameter configuration');
 }
 
 /** Wider linear throughput plot reveals the inverse relationship; slider stays log. */

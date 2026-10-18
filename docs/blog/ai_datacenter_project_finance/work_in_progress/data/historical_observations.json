@@ -1,0 +1,16 @@
+{
+  "retrieved_on": "2026-10-18",
+  "tariffs": [
+    {"date":"2023-08-11","provider":"Together","label":"40–70B tier","input":3,"output":3,"date_kind":"announcement","source":"https://www.together.ai/blog/august-2023-pricing-update"},
+    {"date":"2024-07-18","provider":"Together","label":"Llama 3 70B Turbo","input":0.88,"output":0.88,"date_kind":"announcement","source":"https://www.together.ai/blog/together-inference-engine-2"},
+    {"date":"2026-10-18","provider":"Together","label":"Llama 3.3 70B Turbo","input":1.04,"output":1.04,"date_kind":"retrieval, not price-change date","source":"https://www.together.ai/models/llama-3-3-70b"},
+    {"date":"2025-09-05","provider":"DeepSeek","label":"V3.1","input":0.56,"output":1.68,"date_kind":"tariff effective date","source":"https://api-docs.deepseek.com/news/news250821/","price_table":"https://api-docs.deepseek.com/img/v3_2_price_en.jpeg"},
+    {"date":"2025-09-29","provider":"DeepSeek","label":"V3.2-Exp","input":0.28,"output":0.42,"date_kind":"tariff effective date","source":"https://api-docs.deepseek.com/news/news250929/","price_table":"https://api-docs.deepseek.com/img/v3_2_price_en.jpeg"}
+  ],
+  "tariff_note":"USD per million tokens. DeepSeek old/new price image visually verified. 8:1 uncached input/output normalization. Observations are different models/services, not constant capability or an exhaustive market index. Together 2026 observation must not be backdated to model release.",
+  "throughput_comparisons": [
+    {"label":"Mar–Aug 2024 · server","ratio":1.05,"source":"https://developer.nvidia.com/blog/nvidia-blackwell-platform-sets-new-llm-inference-records-in-mlperf-inference-v4-1/","qualification":"Table 3; MLPerf v4.0 vs v4.1; eight H100 at 700 W; Llama 2 70B"},
+    {"label":"Mar–Aug 2024 · offline","ratio":1.12,"source":"https://developer.nvidia.com/blog/nvidia-blackwell-platform-sets-new-llm-inference-records-in-mlperf-inference-v4-1/","qualification":"Same hardware and model; offline has no interactive latency requirement"},
+    {"label":"Year to Apr 2025 · up to","ratio":1.5,"source":"https://developer.nvidia.com/blog/nvidia-blackwell-delivers-massive-performance-leaps-in-mlperf-inference-v5-0/","qualification":"Vendor-reported maximum H100 Llama 2 70B software gain; not a fleet average. Article also includes an unverified-results caveat. Overlaps earlier period; do not multiply gains."}
+  ]
+}

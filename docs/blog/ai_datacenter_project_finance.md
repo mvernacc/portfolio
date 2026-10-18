@@ -91,7 +91,21 @@ Competitive commodity market --> prices likely reflect costs.
 
 ## Trends in the key factors
 
-TODO link to cost-per-intelligence-tier vs time data from https://artificialanalysis.ai/trends#language-model-cost-per-intelligence-index-task-by-intelligence-index-threshold-over-time
+<!-- Historical figures and factual captions; interpretation to be written by the author. -->
+
+![Reconstructed GPQA Diamond cost frontier at two chance-adjusted score thresholds, by model release date.](../assets/images/ai_datacenter_project_finance/historical_capability_cost.svg)
+
+*Retrospective benchmark costs assigned to model release dates, not archived launch tariffs. Thresholds are chance-adjusted accuracy; on four-choice GPQA, 25% and 75% correspond to 43.75% and 81.25% raw accuracy. Includes model switching and token-budget estimates. Source: [Epoch AI report](https://epoch.ai/publications/the-plunging-price-of-thought) and [published Figure 2 data](https://github.com/droodman/inference-cost/blob/9163c17ee7217b9f09ac51bcc71ed64c18c04bc8/output/slides/Figure%202.csv).*
+
+![Selected Together and DeepSeek API tariffs from 2023 to 2026, normalized to eight uncached input tokens per output token.](../assets/images/ai_datacenter_project_finance/historical_provider_tariffs.svg)
+
+*Dated quotes for different models and services, not a fixed-capability price index. Each value is output tariff + 8 × input tariff. The final Together point is an October 18, 2026 snapshot, not its release price. Sources: Together [2023](https://www.together.ai/blog/august-2023-pricing-update), [2024](https://www.together.ai/blog/together-inference-engine-2), [current model page](https://www.together.ai/models/llama-3-3-70b); DeepSeek [V3.1 effective-date announcement](https://api-docs.deepseek.com/news/news250821/) and [V3.2 price table](https://api-docs.deepseek.com/img/v3_2_price_en.jpeg).*
+
+![Reported Llama 2 70B throughput improvements on existing H100 hardware: 5 percent server and 12 percent offline over March to August 2024, and up to 50 percent over the year to April 2025.](../assets/images/ai_datacenter_project_finance/historical_h100_software.svg)
+
+*Separate, overlapping comparisons; do not compound these gains. The 2024 comparison uses eight H100 GPUs at 700 W each; server and offline benchmarks have different latency requirements. The annual maximum is vendor-reported, not a fleet average, and its source includes an unverified-results caveat. Sources: NVIDIA [August 2024, Table 3](https://developer.nvidia.com/blog/nvidia-blackwell-platform-sets-new-llm-inference-records-in-mlperf-inference-v4-1/) and [April 2025](https://developer.nvidia.com/blog/nvidia-blackwell-delivers-massive-performance-leaps-in-mlperf-inference-v5-0/).*
+
+TODO author interpretation. Related: [Artificial Analysis cost-per-task trends](https://artificialanalysis.ai/trends#language-model-cost-per-intelligence-index-task-by-intelligence-index-threshold-over-time).
 
 ---
 

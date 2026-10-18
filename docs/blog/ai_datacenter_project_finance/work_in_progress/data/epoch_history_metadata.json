@@ -1,0 +1,16 @@
+{
+  "source_report": "https://epoch.ai/publications/the-plunging-price-of-thought",
+  "source_csv": "https://raw.githubusercontent.com/droodman/inference-cost/9163c17ee7217b9f09ac51bcc71ed64c18c04bc8/output/slides/Figure%202.csv",
+  "construction_code": "https://github.com/droodman/inference-cost/blob/9163c17ee7217b9f09ac51bcc71ed64c18c04bc8/src/record_timelines.R",
+  "retrieved": "2026-10-18",
+  "description": "Published Figure 2 cost-record observations. Each record is the cheapest qualifying run among models released by that date. At most one observation per release date per benchmark/threshold. No points extrapolated or synthesized from annual decline rates.",
+  "date_semantics": "Release date assigned by source; retrospective evaluation and price data, not an archived contemporaneous provider tariff series.",
+  "cost_semantics": "USD per benchmark question, with truncated-token-budget method described in report; not USD per token. Source may include rented-hardware estimates for open models without hosted APIs.",
+  "threshold_semantics": "Chance-adjusted accuracy; source rescales random-guessing floor to 0. GPQA is four-choice:25% adjusted corresponds43.75% raw,75% adjusted corresponds81.25% raw.",
+  "limitations": [
+    "Includes open and closed models, model changes, software and hardware changes. Does not isolate same-hardware improvements.",
+    "The market frontier assumes switching to cheapest qualifying model, not the typical provider price.",
+    "Some dates and model labels are as published, e.g. Gemini2.5Pro(Jun2025) label occurs atMarch25 andJune5 releases. Retain source rows rather than silently correcting.",
+    "Connecting records with step lines represents the retrospective frontier among observed releases. Do not extrapolate after last record or interpret as all-market coverage."
+  ]
+}
