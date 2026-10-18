@@ -36,7 +36,7 @@ class FinanceWidget extends HTMLElement {
           <p id="error" role="alert" hidden></p>
           <div class="workspace"><form aria-label="Project assumptions" novalidate>
             <div id="main-controls">${this.controls.filter(c => !c.advanced).map(c => this.controlMarkup(c)).join('')}</div>
-            <details><summary>Further details</summary><div id="advanced-controls">${this.controls.filter(c => c.advanced).map(c => this.controlMarkup(c)).join('')}</div></details>
+            <details><summary>Additional parameters</summary><div id="advanced-controls">${this.controls.filter(c => c.advanced).map(c => this.controlMarkup(c)).join('')}</div></details>
           </form><div class="charts">
             <div role="tablist" aria-label="Finance views"><button type="button" role="tab" id="tab-sensitivity" aria-controls="panel-sensitivity" aria-selected="true" data-tab="sensitivity">Cost sensitivity</button><button type="button" role="tab" id="tab-cashflow" aria-controls="panel-cashflow" aria-selected="false" tabindex="-1" data-tab="cashflow">Cashflows</button></div>
             <section id="panel-sensitivity" role="tabpanel" aria-labelledby="tab-sensitivity">

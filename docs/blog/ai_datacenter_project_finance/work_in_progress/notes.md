@@ -297,7 +297,7 @@ benchmark presets. The favorable-reference region has been removed.
 ## 8. Widget presentation and remaining calibration
 
 The only energy input initially visible should be **Electricity price
-(USD/MWh)**. A collapsed **Further details** section contains PUE, idle-power
+(USD/MWh)**. A collapsed **Additional parameters** section contains PUE, idle-power
 fraction, and capacity charge (USD/kW-month). Show enough help to prevent
 capacity charges being added twice to an all-in rate. Facility split/residual,
 nonbillable allocation, and the two trend rates also belong in further details.

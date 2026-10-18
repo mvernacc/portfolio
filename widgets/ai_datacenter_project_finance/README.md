@@ -21,7 +21,7 @@ The build precomputes conditional Monte Carlo bands and can take several minutes
 
 The UI has shared controls and Cost sensitivity / Cashflows tabs. Four sliders
 are initially visible: aggregate throughput, capital cost, electricity price and
-operating life. Further details expands into normal page flow. Selected results
+operating life. Additional parameters expands into page flow on desktop, with the chart sticky below the site header. On narrow screens, the additional inputs have a bounded scroll area above the chart. Selected results
 appear on the chart and in optional tables, rounded to two significant figures;
 there is no precise headline price or favorable-reference region.
 

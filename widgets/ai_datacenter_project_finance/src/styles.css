@@ -27,7 +27,12 @@ input[type=range] { width: 100%; accent-color: #006e9c; min-height: 24px; }
 form > details { border-top: 1px solid #d8e2e7; padding-top: 10px; margin-top: 12px; }
 summary { cursor: pointer; font-weight: 600; }
 form details .control { margin: 14px 0; }
-.charts { min-width: 0; align-content: start; }
+/* Keep the chart beside long parameter lists, below the site's fixed header.
+   A short viewport or expanded data table can scroll within this panel. */
+.charts {
+  min-width: 0; align-self: start; position: sticky; top: 64px;
+  max-height: calc(100dvh - 80px); overflow-y: auto;
+}
 [role=tablist] { display: flex; gap: 3px; padding-left: 4px; }
 [role=tab] { border-radius: 6px 6px 0 0; font-size: 12px; }
 [role=tab][aria-selected=true] { background: #e9f3f7; border-bottom-color: #e9f3f7; font-weight: 700; }
@@ -49,6 +54,9 @@ th { position: sticky; top: 0; background: #edf4f8; }
 @container (max-width: 620px) {
   :host > section { padding: 12px; }
   .workspace { grid-template-columns: minmax(0, 1fr); }
+  .charts { position: static; max-height: none; overflow: visible; }
+  /* In the stacked layout, keep the expanded inputs close to the chart. */
+  #advanced-controls { max-height: 35dvh; overflow-y: auto; padding: 0 4px; }
   #main-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .preset-controls { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   h2 { font-size: 18px; }
