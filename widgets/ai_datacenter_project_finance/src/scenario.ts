@@ -15,22 +15,25 @@ export function evaluateProject(assumptions: AiDatacenterFinanceModelAssumptions
   return { price, cashflows, npv, irr: calcIrr(assumptions, price) };
 }
 
-/** Hold all other inputs fixed. Null points are infeasible, never silently zero cost.
- * Reference overrides follow the sweep, preserving 4% effective debt/equity and
- * fully billable inference even when one of those assumptions is being swept.
- */
+/** Hold all other selected inputs fixed; null marks an infeasible price. */
 export function sweepPrices(assumptions: AiDatacenterFinanceModelAssumptions, hurdle: number, key: SweepKey, values: number[]) {
   return values.map(value => {
-    const selected = key === 'equityHurdle' ? assumptions : { ...assumptions, [key]: value };
-    const selectedHurdle = key === 'equityHurdle' ? value : hurdle;
-    const price = (a: AiDatacenterFinanceModelAssumptions, h: number) => {
-      try { return calcPricePerMTokForTargetIrr(a, h); }
-      catch { return null; }
-    };
-    return {
-      value,
-      selected: price(selected, selectedHurdle),
-      reference: price({ ...selected, debtInterestRate: 12 * (1.04 ** (1 / 12) - 1), revenueFraction: 1 }, 0.04),
-    };
+    try {
+      return { value, selected: calcPricePerMTokForTargetIrr(
+        key === 'equityHurdle' ? assumptions : { ...assumptions, [key]: value },
+        key === 'equityHurdle' ? value : hurdle) };
+    } catch { return { value, selected: null }; }
   });
+}
+
+/** Undiscounted recovery of all capital and operating expenses, net of resale.
+ * No equity IRR is defined for the hypothetical 100%-debt, zero-interest project.
+ * Using zero debt in the cashflow helper exposes operating costs without debt service;
+ * the numerator separately recovers the entire initial investment.
+ */
+export function favorableReferencePrice(assumptions: AiDatacenterFinanceModelAssumptions): number {
+  const c = calcMonthlyCashflows({ ...assumptions, debtFraction: 0, debtInterestRate: 0 }, 1);
+  const total = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+  return (assumptions.capex - total(c.nonEnergyOpex) - total(c.energyOpex)
+    - total(c.capacityOpex) - total(c.terminalValue)) / total(c.revenue);
 }

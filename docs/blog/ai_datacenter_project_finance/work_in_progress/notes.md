@@ -290,12 +290,12 @@ ties high leverage to creditworthy tenants and contractual support. A GPU-heavy
 merchant service has different risks. Leverage sweeps hold rates fixed and
 therefore omit the feedback from leverage to required investor returns.
 
-The gray plot reference uses 100% billable inference and 4% effective debt/equity
-returns, with other assumptions held fixed. Label it **low-cost financing
-reference**. It is neither a risk-free investment nor a universal token-price
-floor, and the illustrative 4% is not a live Treasury quote. For debt-rate or
-revenue-share sweeps, preserve those reference overrides after applying the sweep;
-the reference should not silently lose its stated definition.
+The widget shows a conditional Monte Carlo band from independent plausible-range
+samples alongside the selected-input sweep. Its hatched reference assumes zero
+interest and zero required capital return, with favorable plausible endpoints for
+other inputs. This is a favorable scenario, not a proven lower bound. Section 11
+specifies sampling, endpoint conventions, financing-axis overrides, and the
+undiscounted capital-recovery formula.
 
 ## 8. Widget presentation and remaining calibration
 
@@ -349,3 +349,49 @@ February 2026 release, an FP8 four-GPU benchmark, and explicit regional API
 tariffs. It reuses the first case's cost scenarios, with two TP4 replicas per
 server replacing eight TP1 replicas. Its chunked streaming setting requires
 a different interpretation of the latency panel.
+
+## 11. Conditional Monte Carlo widget
+
+The widget separates each parameter's exploration limits, provisional plausible
+range, and selected value. `widgets/ai_datacenter_project_finance/src/config.ts`
+is the single configuration for these ranges, units and sampling scales. Limits
+keep sliders within a numerically valid exploration domain; they are not claims
+that every combination inside those limits is realistic. Plausible ranges are
+working scenario choices, not calibrated statistical estimates.
+
+At each horizontal-axis value, the widget fixes that input and samples all other
+inputs independently. Samples are uniform in displayed units, except throughput
+is log-uniform and duration is discrete-uniform over whole months. Billable share
+has a zero-width plausible range at 100%, unless it is the horizontal-axis input.
+Independence omits correlations between capital costs and throughput, financing
+terms, or facility resale and operating life. The 5th–95th percentile band is the
+central 90% of these stipulated scenarios, **not a confidence interval**.
+
+The build uses 2,048 deterministic PCG32 samples (seed 42, sequence 54) and reuses
+those same scenarios at successive x values. Percentiles linearly interpolate
+between adjacent sorted observations. Generation fails on any invalid scenario;
+it does not remove failures before calculating quantiles. Generated arrays are
+bundled into the widget, so slider changes only recompute the selected scenario,
+its one-parameter sweep, and monthly cashflows. A new axis selects another band.
+
+The favorable reference has zero interest and zero required return on all capital,
+equivalent to 100% debt at zero interest with project-wide capital recovery. It
+uses no equity IRR. Its required initial workload revenue is
+
+\[
+P_{0,\mathrm{ref}} =
+\frac{C_0 + \sum_m O_m - V_T}
+     {\sum_m Q_m(1-e)^{a_m}},
+\]
+
+where `C_0` is initial CAPEX, `O_m` includes energy, capacity charges and other
+operating expense, `V_T` is terminal facility proceeds, `Q_m` is billable output
+in millions of tokens, and `a_m` is operating age in years. The throughput trend
+is included in `Q_m`. Favorable plausible endpoints are selected explicitly in
+configuration. The horizontal input is held at x, except debt share/rate and the
+equity hurdle always retain zero-financing-cost treatment, giving flat references
+on those axes. Shorter construction is irrelevant without financing costs.
+Longer life is a stipulated favorable choice, not necessarily the cheapest when
+prices erode. The hatched area below this curve is therefore **below the favorable
+reference scenario**, not a proven lower bound or a region of unprofitability.
+Selected values outside plausible ranges may fall inside the hatching.

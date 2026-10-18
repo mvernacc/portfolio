@@ -1,0 +1,61 @@
+import { DEFAULT_ASSUMPTIONS } from './model.ts';
+import type { SweepKey } from './scenario.ts';
+
+/** Display-unit limits and provisional scenario ranges; not empirically calibrated. */
+// One definition owns labels, units, valid ranges, and display-to-model conversion.
+// Log sliders use exponent positions; numeric fields always show physical units.
+export interface Control {
+  key: SweepKey; label: string; unit: string; min: number; max: number;
+  plausible: readonly [number, number]; favorable: "min" | "max"; sampling?: "log" | "months";
+  step: number; scale?: number; log?: boolean; advanced?: boolean; help?: string;
+}
+export const CONTROLS: Control[] = [
+  { key: 'throughput', plausible: [.03, 1], favorable: 'max', sampling: 'log',  label: 'Output throughput', unit: 'MTok/s/MW IT', min: .01, max: 10, step: .01, scale: 1e6, log: true, help: 'Aggregate output across requests, including prefill and decode resources, for a fixed workload.' },
+  { key: 'capex', plausible: [30, 70], favorable: 'min',  label: 'Total capital cost', unit: 'million USD/MW IT', min: 10, max: 100, step: 1, scale: 1e6 },
+  { key: 'utilization', plausible: [50, 95], favorable: 'max',  label: 'Utilization', unit: '%', min: 10, max: 100, step: 1, scale: .01 },
+  { key: 'energyCostPerMWh', plausible: [40, 150], favorable: 'min',  label: 'Electricity price', unit: 'USD/MWh', min: 0, max: 300, step: 1 },
+  { key: 'nonEnergyAnnualOpex', plausible: [.5, 2], favorable: 'min',  label: 'Other annual operating cost', unit: 'million USD/MW IT/year', min: 0, max: 5, step: .1, scale: 1e6 },
+  { key: 'constructionYears', plausible: [12, 36], favorable: 'min', sampling: 'months',  label: 'Construction time', unit: 'months', min: 1, max: 60, step: 1, scale: 1 / 12 },
+  { key: 'operatingYears', plausible: [36, 84], favorable: 'max', sampling: 'months',  label: 'Operating life', unit: 'months', min: 12, max: 120, step: 1, scale: 1 / 12 },
+  { key: 'debtFraction', plausible: [40, 80], favorable: 'max',  label: 'Debt share of capital', unit: '%', min: 0, max: 95, step: 1, scale: .01 },
+  { key: 'debtInterestRate', plausible: [5, 12], favorable: 'min',  label: 'Annual debt interest', unit: '% nominal, monthly compounding', min: 0, max: 20, step: .5, scale: .01 },
+  { key: 'equityHurdle', plausible: [10, 25], favorable: 'min',  label: 'Equity return hurdle', unit: '% effective annual, pre-tax', min: 0, max: 30, step: .5, scale: .01 },
+  { key: 'pue', plausible: [1.1, 1.4], favorable: 'min',  label: 'Power usage effectiveness', unit: 'facility / IT power', min: 1, max: 2, step: .05, advanced: true },
+  { key: 'idlePowerFraction', plausible: [10, 40], favorable: 'min',  label: 'Idle IT power', unit: '% of installed IT capacity', min: 0, max: 100, step: 1, scale: .01, advanced: true },
+  { key: 'capacityChargePerKWMonth', plausible: [0, 20], favorable: 'min',  label: 'Reserved power charge', unit: 'USD/kW facility/month', min: 0, max: 50, step: 1, advanced: true, help: 'Use the volumetric electricity rate above when adding this charge. Do not add it again to an all-in tariff.' },
+  { key: 'facilityCapexFraction', plausible: [10, 35], favorable: 'max',  label: 'Reusable facility share', unit: '% of total capital', min: 0, max: 100, step: 1, scale: .01, advanced: true },
+  { key: 'facilityResidualFraction', plausible: [20, 70], favorable: 'max',  label: 'Facility resale value', unit: '% of initial facility cost', min: 0, max: 100, step: 1, scale: .01, advanced: true, help: 'Net proceeds at the end of the selected life. IT equipment has zero resale value.' },
+  { key: 'revenueFraction', plausible: [100, 100], favorable: 'max',  label: 'Billable share of active capacity', unit: '%', min: 10, max: 100, step: 1, scale: .01, advanced: true },
+  { key: 'priceAnnualErosion', plausible: [0, 30], favorable: 'min',  label: 'Annual price erosion', unit: '% decline', min: 0, max: 80, step: 1, scale: .01, advanced: true },
+  { key: 'throughputAnnualChange', plausible: [-10, 20], favorable: 'max',  label: 'Annual throughput change', unit: '% change', min: -50, max: 100, step: 1, scale: .01, advanced: true },
+];
+
+export const DEFAULT_HURDLE = .15;
+export const DEFAULT_SELECTION = { ...DEFAULT_ASSUMPTIONS, equityHurdle: DEFAULT_HURDLE };
+export const MONTE_CARLO = { samples: 2048, seed: '42', sequence: '54', points: 61 };
+
+export function axisValues(c: Control): number[] {
+  return [...new Set(Array.from({ length: MONTE_CARLO.points }, (_, i) => {
+    const t = i / (MONTE_CARLO.points - 1);
+    const value = c.log ? c.min * (c.max / c.min) ** t : c.min + (c.max - c.min) * t;
+    return c.sampling === 'months' ? Math.round(value) : value;
+  }))];
+}
+
+/** Reject malformed ranges before generating or presenting statistical results. */
+export function validateConfiguration(): void {
+  const keys = new Set<string>();
+  for (const c of CONTROLS) {
+    const [low, high] = c.plausible;
+    const selected = DEFAULT_SELECTION[c.key] / (c.scale ?? 1);
+    if (keys.has(c.key) || ![c.min, c.max, low, high, selected].every(Number.isFinite)
+      || !(c.min <= low && low <= high && high <= c.max && c.min < c.max)
+      || selected < c.min || selected > c.max || !(c.step > 0) || !((c.scale ?? 1) > 0)
+      || ((c.log || c.sampling === 'log') && c.min <= 0)
+      || (c.sampling === 'months' && ![c.min, c.max, low, high].every(Number.isInteger))) {
+      throw new Error(`Invalid parameter configuration: ${c.key}`);
+    }
+    keys.add(c.key);
+  }
+  if (keys.size !== Object.keys(DEFAULT_SELECTION).length) throw new Error('Missing parameter configuration');
+}

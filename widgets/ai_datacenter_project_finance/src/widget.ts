@@ -1,33 +1,9 @@
 import { DEFAULT_ASSUMPTIONS, type AiDatacenterFinanceModelAssumptions } from './model';
-import { evaluateProject, sweepPrices, type SweepKey } from './scenario';
+import { evaluateProject, sweepPrices } from './scenario';
 import styles from './styles.css?inline';
 
-// One definition owns labels, units, valid ranges, and display-to-model conversion.
-// Log sliders use exponent positions; numeric fields always show physical units.
-interface Control {
-  key: SweepKey; label: string; unit: string; min: number; max: number;
-  step: number; scale?: number; log?: boolean; advanced?: boolean; help?: string;
-}
-const CONTROLS: Control[] = [
-  { key: 'throughput', label: 'Output throughput', unit: 'MTok/s/MW IT', min: .01, max: 10, step: .01, scale: 1e6, log: true, help: 'Aggregate output across requests, including prefill and decode resources, for a fixed workload.' },
-  { key: 'capex', label: 'Total capital cost', unit: 'million USD/MW IT', min: 10, max: 100, step: 1, scale: 1e6 },
-  { key: 'utilization', label: 'Utilization', unit: '%', min: 10, max: 100, step: 1, scale: .01 },
-  { key: 'energyCostPerMWh', label: 'Electricity price', unit: 'USD/MWh', min: 0, max: 300, step: 1 },
-  { key: 'nonEnergyAnnualOpex', label: 'Other annual operating cost', unit: 'million USD/MW IT/year', min: 0, max: 5, step: .1, scale: 1e6 },
-  { key: 'constructionYears', label: 'Construction time', unit: 'months', min: 1, max: 60, step: 1, scale: 1 / 12 },
-  { key: 'operatingYears', label: 'Operating life', unit: 'months', min: 12, max: 120, step: 1, scale: 1 / 12 },
-  { key: 'debtFraction', label: 'Debt share of capital', unit: '%', min: 0, max: 95, step: 1, scale: .01 },
-  { key: 'debtInterestRate', label: 'Annual debt interest', unit: '% nominal, monthly compounding', min: 0, max: 20, step: .5, scale: .01 },
-  { key: 'equityHurdle', label: 'Equity return hurdle', unit: '% effective annual, pre-tax', min: 0, max: 30, step: .5, scale: .01 },
-  { key: 'pue', label: 'Power usage effectiveness', unit: 'facility / IT power', min: 1, max: 2, step: .05, advanced: true },
-  { key: 'idlePowerFraction', label: 'Idle IT power', unit: '% of installed IT capacity', min: 0, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'capacityChargePerKWMonth', label: 'Reserved power charge', unit: 'USD/kW facility/month', min: 0, max: 50, step: 1, advanced: true, help: 'Use the volumetric electricity rate above when adding this charge. Do not add it again to an all-in tariff.' },
-  { key: 'facilityCapexFraction', label: 'Reusable facility share', unit: '% of total capital', min: 0, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'facilityResidualFraction', label: 'Facility resale value', unit: '% of initial facility cost', min: 0, max: 100, step: 1, scale: .01, advanced: true, help: 'Net proceeds at the end of the selected life. IT equipment has zero resale value.' },
-  { key: 'revenueFraction', label: 'Billable share of active capacity', unit: '%', min: 10, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'priceAnnualErosion', label: 'Annual price erosion', unit: '% decline', min: 0, max: 80, step: 1, scale: .01, advanced: true },
-  { key: 'throughputAnnualChange', label: 'Annual throughput change', unit: '% change', min: -50, max: 100, step: 1, scale: .01, advanced: true },
-];
+import { CONTROLS, DEFAULT_HURDLE, type Control } from './config';
+import uncertainty from './uncertainty.generated.json';
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 3 });
 const display = (value: number) => Number(value.toPrecision(7)).toString();
 
@@ -37,7 +13,7 @@ const display = (value: number) => Number(value.toPrecision(7)).toString();
 class FinanceWidget extends HTMLElement {
   private root = this.attachShadow({ mode: 'open' });
   private assumptions: AiDatacenterFinanceModelAssumptions = { ...DEFAULT_ASSUMPTIONS };
-  private hurdle = .15;
+  private hurdle = DEFAULT_HURDLE;
   private plotly?: typeof import('plotly.js-dist-min')['default'];
   private observer?: ResizeObserver;
   private frame = 0;
@@ -58,9 +34,9 @@ class FinanceWidget extends HTMLElement {
           </form><div class="charts">
             <section><h3>Cost versus an assumption</h3><label class="sweep-label" for="sweep">Vary <select id="sweep">${CONTROLS.map(c => `<option value="${c.key}">${c.label}</option>`).join('')}</select></label>
               <div id="sensitivity" class="plot" role="img" aria-label="Required initial revenue versus the selected assumption"></div>
-              <p class="chart-note">All other assumptions held fixed. Gray: low-cost financing reference, with 4% effective annual debt and equity returns and 100% billable inference. This is a conditional scenario, not a universal price floor.</p>
-              <p id="sweep-note" class="chart-note"></p>
-              <details class="data"><summary>View sensitivity values</summary><div class="table-scroll"><table><thead><tr><th id="sweep-heading">Assumption</th><th>Selected financing<br>USD/MTok</th><th>Low-cost reference<br>USD/MTok</th></tr></thead><tbody id="sweep-data"></tbody></table></div></details>
+              <p class="chart-note">Blue line: vary only the horizontal-axis assumption. Shaded band: central 90% (5th–95th percentiles) of independently sampled scenarios, conditional on each horizontal-axis value. Ranges are provisional assumptions, not measured probabilities or a confidence interval. Moving sliders changes the point, line, and cashflows; the band and hatched reference stay fixed.</p>
+              <p class="chart-note">Hatching: below the favorable reference scenario, with zero interest and zero required capital return, and favorable plausible endpoints for other inputs. This is an illustrative scenario, not a proven minimum. Financing axes do not change it. Selected values outside the plausible ranges can fall inside the hatching.</p><details class="data"><summary>Sampling and reference assumptions</summary><p class="chart-note">${uncertainty.metadata.samples.toLocaleString()} reproducible scenarios per axis value. Uniform sampling in the displayed units, except throughput is uniform on a logarithmic scale and durations are uniform over whole months. All inputs are independent; billable share is fixed at 100% unless it is the horizontal-axis parameter. The same draws are reused across each curve. Reference endpoints favor lower costs, shorter construction, longer operation, higher utilization and throughput, and greater facility resale proceeds; longer life is a stipulated favorable endpoint, not always an optimum when prices erode.</p></details><p id="sweep-note" class="chart-note"></p>
+              <details class="data"><summary>View sensitivity values</summary><div class="table-scroll"><table><thead><tr><th id="sweep-heading">Assumption</th><th>Selected sweep<br>USD/MTok</th><th>5th percentile<br>USD/MTok</th><th>95th percentile<br>USD/MTok</th><th>Favorable reference<br>USD/MTok</th></tr></thead><tbody id="sweep-data"></tbody></table></div></details>
             </section>
             <section><h3>Monthly equity cashflows</h3><div id="cashflow" class="plot" role="img" aria-label="Monthly revenue, terminal proceeds, expenses, and net equity cashflow"></div><p class="chart-note">Construction uses equity contributions; debt draws are excluded. During operation, costs include debt service. Facility sale proceeds arrive in the last month. Values are per MW of installed IT capacity.</p>
               <details class="data"><summary>View monthly cashflows</summary><div class="table-scroll"><table><thead><tr><th>Month</th><th>Revenue</th><th>Facility sale</th><th>Equity CAPEX</th><th>Other OPEX</th><th>Energy</th><th>Capacity</th><th>Debt service</th><th>Net</th></tr></thead><tbody id="cashflow-data"></tbody></table></div><p class="chart-note">USD per MW IT per month; expenses are negative.</p></details>
@@ -80,7 +56,7 @@ class FinanceWidget extends HTMLElement {
       });
       this.root.querySelector('#sweep')!.addEventListener('change', () => this.scheduleRender());
       this.root.querySelector('#reset')!.addEventListener('click', () => {
-        this.assumptions = { ...DEFAULT_ASSUMPTIONS }; this.hurdle = .15;
+        this.assumptions = { ...DEFAULT_ASSUMPTIONS }; this.hurdle = DEFAULT_HURDLE;
         this.syncControls(); this.scheduleRender();
       });
       this.syncControls();
@@ -97,7 +73,9 @@ class FinanceWidget extends HTMLElement {
   }
   private element(id: string) { return this.root.getElementById(id)!; }
   private controlMarkup(c: Control) {
-    return `<div class="control"><label for="${c.key}-number">${c.label}<span>${c.unit}</span></label><input id="${c.key}-number" data-key="${c.key}" type="number" min="${c.min}" max="${c.max}" step="${c.step}" ${c.help ? `aria-describedby="${c.key}-help"` : ''}><input aria-label="${c.label} (${c.unit}) slider" data-key="${c.key}" type="range" min="${c.log ? Math.log10(c.min) : c.min}" max="${c.log ? Math.log10(c.max) : c.max}" step="${c.log ? .01 : c.step}">${c.help ? `<small id="${c.key}-help">${c.help}</small>` : ''}</div>`;
+    const position = (v: number) => 100 * (c.log ? Math.log(v / c.min) / Math.log(c.max / c.min) : (v - c.min) / (c.max - c.min));
+    const [lo, hi] = c.plausible;
+    return `<div class="control"><label for="${c.key}-number">${c.label}<span>${c.unit}</span></label><input id="${c.key}-number" data-key="${c.key}" type="number" min="${c.min}" max="${c.max}" step="${c.step}" aria-describedby="${c.key}-plausible ${c.help ? `${c.key}-help` : ''}"><div class="slider-track" style="--plausible-start:${position(lo)}%;--plausible-width:${position(hi) - position(lo)}%"><span class="plausible-track" aria-hidden="true"><span class="plausible-marker"></span></span><input aria-label="${c.label} (${c.unit}) slider" aria-describedby="${c.key}-plausible" data-key="${c.key}" type="range" min="${c.log ? Math.log10(c.min) : c.min}" max="${c.log ? Math.log10(c.max) : c.max}" step="${c.log ? .01 : c.step}"></div><small id="${c.key}-plausible" class="plausible-label">Plausible: ${display(lo)}–${display(hi)} ${c.unit}${lo === hi ? ' (fixed in sampling)' : ''}</small>${c.help ? `<small id="${c.key}-help">${c.help}</small>` : ''}</div>`;
   }
   private syncControls() {
     for (const c of CONTROLS) {
@@ -151,19 +129,16 @@ class FinanceWidget extends HTMLElement {
       const project = evaluateProject(this.assumptions, this.hurdle);
       const control = CONTROLS.find(c => c.key === (this.element('sweep') as HTMLSelectElement).value)!;
       const current = (control.key === 'equityHurdle' ? this.hurdle : this.assumptions[control.key]) / (control.scale ?? 1);
-      const values = Array.from({ length: 61 }, (_, i) => {
-        const value = control.log ? control.min * (control.max / control.min) ** (i / 60) : control.min + (control.max - control.min) * i / 60;
-        return control.key === 'constructionYears' || control.key === 'operatingYears' ? Math.round(value) : value;
-      });
-      values.push(current);
-      const xs = [...new Set(values)].sort((a, b) => a - b);
+      const band = uncertainty.axes[control.key];
+      const xs = [...new Set([...band.x, current])].sort((a, b) => a - b);
       const sweep = sweepPrices(this.assumptions, this.hurdle, control.key, xs.map(v => v * (control.scale ?? 1)));
+      const tableSweep = sweepPrices(this.assumptions, this.hurdle, control.key, band.x.map(v => v * (control.scale ?? 1)));
       this.element('error').hidden = true;
       this.element('price').textContent = money.format(project.price);
       this.element('accounting').textContent = `Equity NPV at ${display(this.hurdle * 100)}%: ${money.format(Math.abs(project.npv) < .005 ? 0 : project.npv)} / MW IT. ${Number.isFinite(project.irr) ? `Implied annual IRR: ${(project.irr * 100).toFixed(1)}%.` : 'IRR unavailable: cashflow sign changes make it potentially ambiguous.'}`;
-      this.element('sweep-note').textContent = `${sweep.some(p => p.selected === null || p.reference === null) ? 'Gaps indicate no finite nonnegative price meets the return hurdle. ' : ''}${control.key === 'operatingYears' ? 'Facility resale fraction is held fixed across operating lives; reassess it when calibrating a scenario.' : ''}`;
+      this.element('sweep-note').textContent = `${sweep.some(p => p.selected === null) ? 'Gaps indicate no finite nonnegative price meets the return hurdle. ' : ''}${control.key === 'operatingYears' ? 'Facility resale fraction is held fixed across operating lives; reassess it when calibrating a scenario.' : ''}`;
       this.element('sweep-heading').textContent = `${control.label} (${control.unit})`;
-      this.element('sweep-data').innerHTML = sweep.map((p, i) => `<tr><td>${display(xs[i])}</td><td>${p.selected === null ? 'Not feasible' : money.format(p.selected)}</td><td>${p.reference === null ? 'Not feasible' : money.format(p.reference)}</td></tr>`).join('');
+      this.element('sweep-data').innerHTML = tableSweep.map((p, i) => `<tr><td>${display(band.x[i])}</td><td>${p.selected === null ? 'Not feasible' : money.format(p.selected)}</td><td>${money.format(band.p05[i])}</td><td>${money.format(band.p95[i])}</td><td>${money.format(band.reference[i])}</td></tr>`).join('');
       const c = project.cashflows;
       const series = [
         { key: 'revenue', name: 'Token revenue', color: '#17876b' },
@@ -180,9 +155,11 @@ class FinanceWidget extends HTMLElement {
       (this.root.querySelector('.charts') as HTMLElement).hidden = false;
       await Promise.all([
         this.plotly.react(this.element('sensitivity'), [
-          { x: xs, y: sweep.map(p => p.reference), type: 'scatter', mode: 'lines', name: 'Low-cost financing', fill: 'tozeroy', fillcolor: 'rgba(130,140,150,.16)', line: { color: '#8b959d', width: 2 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>Low-cost financing</extra>' },
-          { x: xs, y: sweep.map(p => p.selected), type: 'scatter', mode: 'lines', name: 'Selected assumptions', line: { color: '#006e9c', width: 3 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>Selected assumptions</extra>' },
-          { x: [current], y: [project.price], type: 'scatter', mode: 'markers', name: 'Current value', marker: { color: '#d8592f', size: 11 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>Current value</extra>' },
+          { x: band.x, y: band.reference, type: 'scatter', mode: 'lines', name: 'Below favorable reference', fill: 'tozeroy', fillcolor: 'rgba(130,140,150,.07)', fillpattern: { shape: '/', fgcolor: '#8b959d', bgcolor: 'rgba(255,255,255,0)', size: 8, solidity: .15 }, line: { color: '#8b959d', width: 1 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>Favorable reference</extra>' },
+          { x: band.x, y: band.p05, type: 'scatter', mode: 'lines', showlegend: false, line: { color: 'rgba(0,110,156,.3)', width: 1 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>5th percentile</extra>' },
+          { x: band.x, y: band.p95, type: 'scatter', mode: 'lines', name: 'Other assumptions: 5th–95th percentiles', fill: 'tonexty', fillcolor: 'rgba(0,110,156,.18)', line: { color: 'rgba(0,110,156,.3)', width: 1 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>95th percentile</extra>' },
+          { x: xs, y: sweep.map(p => p.selected), type: 'scatter', mode: 'lines', name: 'Vary only horizontal assumption', line: { color: '#006e9c', width: 3 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>Vary only horizontal assumption</extra>' },
+          { x: [current], y: [project.price], type: 'scatter', mode: 'markers', name: 'Selected values', marker: { color: '#d8592f', size: 11 }, hovertemplate: '%{x:.3g}<br>$%{y:.3f}/MTok<extra>Selected values</extra>' },
         ], { ...common, xaxis: { title: { text: `${control.label}<br>${control.unit}` }, type: control.log ? 'log' : 'linear', automargin: true }, yaxis: { title: { text: 'Initial revenue (USD / MTok output)' }, rangemode: 'tozero', automargin: true } }, config),
         this.plotly.react(this.element('cashflow'), [
           ...series.map(s => ({ x: c.months.slice(1), y: c[s.key].slice(1).map(v => v / 1e6), type: 'bar', name: s.name, marker: { color: s.color }, hovertemplate: 'Month %{x}<br>$%{y:.3f}m / MW IT<extra>%{fullData.name}</extra>' })),

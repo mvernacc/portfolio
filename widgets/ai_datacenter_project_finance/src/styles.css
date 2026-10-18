@@ -51,3 +51,11 @@ th { position: sticky; top: 0; background: #edf4f8; }
 .js-plotly-plot .user-select-none { user-select: none; }
 .js-plotly-plot .cursor-crosshair { cursor: crosshair; }
 .js-plotly-plot .cursor-pointer { cursor: pointer; }
+
+/* The highlighted strip sits beneath the native slider so thumb/keyboard behavior
+   stays native. A minimum-width marker makes fixed plausible values visible. */
+.slider-track { position: relative; grid-column: 1 / -1; padding-bottom: 8px; }
+.slider-track input[type="range"] { width: 100%; position: relative; margin: 0; }
+.plausible-track { position: absolute; left: 8px; right: 8px; bottom: 0; height: 5px; }
+.plausible-marker { position: absolute; bottom: 0; height: 5px; border-radius: 3px; background: #17876b; left: var(--plausible-start); width: var(--plausible-width); min-width: 3px; max-width: 100%; transform: translateX(-1px); }
+.plausible-label { color: #226957; }
