@@ -54,7 +54,7 @@ class FinanceWidget extends HTMLElement {
           <details class="method"><summary>Benchmark and modeling assumptions</summary><p id="benchmark-note"></p><div id="market-note"></div>
             <p>Text-only workload: nominal 8,192 input / 1,024 output tokens (sampled lengths). The highest aggregate-throughput saved configuration meeting the speed target and p99 first-response time ≤10 seconds is selected. Streaming speed means reciprocal mean time per output token, not a minimum guaranteed for every request. First response may include hidden reasoning. Qwen's 25 and 50 targets select the same measured configuration.</p>
             <p>Installed capacity: eight B200 GPUs per 15.015 kW IT (14.3 kW server plus 5% ancillary allowance). Throughput samples are uniform from 75–100% of the selected benchmark's aggregate output. This is an assumed deployment/replication allowance, not observed variation. It does not assert a 25% slowdown per request; service quality under replication remains unverified. Edited throughput values explore deviations from the benchmark and do not certify the streaming target.</p>
-            <p>Capital cost range: $38.70–50.51 million/MW IT, default $40.83 million, based on the saved server quote and facility scenarios. Other ranges are provisional assumptions. All inputs are sampled independently, even where real-world correlations are likely. ${MONTE_CARLO.samples.toLocaleString()} reproducible PCG32 draws; uniform in displayed units, discrete-uniform whole months, billable inference share fixed at 100% unless it is the horizontal-axis input. The same draws are reused across each curve. The highlighted slider strips show plausible ranges; selections may lie outside them. Changing model or speed resets throughput to its benchmark; other edits remain.</p>
+            <p>Capital cost range: $38.70–50.51 million/MW IT, default $41 million, based on the saved server quote and facility scenarios. Other ranges are provisional assumptions. All inputs are sampled independently, even where real-world correlations are likely. ${MONTE_CARLO.samples.toLocaleString()} reproducible PCG32 draws; uniform in displayed units, discrete-uniform whole months, billable inference share fixed at 100% unless it is the horizontal-axis input. The same draws are reused across each curve. The highlighted slider strips show plausible ranges; selections may lie outside them. Changing model or speed resets throughput to its benchmark; other edits remain.</p>
             <p>Revenue includes associated input revenue per million generated output tokens; it is not an output-only API tariff. Aggregate throughput includes prefill and decode over the full serving interval. Price erosion and throughput changes compound annually from operation start. All costs are per MW of installed IT capacity. Taxes and training costs are excluded.</p>
           </details>
         </section>`;
@@ -63,9 +63,10 @@ class FinanceWidget extends HTMLElement {
       this.root.addEventListener('focusout', event => {
         const input = event.target;
         if (input instanceof HTMLInputElement && input.type === 'number' &&
-            (input.dataset.key === 'constructionYears' || input.dataset.key === 'operatingYears') &&
+            ['constructionYears', 'operatingYears', 'capex', 'facilityCapexFraction'].includes(input.dataset.key ?? '') &&
             !input.hasAttribute('aria-invalid')) {
-          input.value = display(this.assumptions[input.dataset.key] * 12);
+          const c = this.controls.find(c => c.key === input.dataset.key)!;
+          input.value = display(Math.round((c.key === 'equityHurdle' ? this.hurdle : this.assumptions[c.key]) / (c.scale ?? 1)));
         }
       });
       this.root.querySelector('#sweep')!.addEventListener('change', () => this.scheduleRender());
@@ -145,7 +146,7 @@ class FinanceWidget extends HTMLElement {
       input.setAttribute('aria-invalid', 'true');
       this.showError(`${c.label} must be between ${c.min} and ${c.max} ${c.unit}.`); return;
     }
-    if (c.key === 'constructionYears' || c.key === 'operatingYears') value = Math.round(value);
+    if (['constructionYears', 'operatingYears', 'capex', 'facilityCapexFraction'].includes(c.key)) value = Math.round(value);
     if (c.key === 'equityHurdle') this.hurdle = value * (c.scale ?? 1);
     else this.assumptions[c.key] = value * (c.scale ?? 1);
     input.removeAttribute('aria-invalid');

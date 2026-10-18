@@ -31,6 +31,6 @@ export function scenarioPreset(modelId: string, target: number) {
     ? { ...c, plausible: BENCHMARK_POLICY.deploymentFraction.map(f => f * throughput / 1e6) as [number, number] }
     : c.key === 'capex' ? { ...c, plausible: [38.70, 50.51] } : { ...c });
   return { id: `${modelId}-${target}`, model, row, controls,
-    defaults: { ...DEFAULT_SELECTION, throughput, capex: 40.83e6, facilityCapexFraction: 12 / 40.83 } };
+    defaults: { ...DEFAULT_SELECTION, throughput, capex: 41e6, facilityCapexFraction: .29 } };
 }
 export const PRESETS = MODELS.flatMap(m => STREAMING_TARGETS.map(target => scenarioPreset(m.id, target)));

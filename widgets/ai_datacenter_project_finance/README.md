@@ -72,8 +72,8 @@ slowdown. Service quality under replication still needs measurement. Editing
 throughput explores custom deviations without certifying the streaming target.
 The benchmark anchor is the default selected value.
 
-Capital cost is $40.83m/MW IT by default, with $38.70–50.51m plausible endpoints
-from the existing purchase/facility scenarios; facility share defaults to 12/40.83.
+Capital cost is $41m/MW IT by default, with $38.70–50.51m plausible endpoints
+from the existing purchase/facility scenarios; facility share defaults to 29%. These selected defaults and number-box values are rounded to whole millions and whole percentages.
 See the research `open_weights_comparison.md` and `qwen35_comparison.md` for sources,
 quote exclusions, precision, replication, and normalization limitations.
 Changing model or speed resets throughput and its range; other financial edits

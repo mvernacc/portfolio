@@ -391,7 +391,7 @@ not an assertion that every request slows by 25%; latency under replication is
 unverified. It replaces mixing unrelated models and concurrency operating choices
 into one huge uncertainty range. Selected throughput can still be edited.
 
-Capital cost defaults to $40.83m/MW IT with plausible range $38.70–50.51m from the
+Capital cost defaults to $41m/MW IT (rounded from $40.83m), and reusable facility share to 29%, with capital cost plausible range $38.70–50.51m from the
 saved quote/facility scenarios. Model/speed changes reset throughput while
 preserving financial edits. Other ranges remain provisional and independent.
 Benchmark IDs and provenance are kept in saved data and exposed in widget fine print.
