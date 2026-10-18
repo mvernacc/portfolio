@@ -77,3 +77,6 @@ th { position: sticky; top: 0; background: #edf4f8; }
 .plot-key .point-key { width: 8px; height: 8px; border-radius: 50%; background: #d8592f; }
 .plot-key .line-key { border-top: 3px solid #006e9c; }
 .plot-key .band-key { height: 10px; background: rgba(0,110,156,.18); border: 1px solid rgba(0,110,156,.3); }
+
+.plot-key .plausible-key { height: 10px; background: rgba(23,135,107,.1); border: 1px solid #17876b; }
+.plot-key .market-key { border-top: 2px dashed #a36b21; }

@@ -59,3 +59,6 @@ export function validateConfiguration(controls: readonly Control[] = CONTROLS): 
   }
   if (keys.size !== Object.keys(DEFAULT_SELECTION).length) throw new Error('Missing parameter configuration');
 }
+
+/** Wider linear throughput plot reveals the inverse relationship; slider stays log. */
+export const THROUGHPUT_VIEW = { lowerBenchmarkFraction: .25, upperBenchmarkFraction: 2 };

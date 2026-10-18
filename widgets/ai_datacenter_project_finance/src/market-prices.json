@@ -1,0 +1,58 @@
+{
+  "gpt-oss": {
+    "model": "openai/gpt-oss-120b",
+    "retrieved": "2026-10-18",
+    "source": "https://openrouter.ai/api/v1/models/openai/gpt-oss-120b/endpoints",
+    "providers": [
+      {
+        "provider": "Near AI",
+        "tag": "near-ai/fp4",
+        "precision": "fp4",
+        "inputPerMillion": 0.03,
+        "outputPerMillion": 0.15
+      },
+      {
+        "provider": "DeepInfra",
+        "tag": "deepinfra/bf16",
+        "precision": "bf16",
+        "inputPerMillion": 0.037,
+        "outputPerMillion": 0.17
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "precision": "fp4",
+        "inputPerMillion": 0.15,
+        "outputPerMillion": 0.6
+      }
+    ]
+  },
+  "qwen35": {
+    "model": "qwen/qwen3.5-397b-a17b",
+    "retrieved": "2026-10-18",
+    "source": "https://openrouter.ai/api/v1/models/qwen/qwen3.5-397b-a17b/endpoints",
+    "providers": [
+      {
+        "provider": "Alibaba",
+        "tag": "alibaba",
+        "precision": "unknown",
+        "inputPerMillion": 0.39,
+        "outputPerMillion": 2.34
+      },
+      {
+        "provider": "DeepInfra",
+        "tag": "deepinfra/fp8",
+        "precision": "fp8",
+        "inputPerMillion": 0.45,
+        "outputPerMillion": 3.0
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "precision": "fp8",
+        "inputPerMillion": 0.5,
+        "outputPerMillion": 3.6
+      }
+    ]
+  }
+}

@@ -4,6 +4,8 @@ import styles from './styles.css?inline';
 
 import { DEFAULT_HURDLE, MONTE_CARLO, type Control } from './config';
 import { MODELS, STREAMING_TARGETS, scenarioPreset } from './presets';
+import { marketComparison } from './market';
+import { sensitivityAxis } from './presentation';
 import uncertainty from './uncertainty.generated.json';
 const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 });
 const display = (value: number) => Number(value.toPrecision(7)).toString();
@@ -40,7 +42,8 @@ class FinanceWidget extends HTMLElement {
             <section id="panel-sensitivity" role="tabpanel" aria-labelledby="tab-sensitivity">
               <label class="sweep-label" for="sweep">Vary <select id="sweep">${this.controls.map(c => `<option value="${c.key}">${c.label}</option>`).join('')}</select></label>
               <div id="sensitivity" class="plot" role="img" aria-label="Required initial revenue versus the selected assumption"></div>
-              <div class="plot-key" aria-label="Chart key"><span><i class="point-key"></i> Selected values</span><span><i class="line-key"></i> Vary horizontal input</span><span><i class="band-key"></i> Other inputs: 5th–95th percentiles</span></div><p class="chart-note">Independent plausible-range scenarios; not a confidence interval. Model and speed set the band; sliders move the point and line.</p>
+              <div class="plot-key" aria-label="Chart key"><span><i class="point-key"></i> Selected values</span><span><i class="line-key"></i> Vary horizontal input</span><span><i class="market-key"></i> Provider prices</span><span><i class="plausible-key"></i> Plausible horizontal range</span><span><i class="band-key"></i> Other inputs: 5th–95th percentiles</span></div><p class="chart-note">Independent plausible-range scenarios; not a confidence interval. Model and speed set the band; sliders move the point and line.</p>
+              <p id="market-status" class="chart-note"></p>
               <p id="sweep-note" class="chart-note"></p>
               <details class="data"><summary>View sensitivity values</summary><div class="table-scroll"><table><thead><tr><th id="sweep-heading">Assumption</th><th>Selected sweep<br>USD/MTok</th><th>5th percentile<br>USD/MTok</th><th>95th percentile<br>USD/MTok</th></tr></thead><tbody id="sweep-data"></tbody></table></div></details>
             </section>
@@ -48,7 +51,7 @@ class FinanceWidget extends HTMLElement {
               <details class="data"><summary>View monthly cashflows</summary><div class="table-scroll"><table><thead><tr><th>Month</th><th>Revenue</th><th>Facility sale</th><th>Equity CAPEX</th><th>Other OPEX</th><th>Energy</th><th>Capacity</th><th>Debt service</th><th>Net</th></tr></thead><tbody id="cashflow-data"></tbody></table></div><p class="chart-note">USD per MW IT per month; expenses are negative.</p></details>
             </section>
           </div></div>
-          <details class="method"><summary>Benchmark and modeling assumptions</summary><p id="benchmark-note"></p>
+          <details class="method"><summary>Benchmark and modeling assumptions</summary><p id="benchmark-note"></p><div id="market-note"></div>
             <p>Text-only workload: nominal 8,192 input / 1,024 output tokens (sampled lengths). The highest aggregate-throughput saved configuration meeting the speed target and p99 first-response time ≤10 seconds is selected. Streaming speed means reciprocal mean time per output token, not a minimum guaranteed for every request. First response may include hidden reasoning. Qwen's 25 and 50 targets select the same measured configuration.</p>
             <p>Installed capacity: eight B200 GPUs per 15.015 kW IT (14.3 kW server plus 5% ancillary allowance). Throughput samples are uniform from 75–100% of the selected benchmark's aggregate output. This is an assumed deployment/replication allowance, not observed variation. It does not assert a 25% slowdown per request; service quality under replication remains unverified. Edited throughput values explore deviations from the benchmark and do not certify the streaming target.</p>
             <p>Capital cost range: $38.70–50.51 million/MW IT, default $40.83 million, based on the saved server quote and facility scenarios. Other ranges are provisional assumptions. All inputs are sampled independently, even where real-world correlations are likely. ${MONTE_CARLO.samples.toLocaleString()} reproducible PCG32 draws; uniform in displayed units, discrete-uniform whole months, billable inference share fixed at 100% unless it is the horizontal-axis input. The same draws are reused across each curve. The highlighted slider strips show plausible ranges; selections may lie outside them. Changing model or speed resets throughput to its benchmark; other edits remain.</p>
@@ -112,14 +115,9 @@ class FinanceWidget extends HTMLElement {
   }
   private updateBenchmarkNote() {
     const {model, row} = this.preset;
+    const market = marketComparison(model.id);
+    this.element('market-note').innerHTML = `<p>Illustrative provider prices via <a href="${market.source}" target="_blank" rel="noopener">OpenRouter (${market.model})</a>, snapshot ${market.retrieved}; not a full market range. Standard uncached text tariffs in USD per million tokens:</p><ul>${market.providers.map(p => `<li>${p.provider} (${p.tag}; ${p.precision}): input ${money.format(p.inputPerMillion)}, output ${money.format(p.outputPerMillion)} → ${money.format(p.workloadRevenue)} per million output tokens including associated input revenue.</li>`).join('')}</ul><p>Comparison assumes 8 uncached input tokens per output token (the nominal benchmark mix): output tariff + 8 × input tariff. Sampled benchmark lengths can differ. Discounts, cache hits, taxes and additional fees are excluded. These routes are not filtered for the selected streaming target; hardware, precision, service performance and provider margins differ. Posted prices do not establish production costs or validate the financial assumptions. References stay fixed when sliders or streaming targets change. Cashflows continue to use the model-required revenue.</p>`;
     this.element('benchmark-note').innerHTML = `${model.description} Selected concurrency: ${row.conc} per replica; measured streaming speed ~${Math.round(1 / row.metrics.mean_tpot)} output tokens/s/request and p99 first response ${row.metrics.p99_ttft.toFixed(1)}s. <a href="${model.source}" target="_blank" rel="noopener">InferenceX source</a>, row ${row.id}.`;
-  }
-  private axisRange(c: Control, current: number) {
-    const [lo, hi] = c.plausible[0] === c.plausible[1] ? [c.min, c.max] : c.plausible;
-    const transform = (value: number) => c.log ? Math.log10(value) : value;
-    const bounds = [transform(Math.min(lo, current)), transform(Math.max(hi, current))];
-    const padding = (bounds[1] - bounds[0]) * .04;
-    return [Math.max(transform(c.min), bounds[0] - padding), Math.min(transform(c.max), bounds[1] + padding)];
   }
   private controlMarkup(c: Control) {
     const position = (v: number) => 100 * (c.log ? Math.log(v / c.min) / Math.log(c.max / c.min) : (v - c.min) / (c.max - c.min));
@@ -175,11 +173,16 @@ class FinanceWidget extends HTMLElement {
     if (!this.plotly || !this.isConnected || this.root.querySelector('[aria-invalid="true"]')) return;
     try {
       const project = evaluateProject(this.assumptions, this.hurdle);
+      const market = marketComparison(this.preset.model.id);
+      const prices = market.providers.map(p => p.workloadRevenue);
+      const position = project.price < Math.min(...prices) ? 'below' : project.price > Math.max(...prices) ? 'above' : 'within';
+      this.element('market-status').textContent = `Selected estimate is ${position} these provider prices (8:1 uncached input/output mix). Sources and qualifications below.`;
       const control = this.controls.find(c => c.key === (this.element('sweep') as HTMLSelectElement).value)!;
       const current = (control.key === 'equityHurdle' ? this.hurdle : this.assumptions[control.key]) / (control.scale ?? 1);
       const data = uncertainty.presets[this.preset.id as keyof typeof uncertainty.presets];
       const all = data.axes[control.key];
-      const bounds = this.axisRange(control, current).map(v => control.log ? 10 ** v : v);
+      const axis = sensitivityAxis(control, current);
+      const bounds = axis.bounds;
       const indices = all.x.map((_, i) => i).filter(i => (all.x[i + 1] ?? all.x[i]) >= bounds[0] && (all.x[i - 1] ?? all.x[i]) <= bounds[1]);
       const band = { x: indices.map(i => all.x[i]), p05: indices.map(i => all.p05[i]), p95: indices.map(i => all.p95[i]) };
       const xs = [...new Set([...band.x, current])].sort((a, b) => a - b);
@@ -207,8 +210,9 @@ class FinanceWidget extends HTMLElement {
           { x: band.x, y: band.p05, type: 'scatter', mode: 'lines', showlegend: false, line: { color: 'rgba(0,110,156,.3)', width: 1 }, hovertemplate: '%{x:.2g}<br>$%{y:.2g}/MTok<extra>5th percentile</extra>' },
           { x: band.x, y: band.p95, type: 'scatter', mode: 'lines', name: 'Other assumptions: 5th–95th', fill: 'tonexty', fillcolor: 'rgba(0,110,156,.18)', line: { color: 'rgba(0,110,156,.3)', width: 1 }, hovertemplate: '%{x:.2g}<br>$%{y:.2g}/MTok<extra>95th percentile</extra>' },
           { x: xs, y: sweep.map(p => p.selected), type: 'scatter', mode: 'lines', name: 'Vary only horizontal assumption', line: { color: '#006e9c', width: 3 }, hovertemplate: '%{x:.2g}<br>$%{y:.2g}/MTok<extra>Vary only horizontal assumption</extra>' },
+          ...market.providers.map((p, i) => ({ x: bounds, y: [p.workloadRevenue, p.workloadRevenue], type: 'scatter', mode: 'lines', name: p.provider, line: { color: ['#a36b21', '#806128', '#b0844d'][i], width: 1.5, dash: 'dash' }, hovertemplate: `$%{y:.2g}/MTok output including input revenue<extra>${p.provider} · ${market.retrieved}</extra>` })),
           { x: [current], y: [project.price], type: 'scatter', mode: 'markers', name: 'Selected values', marker: { color: '#d8592f', size: 11 }, hovertemplate: '%{x:.2g}<br>$%{y:.2g}/MTok<extra>Selected values</extra>' },
-        ], { ...common, showlegend: false, margin: { l: 62, r: 12, t: 12, b: 65 }, xaxis: { title: { text: `${control.label}<br>${control.unit}` }, type: control.log ? 'log' : 'linear', automargin: true, range: this.axisRange(control, current) }, yaxis: { title: { text: 'Initial revenue (USD / MTok output)' }, rangemode: 'tozero', automargin: true } }, config);
+        ], { ...common, showlegend: false, margin: { l: 62, r: 12, t: 12, b: 65 }, xaxis: { title: { text: `${control.label}<br>${control.unit}` }, type: axis.type, automargin: true, range: axis.range }, yaxis: { title: { text: 'Initial revenue (USD / MTok output)' }, rangemode: 'tozero', automargin: true }, shapes: [{ type: 'rect', x0: control.plausible[0], x1: control.plausible[1], y0: 0, y1: 1, yref: 'paper', fillcolor: 'rgba(23,135,107,.10)', line: { width: 0 }, layer: 'below' }] }, config);
       else await this.plotly.react(this.element('cashflow'), [
           ...series.map(s => ({ x: c.months.slice(1), y: c[s.key].slice(1).map(v => v / 1e6), type: 'bar', name: s.name, marker: { color: s.color }, hovertemplate: 'Month %{x}<br>$%{y:.2g}m / MW IT<extra>%{fullData.name}</extra>' })),
           { x: c.months.slice(1), y: c.net.slice(1).map(v => v / 1e6), type: 'scatter', mode: 'lines', name: 'Net equity cashflow', line: { color: '#20262c', width: 2 }, hovertemplate: 'Month %{x}<br>$%{y:.2g}m / MW IT<extra>Net equity cashflow</extra>' },

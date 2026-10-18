@@ -398,3 +398,24 @@ Benchmark IDs and provenance are kept in saved data and exposed in widget fine p
 The UI has shared assumptions and sensitivity/cashflow tabs, no numerical price
 headline, and no favorable-reference curve. Values remain available in hovers
 and tables with roughly two significant figures.
+
+
+### Widget market comparison and throughput viewport
+
+The throughput chart uses a linear x-axis spanning roughly 0.25–2× benchmark
+throughput, clipped to hard limits and extended to include the selected value.
+This reveals the inverse-throughput relation; a green vertical strip marks the
+plausible interval, while the slider stays logarithmic. Conditional bands outside
+that interval are hypothetical scenarios, not benchmark validation.
+
+Three illustrative OpenRouter provider routes per model appear as horizontal
+price references, from an October 18, 2026 snapshot. For nominal 8192/1024 lengths,
+equivalent workload revenue is `output tariff + 8 × uncached input tariff`, in
+USD per million output tokens. GPT-OSS references: Near AI, DeepInfra, Nebius.
+Qwen references: Alibaba, DeepInfra, Parasail. Exact tariffs, route precision,
+source and date are stored in the widget's `market-prices.json`. These selected
+examples neither describe the full market range nor guarantee the selected
+streaming target. Hardware, precision, service quality, margins, actual token
+ratios, caching and fees limit comparability. Prices do not establish costs or
+validate the model. References stay fixed when financial inputs or speed targets
+change; cashflows use the solved revenue as before.

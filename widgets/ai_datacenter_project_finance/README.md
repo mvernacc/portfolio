@@ -94,7 +94,29 @@ fail generation rather than being silently dropped. Bands are the central 90%
 of stipulated scenarios, **not confidence intervals**. Tests verify fingerprints
 for every preset's generated data. Sliders do not trigger sampling.
 
-The viewport shows the plausible axis range plus any selected out-of-range value;
+The throughput viewport uses a linear axis spanning roughly 0.25–2× the benchmark,
+clipped to hard limits, to reveal the inverse relationship. Other axes use the
+plausible range. All viewports include the selected value. A green vertical strip
+marks the plausible horizontal interval;
 slider exploration limits remain wider. All plotted quantities use initial total
 workload revenue per million output tokens including associated input revenue,
 not an output-only API tariff. Cashflows use the selected state and required price.
+
+
+## Market references
+
+`market-prices.json` is a curated snapshot of three illustrative active
+OpenRouter provider routes per model, retrieved October 18, 2026. It is maintained
+from the public endpoint API, not regenerated during build. Source URL, date,
+route tag, precision and tariffs are retained. `market.ts` converts uncached input
+tariff ×8 + output tariff into USD per million output tokens, matching nominal
+8192/1024 lengths. Dashed horizontal lines show these references on every
+sensitivity view; provider details and tariffs are in the assumptions disclosure.
+
+These examples are not a full market range or filtered for the selected speed.
+Hardware, precision, service conditions and margins differ. Tariffs exclude cache
+discounts, taxes and extra fees; actual sampled token ratios may differ. Posted
+prices do not establish production costs or validate assumptions. Cashflows still
+use the model-required price. `presentation.ts` owns viewport policy separately
+from slider geometry and sampling. This iteration leaves Monte Carlo unchanged;
+`npx tsc && npx vite build` rebuilds presentation without redoing precomputation.
