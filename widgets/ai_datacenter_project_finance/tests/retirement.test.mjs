@@ -35,13 +35,12 @@ test('early retirement preserves scheduled payment and repays remaining principa
     near(-c.debtPayoff.at(-1),expected,1e-11);
     assert.equal(c.debtPayoff.filter(v=>v!==0).length,1);
     assert.equal(full.debtPayoff.reduce((s,v)=>s+v,0),0);
-    near(c.terminalValue.at(-1),full.terminalValue.at(-1));
-    assert.equal(c.months.at(-1),24+10);
-    c.net.forEach((v,i)=>near(v,c.revenue[i]+c.equityConstructionCapex[i]+c.nonEnergyOpex[i]+c.energyOpex[i]+c.capacityOpex[i]+c.debtService[i]+c.debtPayoff[i]+c.terminalValue[i]));
+    assert.equal(c.months.at(-1),3+10);
+    c.net.forEach((v,i)=>near(v,c.revenue[i]+c.equityCapex[i]+c.nonEnergyOpex[i]+c.energyOpex[i]+c.rentOpex[i]+c.debtService[i]+c.debtPayoff[i]));
   }
 });
 test('flat revenues and no salvage favor full life; extreme erosion can favor earliest retirement',()=>{
-  const flat={...DEFAULT_ASSUMPTIONS,facilityResidualFraction:0};
+  const flat={...DEFAULT_ASSUMPTIONS};
   assert.equal(optimizeRetirement(flat,.15).retirementMonths,60);
   const adverse={...DEFAULT_ASSUMPTIONS,priceAnnualErosion:.999999999,nonEnergyAnnualOpex:1e9};
   assert.equal(optimizeRetirement(adverse,.15).retirementMonths,1);
@@ -54,11 +53,7 @@ test('retirement cashflows and price retain exact reciprocal throughput scaling'
   near(x.npv,0,1e-5);
   x.cashflows.net.forEach((v,i)=>near(v,y.cashflows.net[i],1e-11));
 });
-test('retirement validation and zero-price asset recovery case',()=>{
+test('retirement validation',()=>{
   for(const t of [0,1.5,61,NaN]) assert.throws(()=>calcMonthlyCashflows(DEFAULT_ASSUMPTIONS,1,t),/Retirement/);
   for(const h of [-1,NaN]) assert.throws(()=>optimizeRetirement(DEFAULT_ASSUMPTIONS,h));
-  const a={...DEFAULT_ASSUMPTIONS,debtFraction:0,facilityCapexFraction:1,facilityResidualFraction:1,energyCostPerMWh:0,nonEnergyAnnualOpex:0};
-  const best=optimizeRetirement(a,-.1);
-  assert.equal(best.price,0);
-  assert.ok(npv(calcMonthlyCashflows(a,0,best.retirementMonths),-.1)>=0);
 });

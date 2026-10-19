@@ -1,19 +1,15 @@
 /** Pre-tax finance per MW of installed IT capacity. See the model notes.md. */
 export interface AiDatacenterFinanceModelAssumptions {
-  /** [USD / MW] Capital expenditures per MW of installed IT capacity. */
+  /** [USD / MW] Installed IT equipment and deployment cost per MW of installed IT capacity. */
   capex: number;
-  /** Reusable facility share of total CAPEX; remaining IT has zero residual. */
-  facilityCapexFraction: number;
-  /** Net terminal facility proceeds / initial facility CAPEX. */
-  facilityResidualFraction: number;
   /** Effective annual output growth at fixed capacity and active power; > -1. */
   throughputAnnualChange: number;
   /** Effective annual decline in total revenue per output token; [0, 1). */
   priceAnnualErosion: number;
   /** Idle IT power / installed IT capacity. */
   idlePowerFraction: number;
-  /** [USD / kW facility / month] Reserved peak power charge. */
-  capacityChargePerKWMonth: number;
+  /** [USD / kW IT / month] Rent per reserved IT kW; electricity excluded. */
+  coloRentPerKWMonth: number;
   /** [Tok s^-1 MW^-1] Initial aggregate output tok/s/MW installed IT, including prefill and decode resources over the full serving interval. */
   throughput: number;
   /** [dimensionless] Power usage effectiveness. */
@@ -24,10 +20,10 @@ export interface AiDatacenterFinanceModelAssumptions {
   revenueFraction: number;
   /** [USD year^-1 MW^-1] Non-energy operating costs per MW of installed IT capacity. */
   nonEnergyAnnualOpex: number;
-  /** [USD / MWh] Volumetric facility electricity tariff, excluding separate capacity charges. */
+  /** [USD / MWh] Volumetric facility electricity tariff, including any utility charges allocated per consumed MWh; rent is separate. */
   energyCostPerMWh: number;
   /** [year] Time from first major expenses and loan start to operations. */
-  constructionYears: number;
+  commissioningYears: number;
   /** [year] Maximum operating life; original loan maturity uses this horizon. */
   operatingYears: number;
   /** [dimensionless] Fraction of CAPEX financed with debt. */
@@ -39,18 +35,16 @@ export interface AiDatacenterFinanceModelAssumptions {
 export interface ProjectFinanceTerms {
   /** [USD year^-1 MW^-1] Annual energy costs per MW of installed IT capacity. */
   energyAnnualOpex: number;
-  /** [USD / year / MW IT] Reserved peak facility capacity expense. */
-  capacityAnnualOpex: number;
-  /** [USD / MW IT] Net proceeds at the final operating month end. */
-  terminalFacilityValue: number;
-  /** [USD month^-1 MW^-1] Equity-funded monthly construction CAPEX. */
-  equityMonthlyConstructionCapex: number;
+  /** [USD / year / MW IT] Colocation rent, independent of utilization and PUE. */
+  rentAnnualOpex: number;
+  /** [USD / MW IT] Equity-funded equipment paid at month 0. */
+  initialEquityCapex: number;
   /** [USD / MW] Debt balance at start of revenue-generating operations. */
   debtBalanceAtOperationsStart: number;
   /** [USD month^-1 MW^-1] Monthly term loan payment during operations. */
   termLoanMonthlyPayment: number;
   /** [month] Time from first major expenses to revenue-generating operations. */
-  constructionMonths: number;
+  commissioningMonths: number;
   /** [month] Time from first major expenses to end of operations. */
   projectDurationMonths: number;
   /** [month] Modeled cashflow duration. */
@@ -60,20 +54,18 @@ export interface ProjectFinanceTerms {
 }
 
 export interface MonthlyCashflowSeries {
-  /** [month] Month index. Month 0 has no cashflow, matching the Python model. */
+  /** [month] Month index. Month 0 pays equipment equity; following months are end-of-month flows. */
   months: number[];
   /** [USD month^-1 MW^-1] Positive revenue cashflow. */
   revenue: number[];
-  /** [USD month^-1 MW^-1] Negative equity-funded construction CAPEX. */
-  equityConstructionCapex: number[];
+  /** [USD month^-1 MW^-1] Negative upfront equity-funded IT equipment cost. */
+  equityCapex: number[];
   /** [USD month^-1 MW^-1] Negative non-energy OPEX. */
   nonEnergyOpex: number[];
   /** [USD month^-1 MW^-1] Negative energy OPEX. */
   energyOpex: number[];
-  /** Negative reserved facility power expense. */
-  capacityOpex: number[];
-  /** Positive terminal facility proceeds, separate from token revenue. */
-  terminalValue: number[];
+  /** Negative colocation rent, including commissioning. */
+  rentOpex: number[];
   /** [USD month^-1 MW^-1] Negative debt service. */
   debtService: number[];
   /** Negative outstanding principal repaid at early retirement, after scheduled payment. */
@@ -99,20 +91,18 @@ export const SECONDS_PER_YEAR = 60 * 60 * HOURS_PER_YEAR;
 export const MONTHS_PER_YEAR = 12;
 
 export const DEFAULT_ASSUMPTIONS: AiDatacenterFinanceModelAssumptions = {
-  capex: 50e6,
-  facilityCapexFraction: 0.2,
-  facilityResidualFraction: 0.5,
+  capex: 29e6,
   throughputAnnualChange: 0.0,
   priceAnnualErosion: 0.0,
   idlePowerFraction: 0.2,
-  capacityChargePerKWMonth: 0.0,
+  coloRentPerKWMonth: 275,
   throughput: 1e5,
   pue: 1.2,
   utilization: 0.9,
   revenueFraction: 1.0,
   nonEnergyAnnualOpex: 1e6,
   energyCostPerMWh: 90.0,
-  constructionYears: 2.0,
+  commissioningYears: 3 / 12,
   operatingYears: 5.0,
   debtFraction: 0.65,
   debtInterestRate: 0.085,
@@ -206,30 +196,19 @@ export function calcProjectFinanceTerms(
     assumptions.energyCostPerMWh *
     HOURS_PER_YEAR;
 
-  const capacityAnnualOpex =
-    1000 * assumptions.pue * assumptions.capacityChargePerKWMonth * 12;
-  const terminalFacilityValue =
-    assumptions.capex *
-    assumptions.facilityCapexFraction *
-    assumptions.facilityResidualFraction;
-  const constructionMonths = yearsToMonths(assumptions.constructionYears);
+  const rentAnnualOpex =
+    1000 * assumptions.coloRentPerKWMonth * 12;
+  const commissioningMonths = yearsToMonths(assumptions.commissioningYears);
   const operatingMonths = yearsToMonths(assumptions.operatingYears);
-  const projectDurationMonths = constructionMonths + operatingMonths;
+  const projectDurationMonths = commissioningMonths + operatingMonths;
   const cashflowDurationMonths = projectDurationMonths;
   const debtMonthlyInterestRate =
     assumptions.debtInterestRate / MONTHS_PER_YEAR;
 
-  const monthlyConstructionCapex = assumptions.capex / constructionMonths;
-  const equityMonthlyConstructionCapex =
-    (1 - assumptions.debtFraction) * monthlyConstructionCapex;
-  const debtMonthlyConstructionDraw =
-    assumptions.debtFraction * monthlyConstructionCapex;
-
-  let debtBalanceAtOperationsStart = 0.0;
-  for (let month = 0; month < constructionMonths; month += 1) {
-    debtBalanceAtOperationsStart *= 1 + debtMonthlyInterestRate;
-    debtBalanceAtOperationsStart += debtMonthlyConstructionDraw;
-  }
+  // Equipment is paid and debt drawn at month 0. Interest accrues throughout commissioning.
+  const initialEquityCapex = (1 - assumptions.debtFraction) * assumptions.capex;
+  const debtBalanceAtOperationsStart = assumptions.debtFraction * assumptions.capex
+    * (1 + debtMonthlyInterestRate) ** commissioningMonths;
 
   const termLoanMonthlyPayment = loanPayment(
     debtMonthlyInterestRate,
@@ -244,12 +223,11 @@ export function calcProjectFinanceTerms(
 
   return {
     energyAnnualOpex,
-    capacityAnnualOpex,
-    terminalFacilityValue,
-    equityMonthlyConstructionCapex,
+    rentAnnualOpex,
+    initialEquityCapex,
     debtBalanceAtOperationsStart,
     termLoanMonthlyPayment,
-    constructionMonths,
+    commissioningMonths,
     projectDurationMonths,
     cashflowDurationMonths,
     billableOutputAnnual,
@@ -282,12 +260,11 @@ export function calcPricePerMTokForTargetIrr(
   for (const month of c.months) {
     const discount = (1 + targetIrrAnnual) ** (-month / 12);
     costs -=
-      (c.equityConstructionCapex[month] +
+      (c.equityCapex[month] +
         c.nonEnergyOpex[month] +
         c.energyOpex[month] +
-        c.capacityOpex[month] +
-        c.debtService[month] +
-        c.terminalValue[month]) *
+        c.rentOpex[month] +
+        c.debtService[month]) *
       discount;
     revenueCoefficient += c.revenue[month] * discount;
   }
@@ -317,41 +294,37 @@ export function calcMonthlyCashflows(
   const maximumOperatingMonths = yearsToMonths(assumptions.operatingYears);
   if (!Number.isInteger(retirementMonths) || retirementMonths < 1 || retirementMonths > maximumOperatingMonths)
     throw new Error("Retirement must be a whole operating month within the maximum life.");
-  const endMonth = terms.constructionMonths + retirementMonths;
+  const endMonth = terms.commissioningMonths + retirementMonths;
   if (!Number.isFinite(pricePerMTok) || pricePerMTok < 0) {
     throw new Error("Initial price must be finite and nonnegative.");
   }
 
   const months = rangeInclusive(0, endMonth);
   const revenue = new Array<number>(months.length).fill(0.0);
-  const equityConstructionCapex = new Array<number>(months.length).fill(0.0);
+  const equityCapex = new Array<number>(months.length).fill(0.0);
   const nonEnergyOpex = new Array<number>(months.length).fill(0.0);
   const energyOpex = new Array<number>(months.length).fill(0.0);
-  const capacityOpex = new Array<number>(months.length).fill(0.0);
-  const terminalValue = new Array<number>(months.length).fill(0.0);
-  terminalValue[endMonth] = terms.terminalFacilityValue;
+  const rentOpex = new Array<number>(months.length).fill(0.0);
   const debtService = new Array<number>(months.length).fill(0.0);
   const debtPayoff = new Array<number>(months.length).fill(0.0);
   let balance = terms.debtBalanceAtOperationsStart;
   const net = new Array<number>(months.length).fill(0.0);
 
   for (const month of months) {
-    const isConstructionMonth = month > 0 && month <= terms.constructionMonths;
-    const isOperatingMonth =
-      month > terms.constructionMonths && month <= endMonth;
 
-    if (isConstructionMonth) {
-      equityConstructionCapex[month] = -terms.equityMonthlyConstructionCapex;
-    }
+    const isOperatingMonth =
+      month > terms.commissioningMonths && month <= endMonth;
+
+    if (month === 0) equityCapex[month] = -terms.initialEquityCapex;
+    if (month > 0) rentOpex[month] = -terms.rentAnnualOpex / 12;
 
     if (isOperatingMonth) {
-      const age = (month - terms.constructionMonths - 1) / 12;
+      const age = (month - terms.commissioningMonths - 1) / 12;
       const output =
         (terms.billableOutputAnnual / 12) *
         (1 + assumptions.throughputAnnualChange) ** age;
       const price = pricePerMTok * (1 - assumptions.priceAnnualErosion) ** age;
       revenue[month] = output * price;
-      capacityOpex[month] = -terms.capacityAnnualOpex / 12;
       nonEnergyOpex[month] = -assumptions.nonEnergyAnnualOpex / MONTHS_PER_YEAR;
       energyOpex[month] = -terms.energyAnnualOpex / MONTHS_PER_YEAR;
       debtService[month] = -terms.termLoanMonthlyPayment;
@@ -361,24 +334,22 @@ export function calcMonthlyCashflows(
 
     net[month] =
       revenue[month] +
-      equityConstructionCapex[month] +
+      equityCapex[month] +
       nonEnergyOpex[month] +
       energyOpex[month] +
       debtService[month] +
-      capacityOpex[month] +
-      debtPayoff[month] +
-      terminalValue[month];
+      rentOpex[month] +
+      debtPayoff[month];
   }
 
   const series = [
     revenue,
-    equityConstructionCapex,
+    equityCapex,
     nonEnergyOpex,
     energyOpex,
-    capacityOpex,
+    rentOpex,
     debtService,
     debtPayoff,
-    terminalValue,
     net,
   ];
   if (
@@ -391,11 +362,10 @@ export function calcMonthlyCashflows(
   return {
     months,
     revenue,
-    equityConstructionCapex,
+    equityCapex,
     nonEnergyOpex,
     energyOpex,
-    capacityOpex,
-    terminalValue,
+    rentOpex,
     debtService,
     debtPayoff,
     net,
@@ -425,14 +395,12 @@ function validateAssumptions(a: AiDatacenterFinanceModelAssumptions): void {
   for (const key of [
     "capex",
     "throughput",
-    "constructionYears",
+    "commissioningYears",
     "operatingYears",
   ] as const) {
     if (a[key] <= 0) throw new Error(`${key} must be positive.`);
   }
   for (const key of [
-    "facilityCapexFraction",
-    "facilityResidualFraction",
     "idlePowerFraction",
   ] as const) {
     if (a[key] < 0 || a[key] > 1)
@@ -449,7 +417,7 @@ function validateAssumptions(a: AiDatacenterFinanceModelAssumptions): void {
   for (const key of [
     "nonEnergyAnnualOpex",
     "energyCostPerMWh",
-    "capacityChargePerKWMonth",
+    "coloRentPerKWMonth",
     "debtInterestRate",
   ] as const) {
     if (a[key] < 0) throw new Error(`${key} must be nonnegative.`);
@@ -459,7 +427,7 @@ function validateAssumptions(a: AiDatacenterFinanceModelAssumptions): void {
       "PUE must be >= 1 and throughput annual change must be > -1.",
     );
   }
-  for (const years of [a.constructionYears, a.operatingYears]) {
+  for (const years of [a.commissioningYears, a.operatingYears]) {
     if (yearsToMonths(years) < 1)
       throw new Error("Each duration must be at least one whole month.");
   }
@@ -472,7 +440,7 @@ function calcIrrFromCashflows(cashflows: number[]): number {
   for (let i = 1; i < significant.length; i++) {
     if (Math.sign(significant[i]) !== Math.sign(significant[i - 1])) changes++;
   }
-  // Erosion and terminal proceeds can introduce multiple IRRs. Do not choose one.
+  // Erosion and debt repayment can introduce multiple IRRs. Do not choose one.
   if (significant.length < 2 || significant[0] >= 0 || changes !== 1)
     return Number.NaN;
 

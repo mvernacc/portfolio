@@ -9,19 +9,25 @@ const near = (a, b, tolerance = 1e-9) =>
   );
 const scenario = (patch) => ({ ...m.DEFAULT_ASSUMPTIONS, ...patch });
 
-test("historical zero-trend, zero-residual, zero-idle result is preserved", () => {
-  const a = scenario({
-    revenueFraction: 0.5,
-    facilityResidualFraction: 0,
-    idlePowerFraction: 0,
-  });
-  near(m.calcPricePerMTokForTargetIrr(a, 0.15), 11.37426337099161);
+test("upfront equipment and commissioning interest follow payment timing", () => {
+  const a = scenario({ commissioningYears: 3/12 });
+  const terms = m.calcProjectFinanceTerms(a), c = m.calcMonthlyCashflows(a, 1);
+  near(c.equityCapex[0], -(1-a.debtFraction)*a.capex);
+  assert.equal(c.equityCapex.filter(v=>v!==0).length, 1);
+  near(terms.debtBalanceAtOperationsStart, a.capex*a.debtFraction*(1+a.debtInterestRate/12)**3);
+  for(let month=1; month<=3; month++) {
+    near(c.net[month], -1000*a.coloRentPerKWMonth);
+    assert.equal(c.revenue[month], 0);
+    assert.equal(c.energyOpex[month], 0);
+  }
+  assert.ok(c.revenue[4]>0);
+  assert.ok(c.energyOpex[4]<0);
 });
 
 test("target price gives zero equity NPV and IRR for conventional cashflows", () => {
   for (const patch of [
     {},
-    { constructionYears: 4.5 },
+    { commissioningYears: 4.5 },
     { debtFraction: 0 },
     { debtInterestRate: 0 },
     { priceAnnualErosion: 0.05, throughputAnnualChange: 0.03 },
@@ -45,43 +51,30 @@ test("annual trend timing and multiplicative offset", () => {
     scenario({ priceAnnualErosion: 0.2 }),
     10,
   );
-  near(decay.revenue[37] / decay.revenue[25], 0.8);
+  near(decay.revenue[16] / decay.revenue[4], 0.8);
 });
 
-test("capacity charges use reserved facility kW; idle energy remains", () => {
+test("rent uses reserved IT kW; PUE applies only to consumed electricity", () => {
   const a = scenario({
     utilization: 0.5,
     idlePowerFraction: 0.2,
-    capacityChargePerKWMonth: 10,
+    coloRentPerKWMonth: 10,
   });
   const t = m.calcProjectFinanceTerms(a);
   near(t.energyAnnualOpex, 0.6 * 1.2 * 90 * m.HOURS_PER_YEAR);
-  near(t.capacityAnnualOpex, 144000);
+  near(t.rentAnnualOpex, 120000);
   near(
-    m.calcProjectFinanceTerms({ ...a, utilization: 0.9 }).capacityAnnualOpex,
-    t.capacityAnnualOpex,
+    m.calcProjectFinanceTerms({ ...a, utilization: 0.9, pue: 1.8 }).rentAnnualOpex,
+    t.rentAnnualOpex,
   );
 });
 
-test("terminal proceeds are distinct and occur only once", () => {
-  const c = m.calcMonthlyCashflows(scenario({}), 10);
-  near(
-    c.terminalValue.reduce((a, b) => a + b, 0),
-    5e6,
-  );
-  assert.equal(c.terminalValue.filter((x) => x !== 0).length, 1);
-  near(c.terminalValue.at(-1), 5e6);
-  for (const i of c.months)
-    near(
-      c.net[i],
-      c.revenue[i] +
-        c.equityConstructionCapex[i] +
-        c.energyOpex[i] +
-        c.capacityOpex[i] +
-        c.nonEnergyOpex[i] +
-        c.debtService[i] +
-        c.terminalValue[i],
-    );
+test("rent stops at retirement with no salvage or lease penalty", () => {
+  const a=scenario({}), c=m.calcMonthlyCashflows(a, 10, 2);
+  assert.equal(c.months.at(-1),5);
+  near(c.rentOpex.reduce((x,y)=>x+y,0), -5*1000*a.coloRentPerKWMonth);
+  assert.ok(!('terminalValue' in c));
+  for(const i of c.months) near(c.net[i], c.revenue[i]+c.equityCapex[i]+c.energyOpex[i]+c.rentOpex[i]+c.nonEnergyOpex[i]+c.debtService[i]+c.debtPayoff[i]);
 });
 
 test("nonconventional cashflows do not return an arbitrary IRR", () => {
@@ -106,10 +99,9 @@ test("invalid inputs are rejected", () => {
     { capex: 0 },
     { throughput: NaN },
     { operatingYears: Infinity },
-    { constructionYears: 0.01 },
+    { commissioningYears: 0.01 },
     { idlePowerFraction: -0.1 },
-    { facilityResidualFraction: 1.1 },
-    { capacityChargePerKWMonth: -1 },
+    { coloRentPerKWMonth: -1 },
     { priceAnnualErosion: 1 },
     { throughputAnnualChange: -1 },
   ]) {

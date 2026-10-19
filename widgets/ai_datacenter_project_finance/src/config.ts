@@ -12,20 +12,18 @@ export interface Control {
 }
 export const CONTROLS: Control[] = [
   { key: 'throughput', plausible: [.03, 1],   label: 'Output throughput', unit: 'MTok/s/MW IT', min: .01, max: 10, step: .01, scale: 1e6, log: true, help: 'Aggregate output across requests, including prefill and decode resources, for a fixed workload.' },
-  { key: 'capex', plausible: [30, 70],  label: 'Total capital cost', unit: 'million USD/MW IT', min: 10, max: 100, step: 1, scale: 1e6 },
+  { key: 'capex', plausible: [28.7, 34.5],  label: 'IT equipment cost', unit: 'million USD/MW IT', min: 10, max: 100, step: 1, scale: 1e6 },
   { key: 'utilization', advanced: true, plausible: [50, 95],  label: 'Utilization', unit: '%', min: 10, max: 100, step: 1, scale: .01 },
   { key: 'energyCostPerMWh', plausible: [40, 150],  label: 'Electricity price', unit: 'USD/MWh', min: 0, max: 300, step: 1 },
+  { key: 'coloRentPerKWMonth', plausible: [175, 300], label: 'Colocation rent', unit: 'USD/kW IT/month', min: 0, max: 600, step: 5, help: 'Reserved IT capacity, independent of utilization. Electricity is separate. Lease may end at retirement without penalty.' },
   { key: 'nonEnergyAnnualOpex', advanced: true, plausible: [.5, 2],  label: 'Other annual operating cost', unit: 'million USD/MW IT/year', min: 0, max: 5, step: .1, scale: 1e6 },
-  { key: 'constructionYears', advanced: true, plausible: [12, 36], sampling: 'months',  label: 'Construction time', unit: 'months', min: 1, max: 60, step: 1, scale: 1 / 12 },
+  { key: 'commissioningYears', advanced: true, plausible: [1, 6], sampling: 'months',  label: 'Commissioning delay', unit: 'months', min: 1, max: 12, step: 1, scale: 1 / 12 },
   { key: 'operatingYears', plausible: [36, 84], sampling: 'months',  label: 'Maximum operating life', unit: 'months', min: 12, max: 120, step: 1, scale: 1 / 12, help: 'Retirement is chosen within this limit. Loan payments amortize over the full maximum life.' },
   { key: 'debtFraction', advanced: true, plausible: [40, 80],  label: 'Debt share of capital', unit: '%', min: 0, max: 95, step: 1, scale: .01 },
   { key: 'debtInterestRate', advanced: true, plausible: [5, 12],  label: 'Annual debt interest', unit: '% nominal, monthly compounding', min: 0, max: 20, step: .5, scale: .01 },
   { key: 'equityHurdle', advanced: true, plausible: [10, 25],  label: 'Equity return hurdle', unit: '% effective annual, pre-tax', min: 0, max: 30, step: .5, scale: .01 },
-  { key: 'pue', plausible: [1.1, 1.4],  label: 'Power usage effectiveness', unit: 'facility / IT power', min: 1, max: 2, step: .05, advanced: true },
+  { key: 'pue', plausible: [1.1, 1.4],  label: 'Power usage effectiveness', unit: 'facility / IT power', help: 'Multiplies consumed IT electricity, including idle power; never multiplies rent.', min: 1, max: 2, step: .05, advanced: true },
   { key: 'idlePowerFraction', plausible: [10, 40],  label: 'Idle IT power', unit: '% of installed IT capacity', min: 0, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'capacityChargePerKWMonth', plausible: [0, 20],  label: 'Reserved power charge', unit: 'USD/kW facility/month', min: 0, max: 50, step: 1, advanced: true, help: 'Use the volumetric electricity rate above when adding this charge. Do not add it again to an all-in tariff.' },
-  { key: 'facilityCapexFraction', plausible: [10, 35],  label: 'Reusable facility share', unit: '% of total capital', min: 0, max: 100, step: 1, scale: .01, advanced: true },
-  { key: 'facilityResidualFraction', plausible: [20, 70],  label: 'Facility resale value', unit: '% of initial facility cost', min: 0, max: 100, step: 1, scale: .01, advanced: true, help: 'Same net facility proceeds at any retirement date. Compute hardware has zero resale value.' },
   { key: 'revenueFraction', plausible: [100, 100],  label: 'Billable share of active capacity', unit: '%', min: 10, max: 100, step: 1, scale: .01, advanced: true },
 ];
 

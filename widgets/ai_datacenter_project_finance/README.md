@@ -19,8 +19,8 @@ The build precomputes conditional Monte Carlo bands and can take several minutes
 
 ## Design
 
-The UI has shared controls and Cost sensitivity / Cashflows tabs. Four sliders
-are initially visible: aggregate throughput, capital cost, electricity price and
+The UI has shared controls and Cost sensitivity / Cashflows tabs. Five sliders
+are initially visible: aggregate throughput, IT equipment cost, electricity price, colocation rent and
 maximum operating life. Additional parameters expands into page flow on desktop, with the chart sticky below the site header. On narrow screens, the additional inputs have a bounded scroll area above the chart. Selected results
 appear on the chart and in optional tables, rounded to two significant figures;
 there is no precise headline price or favorable-reference region.
@@ -72,8 +72,17 @@ slowdown. Service quality under replication still needs measurement. Editing
 throughput explores custom deviations without certifying the streaming target.
 The benchmark anchor is the default selected value.
 
-Capital cost is $41m/MW IT by default, with $38.70–50.51m plausible endpoints
-from the existing purchase/facility scenarios; facility share defaults to 29%. These selected defaults and number-box values are rounded to whole millions and whole percentages.
+IT equipment cost is $29m/MW IT by default, with $28.7–34.5m plausible endpoints:
+whole-server purchase prices plus networking/deployment allowances, with facility
+capital removed. See `work_in_progress/notes.md` for formulas and source qualifications.
+Rent is $275 per reserved IT kW-month by default (illustrative $175–300 range),
+independent of utilization and PUE. Electricity is billed separately: PUE multiplies
+active-plus-idle IT energy. Rent starts during commissioning and ends at retirement
+without a termination charge or remaining commitment, an explicit simplification.
+Equipment is paid at month 0, with debt interest accruing over a default three-month
+commissioning delay. Electricity and other operating expenses start at operation.
+All IT salvage is zero. There is no facility ownership, construction or resale.
+
 See the research `open_weights_comparison.md` and `qwen35_comparison.md` for sources,
 quote exclusions, precision, replication, and normalization limitations.
 Changing model or speed resets throughput and its range; other financial edits
@@ -128,8 +137,7 @@ price erosion, 20% aggregate throughput growth; default), faster repricing
 (60%, 50%), and rapid obsolescence (90%, 50%; stress case). These are judgments
 informed by the research memos, not fitted rates, scenario probabilities, or a
 forecast that the same model runs for the entire project. The starting benchmark
-anchors an evolving workload mix on one compute cohort. Terminal proceeds cover
-reusable facility assets only; compute replacement belongs to a successor project.
+anchors an evolving workload mix on one compute cohort. The facility is rented; all IT equipment has zero salvage value.
 
 The selector fixes both rates in selected cashflows and each conditional Monte
 Carlo band. Neither is independently sampled or offered as a slider/sweep. Other
@@ -153,8 +161,7 @@ The maximum operating life also sets the original loan amortization period.
 For each candidate retirement month from 1 through that limit, the solver computes
 the initial price meeting the equity hurdle and chooses the lowest feasible price.
 Scheduled payments remain unchanged between candidates; remaining principal is
-paid at retirement after that month's payment. Facility proceeds are a constant
-fraction of initial facility capital at every retirement date. Compute resale,
+paid at retirement after that month's payment. Rent ends without penalty. IT resale,
 replacement CAPEX, shutdown fees and operating costs after retirement are zero.
 
 Retirement is optimized independently in every Monte Carlo draw and selected
@@ -171,9 +178,8 @@ does too. Any change making costs or retirement eligibility depend on initial
 throughput requires revisiting that reuse.
 
 The widget's retirement solver is `src/retirement.ts`. The fixed-horizon
-`calcPricePerMTokForTargetIrr` helper in `model.ts` and the earlier Python prototype
-remain reference calculations; the widget, sweeps and Monte Carlo all use the
+`calcPricePerMTokForTargetIrr` helper in `model.ts` evaluates the current colocation
+model at its maximum horizon; the earlier Python prototype remains a historical
+owner-developed-facility research artifact. For the current model, the widget, sweeps and Monte Carlo all use the
 retirement solver. `calcMonthlyCashflows` accepts the chosen operating-month
-count without changing original loan terms. A zero required price means asset
-recovery already meets/exceeds the hurdle; exact positive-price ties choose the
-earlier retirement month.
+count without changing original loan terms. Exact price ties choose the earlier retirement month.

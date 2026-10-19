@@ -30,8 +30,8 @@ export function scenarioPreset(modelId: string, target: number, trajectory: Traj
   const { model, row, throughput } = benchmarkFor(modelId, target);
   const controls: Control[] = CONTROLS.map(c => c.key === 'throughput'
     ? { ...c, plausible: BENCHMARK_POLICY.deploymentFraction.map(f => f * throughput / 1e6) as [number, number] }
-    : c.key === 'capex' ? { ...c, plausible: [38.70, 50.51] } : { ...c });
+    : { ...c });
   return { id: `${modelId}-${target}-${trajectory.id}`, model, row, controls, trajectory,
-    defaults: { ...DEFAULT_SELECTION, ...trajectoryRates(trajectory), throughput, capex: 41e6, facilityCapexFraction: .29 } };
+    defaults: { ...DEFAULT_SELECTION, ...trajectoryRates(trajectory), throughput } };
 }
 export const PRESETS = MODELS.flatMap(m => STREAMING_TARGETS.flatMap(target => TRAJECTORIES.map(t => scenarioPreset(m.id, target, t))));

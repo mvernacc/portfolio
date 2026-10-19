@@ -1,481 +1,224 @@
-# AI datacenter project finance: working model specification
-
-This is our shared methods and assumptions document, not draft blog prose.
-`goal.md` describes the motivation. Python is the reference implementation;
-`widgets/ai_datacenter_project_finance/src/model.ts` implements the same model.
-All monetary inputs are USD. Values below are illustrative scenarios, not a
-calibrated estimate of any particular provider's economics.
-
-## 1. Question and accounting boundary
-
-What initial token revenue would make a new inference project have zero equity
-NPV at a chosen pre-tax return hurdle? With constant prices and throughput this
-is a levelized revenue requirement. With trends it is the required **initial**
-price for the specified future path, not a levelized constant price.
-
-The base case is dedicated inference. It includes initial IT and facility
-investment, electricity, other cash operating expenses, construction interest,
-debt repayment, equity return, and terminal facility proceeds. It excludes model
-training, research, data acquisition, and corporate overhead beyond any expenses
-explicitly included in non-energy OPEX. API prices above this benchmark do not
-establish whole-company profitability. Prices below it do not necessarily imply
-operating losses: existing assets need not recover sunk investment to keep serving.
-
-We retain `revenue_fraction` as an advanced allocation scenario. A value below
-one allocates **all** project costs to the billable inference share, while the
-remaining active capacity does internal work with no credited revenue. This is
-not a measured training cost, and does not include the rest of a lab's R&D costs.
-Internal activity is assumed to draw the same active power as inference.
-
-## 2. Tokens, workloads, and the power denominator
-
-### Token terminology
-
-- **Input tokens / prompt tokens**: tokens supplied to the model, including
-  context and conversation history. Use the model's actual tokenizer.
-- **Prefill**: processing the input context to prepare the state used for
-  generation. Cached prefixes can reuse that state; input tokens and newly
-  computed prefill tokens therefore need not have the same count.
-- **Output tokens / generated tokens**: accepted model-generated tokens. Include
-  reasoning tokens when the provider bills them as output and the benchmark can
-  count them consistently. Exclude rejected speculative draft tokens from output
-  counts, but include their resource cost. Visible response text alone may not
-  reproduce the billed output count.
-- **Decode**: the generation phase. Prefill and decode are execution phases,
-  not two interchangeable billing categories or necessarily separate machines.
-
-We use **aggregate output-token throughput over the full serving interval**,
-including prefill and decode time and resources. It is neither output divided
-by decode-only time nor per-user streaming speed. The numerator sums output
-across concurrent requests; latency/service-quality requirements constrain how
-much concurrency is acceptable. Do not use total input-plus-output throughput
-as output throughput.
-
-These distinctions follow the serving/benchmark vocabulary in
-[vLLM's serving benchmark](https://docs.vllm.ai/en/latest/cli/bench/serve/) and
-[InferenceX's methodology](https://inferencex.semianalysis.com/about).
-[vLLM's prefix caching documentation](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
-explains reuse of input processing separately from generation.
-
-### Installed IT capacity
-
-Normalize all project quantities to **one MW of installed IT capacity**: the
-active electrical capacity of the complete IT system, including accelerators,
-CPUs, memory, storage, networking, and any separate prefill/decode pools.
-Cooling and other facility overhead are outside this denominator and enter via
-PUE. This toy model assumes fully active IT draws that one MW.
-
-`throughput = T0` is initial output tok/s per MW installed IT during active
-serving, before multiplying by fleet utilization. If a benchmark has aggregate
-output rate B on an installation with K MW IT capacity, T0 = B/K. Measured
-power-normalized tokens/J is not automatically installed-capacity-normalized
-throughput. Convert using measured active draw relative to installed capacity;
-account for missing non-GPU IT loads. If throughput already includes facility
-power/PUE, first undo that normalization. Apply PUE exactly once.
-
-### Revenue per output token
-
-The financial model's price P is **total workload revenue per million billable
-output tokens**. It includes the associated input revenue. It is not the API's
-posted output-only tariff, nor a claim that input and output have equal cost.
-
-For input/output ratio r, cached input fraction c, and tariffs per million tokens:
-
-    P = p_output + r * [(1-c) * p_input + c * p_cached_input]
-
-The price helper implements this identity (default r=3, c=0). Input counts are
-mutually exclusive cached and uncached categories. This simple helper omits
-separate cache-write/storage charges, batch discounts, tiering, and routing fees;
-when applicable calculate actual workload revenue, then divide by output count.
-
-Throughput must be measured for the **same workload** as that revenue estimate:
-model/version/tokenizer, precision and quality, input/output lengths and their
-distributions, caching, latency requirements, concurrency, hardware, and serving
-stack. Changing r or caching changes both billing and the measured throughput;
-the helper changes billing only and cannot infer the new throughput. Input work
-is paid for in the throughput measurement, not magically covered by blending prices.
-
-The previous frontier-model price examples are retained as dated May 2026
-illustrations, not verified current prices or calibrated comparison points.
-Their r=3 assumption is illustrative. Open-weight validation should use matched
-provider/workload data with source, retrieval date, and benchmark configuration.
-
-## 3. Inputs and provisional base case
-
-Names are Python identifiers; TypeScript uses their camelCase equivalents.
-
-| Parameter | Default | Meaning / qualification |
-| --- | ---: | --- |
-| `capex` | $50m/MW IT | Total initial IT + facility investment |
-| `facility_capex_fraction` | 20% | Reusable facility share; provisional |
-| `facility_residual_fraction` | 50% | Net terminal proceeds / original facility CAPEX; provisional at five years |
-| `throughput` | 100,000 output tok/s/MW IT | Uncalibrated starting workload throughput |
-| `throughput_annual_change` | 0% | Effective annual change in throughput at fixed installed capacity |
-| `price_annual_erosion` | 0% | Effective annual decline in total workload revenue per output token |
-| `utilization` | 90% | Active fraction of installed capacity-time |
-| `revenue_fraction` | 100% | Dedicated inference; lower values are allocation scenarios |
-| `pue` | 1.2 | Facility / IT power, constant at active and idle load |
-| `idle_power_fraction` | 20% | Idle IT power / installed capacity; provisional |
-| `energy_cost_per_MWh` | $90/MWh | Volumetric facility electricity tariff |
-| `capacity_charge_per_kW_month` | $0/kW-month | Separate charge on reserved facility capacity |
-| `non_energy_annual_opex` | $1m/year/MW IT | Cash OPEX excluding electricity and capital recovery; uncalibrated |
-| `construction_years` | 2 | Equal end-of-month CAPEX installments |
-| `operating_years` | 5 | Maximum operating life and original loan maturity |
-| `debt_fraction` | 65% | Debt share of initial CAPEX, before capitalized interest |
-| `debt_interest_rate` | 8.5% | Nominal annual debt rate, compounded monthly |
-| Target equity return (function argument) | 15% | Effective annual pre-tax NPV hurdle |
-
-The facility share is land, building, power/cooling infrastructure, and reusable
-site works. The remaining share includes GPUs **and other IT equipment**, all
-assigned zero terminal value for simplicity. This avoids treating every non-GPU
-component as long-lived real estate. No replacement CAPEX occurs inside the horizon.
-
-The $50m/MW starting point came from the
-[Alpha Matica cost breakdown](https://www.alpha-matica.com/post/deconstructing-the-data-center-a-look-at-the-cost-structure-1).
-It is a secondary estimate; its capacity denominator and component scope must
-be checked against a chosen installation before empirical use. The 20% facility
-share is an illustrative split, not a verified quote. Residual value and idle
-power need their own calibration; they are not inferred from that article.
-
-$90/MWh is retained as a rounded electricity-cost scenario. The earlier notes
-used [EIA retail averages](https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=table_5_03)
-as a broad anchor. Such averages are not an energy-only tariff quote. With zero
-separate capacity charge, the headline rate can approximate an all-in bill at a
-reference load factor. When entering an actual two-part tariff, replace $90 with
-its volumetric component and enter the capacity component separately. Do not
-add a capacity charge to an unchanged all-in rate and call that the same tariff.
-
-The construction timeline was motivated by
-[JLL's outlook](https://www.jll.com/en-us/insights/market-outlook/data-center-outlook).
-Grid waiting time is not automatically a period of full CAPEX spending. We retain
-equal spending as a simplification; hardware delivery near operation and phased
-commissioning would require a different draw schedule.
-
-## 4. Monthly timing and operating trends
-
-Let C = construction months, N = maximum operating months, and T = chosen
-retirement month counted from operation start, with 1 <= T <= N. The project ends
-at H = C+T. Construction and maximum operating durations must be positive whole months. There is no cashflow at month 0. Construction spending
-occurs at ends of months 1..C. Operation starts immediately thereafter, with
-cash received/paid at ends of months C+1..H. Each month has 365.25*24/12 hours.
-
-For operating month k=1..T, use age t_k=(k-1)/12 years. The first operating
-month uses the initial price and throughput; month 13 is one annual step later.
-We use beginning-of-month operating levels and end-of-month cash settlement.
-There is no erosion/growth during construction: price and throughput are quoted
-at the start of operations, not at the investment decision date.
-
-With throughput annual change g and price erosion e:
-
-    T_k = T0 * (1+g)^t_k
-    P_k = P0 * (1-e)^t_k
-    Q_k = utilization * revenue_fraction * T_k * seconds_per_year / (12 * 1e6)
-    R_k = P_k * Q_k
-
-Q_k is millions of output tokens per MW IT per month. g may be positive or
-negative (> -100%); e is in [0,100%). Exponential compounding keeps quantities
-positive, allows meaningful percentage comparisons, and avoids linear decline
-crossing zero. A 20% erosion means multiplying price by 0.8 each year. Offsetting
-it requires 25% annual throughput growth, not 20%.
-
-Both rates are scenario parameters. Throughput change holds installed capacity,
-active power, workload quality, and utilization fixed. It can represent software
-efficiency gains or degraded effective performance; it does not buy new hardware
-or model outages (those belong in utilization). Price erosion applies to the
-combined workload revenue rate with a fixed workload mix. OPEX and tariffs are
-constant nominal dollars; there is no automatic inflation escalator.
-
-## 5. Electricity and other operating costs
-
-Let u = utilization, i = idle fraction, v = volumetric USD/MWh, d = reserved
-capacity USD/kW-month, and p = PUE. Per one MW installed IT:
-
-    average_IT_power = u + (1-u)*i                       [MW]
-    facility_energy_per_year = p * average_IT_power * hours_per_year [MWh]
-    energy_annual_opex = v * facility_energy_per_year
-    reserved_facility_capacity = 1000*p                 [kW]
-    capacity_annual_opex = 12*d*1000*p
-    monthly_operating_cost = (energy_annual_opex + capacity_annual_opex
-                              + non_energy_annual_opex) / 12
-
-The capacity charge is on reserved peak facility capacity, independent of
-utilization. This is a simple contracted-capacity tariff, not a detailed monthly
-metered-demand/ratchet model. No electricity/capacity expense is modeled during
-construction. PUE is held constant across load levels. Idle power aggregates
-unused-but-powered capacity and downtime; explicit powered-off outages would
-need a separate term. These are deliberate toy-model simplifications.
-
-Non-energy OPEX should cover the chosen site's cash expenses (staff, maintenance,
-network connectivity, insurance, etc.). Do not include depreciation, amortized
-hardware replacement, debt payments, or investor return again in this input.
-
-## 6. Capital, debt, and terminal proceeds
-
-Let A = total CAPEX/MW IT, L = debt fraction, and j = annual nominal debt rate/12.
-Each construction month spends A/C; equity contributes (1-L)*A/C. Debt balance:
-
-    B_0 = 0
-    B_m = B_(m-1)*(1+j) + L*A/C, for m=1..C
-
-Interest accrues on the previous balance; the current draw is at month end. All
-construction interest is financed with additional debt. Consequently L is not
-the final debt balance divided by initial CAPEX. There are no financing fees,
-interest reserves, debt-service reserves, taxes, or working-capital requirements.
-
-The construction balance converts to a fully amortizing N-month loan. This
-original maturity stays fixed while evaluating different retirement dates:
-
-    D = B_C*j / [1-(1+j)^(-N)]     when j > 0
-    D = B_C/N                     when j = 0
-
-D is the monthly payment. After each scheduled operating payment, the remaining
-balance is:
-
-    B_(C+k) = B_(C+k-1)*(1+j) - D
-
-At retirement T, the remaining balance B_(C+T) is repaid as a separate terminal
-cash outflow, after the scheduled payment. At T=N it is zero (up to floating-point
-roundoff). Borrowing rate and debt fraction remain fixed, with no refinancing,
-prepayment fee, or automatic credit-risk adjustment. Early retirement does not
-erase debt or recalculate the original monthly payment.
-
-If f is facility CAPEX fraction and s is terminal facility residual fraction:
-
-    V = A*f*s
-
-V is received once, at month H, as net realizable proceeds after disposition
-costs but before taxes (the entire model is pre-tax). It is not annual income,
-depreciation, or a reduction in initial CAPEX/debt. The outstanding debt is paid separately at sale.
-The residual fraction is **constant for every possible retirement date**, not an
-annual retention rate. This assumes the reusable site's value largely comes from
-completed construction, permitting and grid connection, rather than depreciation
-over the few modeled years. It is an explicit simplifying assumption, not an
-appraisal. There are no shutdown fees or operating costs after retirement. Compute
-hardware has zero terminal value; its replacement belongs to the successor project.
-
-## 7. Equity NPV, required initial revenue, and IRR
-
-For a candidate retirement month T, equity cashflow F_m is:
-
-    -(1-L)*A/C                         m=1..C
-    R_k - monthly_operating_cost - D   m=C+k, k=1..T
-    plus V - B_(C+T)                  only at m=C+T
-
-At effective annual hurdle h, discount month m by w_m=(1+h)^(-m/12).
-The nominal debt convention differs intentionally from effective annual equity
-returns. To compare identical effective debt/equity rates h, set nominal debt
-to 12*((1+h)^(1/12)-1).
-
-Revenue is linear in initial price P0. For each possible retirement date define:
-
-    a_T = sum_(k=1..T)(Q_k * (1-e)^t_k * w_(C+k))
-    b_T = sum_construction(equity_contribution*w_m)
-          + sum_(k=1..T)((monthly_operating_cost+D)*w_(C+k))
-          + (B_(C+T) - V)*w_(C+T)
-    NPV(P0,T) = P0*a_T - b_T
-    P0_required(T) = max(0, b_T/a_T)
-
-Discounting output alone would solve the wrong initial price when prices change.
-The denominator includes both throughput change and price erosion. The terminal
-debt payoff is additional to scheduled debt payments, not a duplicate payment.
-
-Evaluate every whole operating month T=1..N and select the lowest required
-nonnegative initial price. This jointly solves the initial price and retirement
-date; it does not stop at the first negative equity cashflow. For positive valid
-prices, the chosen date has zero NPV and all other dates have NPV no greater than
-zero at that price. Prefix sums of revenue and operating costs allow all dates to
-be checked in linear time, rather than constructing a full cashflow per candidate.
-If sale proceeds already cover discounted costs, required price is zero and the
-hurdle is exceeded rather than forcing a negative token price. Among zero-price
-candidates choose the largest NPV; otherwise exact ties choose the earliest month.
-
-The maximum-life slider also sets original loan maturity. Changing that slider
-therefore changes financing as well as the latest permitted retirement date;
-comparing candidate dates *within* a slider setting leaves the loan fixed.
-
-Each selected scenario and each Monte Carlo draw independently optimizes its own
-retirement with **perfect foreknowledge** of its price and throughput trajectory.
-The band thus describes an optimistic ability to adapt within every scenario,
-not uncertainty around a common retirement policy. There is no explicit hardware
-replacement, stochastic learning, or option to postpone investment.
-
-For conventional negative-then-positive equity cashflows, the solved price
-produces IRR h. Price erosion and terminal proceeds can create multiple sign
-changes; then IRR may be absent or nonunique. The price solver still solves NPV=0
-at h, while `calc_irr` returns NaN for nonconventional cashflows rather than picking
-an arbitrary root. The widget should explain that state and show target-rate NPV.
-
-Inputs must be finite, PUE >= 1, active/billable fractions in (0,1], debt fraction
-in [0,1), and CAPEX/throughput positive. No-equity cases have no equity IRR and
-are excluded. Negative-price solutions (terminal proceeds alone exceed discounted
-costs) are outside this solver's domain and raise an error. Numeric overflow also
-raises an error; the widget should display an explanation rather than a broken plot.
-
-### Financing interpretation and sensitivities
-
-Use 10%, 15%, and 20% as illustrative equity hurdles; 7%, 8.5%, 10%, and 12%
-nominal debt rates; and 50%, 65%, and 80% debt shares. They are not an empirically
-established capital stack for merchant inference. The previous notes' sector
-return and commercial-property loan comparisons are indirect evidence, not a
-basis for claiming 65% leverage or 15% pre-tax IRR is the industry standard.
-[Foley's financing discussion](https://www.foley.com/insights/publications/2026/04/financing-the-data-center-boom-trends-structures-and-considerations-for-market-participants/)
-ties high leverage to creditworthy tenants and contractual support. A GPU-heavy
-merchant service has different risks. Leverage sweeps hold rates fixed and
-therefore omit the feedback from leverage to required investor returns.
-
-The widget shows a conditional Monte Carlo band from independent plausible-range
-samples alongside the selected-input sweep. Section 11 specifies sampling and
-benchmark presets. The favorable-reference region has been removed.
-
-## 8. Widget presentation and remaining calibration
-
-The only energy input initially visible should be **Electricity price
-(USD/MWh)**. A collapsed **Additional parameters** section contains PUE, idle-power
-fraction, and capacity charge (USD/kW-month). Show enough help to prevent
-capacity charges being added twice to an all-in rate. Facility split/residual,
-nonbillable allocation, and the two trend rates also belong in further details.
-The charts must use initial workload revenue per million output tokens, installed
-IT capacity, and separate terminal proceeds from token revenue. The widget implements both monthly equity cashflows and assumption sweeps, with
-keyboard-accessible controls and numeric tables for both charts.
-
-Before drawing empirical conclusions:
-
-1. Assemble a matched open-weight workload/hardware/provider comparison, including
-   input/output counts, cache behavior, latency targets, and exact power boundary.
-2. Calibrate installed system CAPEX and throughput together. Hardware changes can
-   change both; sweeping throughput at fixed CAPEX is a conditional sensitivity.
-3. Establish facility value, idle power, non-energy expenses, tariff components,
-   and economic life from specific installations or clearly labeled ranges.
-4. Compare operating-cost coverage separately from recovery of new investment.
-5. Keep frontier lab profitability and future market-price predictions conditional
-   on information this infrastructure model does not observe.
-
-## 9. Reproducible checks
-
-Run from the repository root (Python dependencies are isolated by uv):
-
-```sh
-uv run --no-project --with numpy --with numpy-financial python -m docs.blog.ai_datacenter_project_finance.work_in_progress.test_model
-npm --prefix widgets/ai_datacenter_project_finance test
-npm --prefix widgets/ai_datacenter_project_finance run build
+# Inference project finance in rented colocation space
+
+Working specification for us, not draft blog prose. The current implementation is
+`widgets/ai_datacenter_project_finance/src/model.ts`, with retirement in
+`src/retirement.ts`. Earlier Python prototypes, comparison plots, and saved
+comparison assumptions describe the historical owner-developed-facility model;
+they are research artifacts, not the current widget's accounting specification.
+All monetary amounts are USD per MW of installed IT capacity unless noted.
+
+## Accounting boundary
+
+An inference provider buys a cohort of GPU servers and associated IT equipment,
+rents existing datacenter capacity, commissions the equipment, and operates it
+until economic retirement or a maximum useful life. No facility is purchased,
+built, or sold. All IT equipment has zero residual value. Hardware replacement
+would be a new project and is outside this model.
+
+Costs include equipment and deployment, rent, consumed electricity, other operating
+expenses, debt interest and repayment, and equity's required return. Training,
+research, taxes, incentives, and corporate costs outside the other-OPEX allowance
+are excluded. Meeting this project's hurdle does not establish whole-company
+profitability. An initial price below the revenue requirement need not imply an
+operating loss: recovering sunk capital is different from continuing operation.
+
+The lease can end at any retirement date without penalty, notice-period charges,
+or remaining rent. This is an explicit simplifying, optimistic assumption, not a
+claim about normal wholesale lease terms. There are no shutdown costs, deposits,
+or terminal asset proceeds. Capacity is assumed available when equipment is paid;
+commissioning is a payment-to-operation delay, not a forecast of market availability.
+
+## Tokens, throughput, and capacity
+
+- Input/prompt tokens are context processed in prefill. Output/generated tokens are
+  produced during decode. These are separately billed by API providers.
+- Throughput is **aggregate generated output tokens/s/MW of installed IT capacity**,
+  measured over the full serving workload including prefill and decode resource use.
+  It is not isolated decode throughput or the speed of one user's response.
+- Initial price `P0` is **total workload revenue per million output tokens**, including
+  associated input revenue. For uncached input/output token ratio `r`, an API tariff
+  corresponds to `p_output + r*p_input`. With cached input fraction `c`, use
+  `p_output + r*((1-c)*p_input + c*p_cached)`. No cache discount is assumed in the widget.
+- The saved benchmark mix is nominally 8 input tokens per output token. Market
+  comparisons normalize to that mix; this is not an output-only API price.
+- Installed IT capacity is a fixed rating, not actual average consumption and not
+  facility/grid capacity. The B200 proxy is 14.3 kW per eight-GPU server plus 5%
+  ancillary IT capacity: 0.015015 MW per server. PUE never changes this denominator.
+
+Utilization `u` is the active capacity-time fraction. Billable inference share `b`
+is the fraction of active work credited with revenue; default and plausible range
+are 100%. Lower values charge all project costs against only the billable share.
+Unbilled work still consumes active power and does not itself model training costs.
+
+Benchmark selection uses the highest measured aggregate throughput satisfying the
+selected inverse-mean-TPOT streaming target (25/50/100 output tok/s/request) and
+p99 first response <=10 seconds. The latter is fine print, not a market SLA.
+Eight GPT-OSS TP1 or two Qwen TP4 replicas fill a server by assumption; full-node
+concurrent replication was not measured. Qwen's chunked responses make the speed
+an interval average, not smooth delivery. Throughput's plausible range is uniform
+75–100% of the selected benchmark, an assumed deployment allowance rather than
+observed statistical variation. See the saved benchmark evidence for details.
+
+## Capital and commissioning
+
+Let `K` be installed IT equipment/deployment cost, `d` the debt fraction, `i` nominal
+annual debt interest, `C` commissioning months, and `N` maximum operating months.
+
+At month 0 all equipment is paid for: equity contributes `(1-d)*K` and debt draws
+`d*K`. Equity cashflow is `-(1-d)*K`; the matching debt draw/purchase cancel from
+the equity account. There is no evenly spread construction expenditure.
+
+Months 1 through C are commissioning. Rent is paid at each month end from equity.
+No revenue, electricity, other OPEX, or scheduled debt payments are modeled during
+this interval. Commissioning power is neglected. Interest capitalizes on equipment
+debt, so the balance entering operation is `D0 = d*K*(1+i/12)^C`.
+Commissioning defaults to 3 months, with a provisional 1–6 month plausible range.
+
+Equipment cost defaults to **$29 million/MW IT**. The plausible range is rounded
+to $28.7–34.5 million/MW IT, obtained from saved whole-server prices $390,000–430,000
+plus 10–20% networking/deployment allowance, divided by 0.015015 MW/server. The
+central saved quote $391,737.50 plus 10% gives $28.83 million/MW, rounded to 29.
+The high server price and ancillary allowances are scenarios, not independent
+market quotes. This retains server CPUs, memory, NICs and external IT costs while
+removing facility construction. Quote source:
+[Exxact B200 configuration](https://configurator.exxactcorp.com/configure/TS4-142487900),
+with saved detail in `data/qwen35_evidence.json` and the comparison research memos.
+
+## Rent and electricity: separate expenses
+
+Rent `R` is USD per **reserved IT kW-month**, excluding electricity. Per modeled MW,
+monthly rent is `1000*R`, regardless of utilization or PUE. It starts in commissioning
+and stops after the last operating month. Rent stays constant in nominal dollars.
+It covers facility space, electrical/cooling infrastructure and its provision;
+it does not cover electricity consumed by cooling or the IT equipment.
+
+The illustrative range is **$175–300/kW-month**, default **$275** toward the upper
+end to allow for density and flexible exit. This is not an observed cancel-anytime
+quote or a fitted market distribution. Public anchors, checked October 18, 2026:
+
+- [CBRE's 2026 discussion](https://www.cbre.com/insights/podcasts/2026-ep26-can-data-centers-keep-up-with-ai)
+  describes turnkey colocation at roughly $175/kW-month plus consumed electricity.
+- [CBRE H2 2025](https://www.cbre.com/insights/books/north-america-data-center-trends-h2-2025)
+  reports $196.25/kW-month average asking rent for 250–500 kW primary-market
+  requirements and premiums for AI-ready facilities. These are asking rents, not
+  a quote for our density, scale, term, or termination rights.
+
+Do not use a bundled electricity-inclusive quote as rent and also add electricity.
+The PUE assumption is kept explicit, rather than embedded in rent. With idle-power
+fraction `f`, PUE `p`, volumetric energy price `e` in USD/MWh, and
+`H = 365.25*24` hours/year:
+
+```
+average IT load per installed MW = u + (1-u)*f
+annual facility energy (MWh/MW IT) = H*p*(u + (1-u)*f)
+monthly electricity cost = e*H*p*(u + (1-u)*f)/12
 ```
 
-The Python tests generate reference cases in a temporary file and invoke Node
-for cross-language comparisons of terms, prices, and every monthly cashflow
-component. Node 24+ can execute the TypeScript model directly. Independent checks
-cover capital/loan accounting, terminal discounting, annual trend timing, tariff
-units, target-rate NPV, historical zero-trend behavior, and invalid inputs.
+Default PUE is 1.2, plausible 1.1–1.4. It scales actual active-plus-idle electricity
+consumption, never rent or output. Electricity defaults to $90/MWh, plausible
+$40–150/MWh. There is no additional utility capacity-charge parameter: any utility
+charges passed through to the tenant are assumed allocated in the effective energy
+rate. Rent and electricity represent different services and are not substitutes.
+Other OPEX covers the inference operator's maintenance, networking services and
+staffing allowance, excluding both facility rent and all electricity; the retained
+$1 million/MW-year default and $0.5–2 million range are provisional.
 
-## 10. Public-data comparison
+## Revenue trajectories
 
-The first [open-weights comparison](open_weights_comparison.md) uses a saved
-GPT-OSS-120B/B200 benchmark sweep, direct provider tariffs, and independent
-server/construction evidence. Its plot, evidence JSON, derived CSV, and script
-are separate from the generic model defaults. Refer to that document for the
-measurement-to-installed-capacity conversion and remaining calibration gaps.
+Let `q` be initial aggregate output tokens/s/MW IT, `S = 3600*H`, price erosion `e_p`,
+and annual throughput change `g`. In operating month `t` (1-based):
 
-The second [Qwen3.5-397B-A17B comparison](qwen35_comparison.md) uses Alibaba's
-February 2026 release, an FP8 four-GPU benchmark, and explicit regional API
-tariffs. It reuses the first case's cost scenarios, with two TP4 replicas per
-server replacing eight TP1 replicas. Its chunked streaming setting requires
-a different interpretation of the latency panel.
+```
+output_MTok(t) = u*b*q*S/12/1e6 * (1+g)^((t-1)/12)
+price(t) = P0*(1-e_p)^((t-1)/12)
+revenue(t) = P0*output_MTok(t)*(1-e_p)^((t-1)/12)
+```
 
-## 11. Conditional Monte Carlo widget
+The starting benchmark anchors an evolving service mix on unchanged hardware.
+The trajectory is a paired assumption, not independent price/growth draws:
+adaptation (30% price erosion, 20% throughput growth), faster repricing (60%, 50%),
+and rapid obsolescence (90%, 50%). Their annual revenue multipliers are 0.84, 0.60,
+and 0.15. These are illustrative sensitivities, not forecasts fitted from history.
+Power, rent and other OPEX remain constant while output changes. Long-run software
+improvements on aging equipment are uncertain; faster output is not assumed to
+increase installed power. Historical evidence and its limitations are in the
+research memos and trends plots. No scenario probabilities are assigned.
 
-The widget separates each parameter's exploration limits, provisional plausible
-range, and selected value. `widgets/ai_datacenter_project_finance/src/config.ts`
-is the single configuration for these ranges, units and sampling scales. Limits
-keep sliders within a numerically valid exploration domain; they are not claims
-that every combination inside those limits is realistic. Plausible ranges are
-working scenario choices, not calibrated statistical estimates.
+## Debt, cashflows and joint retirement/price solution
 
-At each horizontal-axis value, the widget fixes that input and samples all other
-inputs independently. Samples are uniform in displayed units; durations are
-discrete-uniform over whole months. Billable share
-has a zero-width plausible range at 100%, unless it is the horizontal-axis input.
-Independence omits correlations between capital costs and throughput, financing
-terms, or facility resale and operating life. The 5th–95th percentile band is the
-central 90% of these stipulated scenarios, **not a confidence interval**.
+The loan is amortized over N operating months, independent of candidate retirement.
+For monthly interest `j=i/12`, scheduled payment is
+`A = D0*j/(1-(1+j)^(-N))`, or `D0/N` for zero interest.
+After payment in operating month t: `D_t = max(0, D_(t-1)*(1+j)-A)`.
+At t=N the balance is set to zero to remove floating-point residue. At earlier
+retirement T, all remaining `D_T` is repaid after the scheduled payment.
 
-The build uses 2,048 deterministic PCG32 samples (seed 42, sequence 54) and reuses
-those same scenarios at successive x values. Percentiles linearly interpolate
-between adjacent sorted observations. Generation fails on any invalid scenario;
-it does not remove failures before calculating quantiles. Generated arrays are
-bundled into the widget, so slider changes only recompute the selected scenario,
-its one-parameter sweep, and monthly cashflows. Every evaluated scenario chooses its own retirement month with perfect foreknowledge. A new axis selects another band.
+Operating equity cashflow is revenue minus electricity, rent, other OPEX and
+scheduled debt service; the final month additionally deducts remaining debt.
+There is no asset sale. No cashflows occur after retirement.
 
-### Model and service presets
+For effective annual equity hurdle h, discount month m by `v_m=(1+h)^(-m/12)`.
+For each candidate T=1,...,N define:
 
-`presets.ts` chooses the highest aggregate throughput in a saved model/hardware
-sweep meeting a 25, 50 or 100 output tok/s/request target (inverse mean TPOT) and
-p99 first client response ≤10s. This is a mean-speed benchmark filter, not a
-minimum for every request. The first-response constraint is an illustrative fixed
-assumption. For Qwen, first response is a chunk under stream interval 50; mean
-TPOT is not inter-chunk latency. The selected GPT concurrencies are 128/64/32;
-Qwen's are 32/32/8. The Qwen tie is intentional.
+```
+a_T = sum(t=1..T, v_(C+t) * revenue(t) evaluated at P0=1)
+b_T = upfront equity + discounted commissioning rent
+      + discounted operating rent, electricity, other OPEX and loan payments
+      + v_(C+T)*D_T
+NPV(P0,T) = a_T*P0 - b_T
+required_price(T) = b_T/a_T
+T_star = argmin(T=1..N, required_price(T))
+P0_star = required_price(T_star)
+```
 
-Both cases use nominal 8192/1024 text workloads on B200: GPT-OSS-120B FP4/vLLM/TP1
-and Qwen3.5-397B-A17B FP8/SGLang/TP4. Aggregate output per GPU is multiplied by 8
-and divided by 0.015015 MW of installed IT capacity (14.3 kW plus 5%). Whole-server
-replication is assumed, not measured. Throughput plausible ranges are 75–100%
-of the selected benchmark, a uniform **assumed deployment-transfer allowance**,
-not empirical confidence limits. The allowance is aggregate replication loss,
-not an assertion that every request slows by 25%; latency under replication is
-unverified. It replaces mixing unrelated models and concurrency operating choices
-into one huge uncertainty range. Selected throughput can still be edited.
+Costs are positive and there are no asset proceeds, so required prices are positive.
+Exact ties use the earliest retirement month. At P0_star the chosen retirement has
+zero NPV and all other retirement dates have NPV <=0. This is a perfect-foreknowledge
+calculation within each scenario, not a stopping policy under uncertain future
+prices. Equity NPV at a hurdle is the objective; multiple-sign-change cashflows
+may have ambiguous IRRs, so no arbitrary IRR root is chosen.
 
-Capital cost defaults to $41m/MW IT (rounded from $40.83m), and reusable facility share to 29%, with capital cost plausible range $38.70–50.51m from the
-saved quote/facility scenarios. Model/speed changes reset throughput while
-preserving financial edits. Other ranges remain provisional and independent.
-Benchmark IDs and provenance are kept in saved data and exposed in widget fine print.
-The UI has shared assumptions and sensitivity/cashflow tabs, no numerical price
-headline, and no favorable-reference curve. Values remain available in hovers
-and tables with roughly two significant figures.
+The prefix-sum solver evaluates all dates in O(N); it does not repeatedly construct
+full cashflow arrays. The tests independently enumerate those arrays as an oracle.
+Changing the maximum-life slider also changes original loan maturity, whereas
+choosing retirement within one scenario does not. Initial throughput enters only
+as a revenue multiplier: doubling it halves required price without changing the
+chosen retirement. This property supports exact precomputation reuse.
 
+## Conditional uncertainty and presentation
 
-### Widget market comparison and throughput viewport
+Configuration owns hard limits, plausible ranges, defaults and units separately
+from computation. Each trajectory fixes its price/growth pair. Other inputs are
+sampled independently and uniformly in displayed units, durations in whole months.
+This independence is a simplifying assumption, including for potentially correlated
+rent, electricity, PUE and equipment costs. Zero-width ranges are allowed.
+A logarithmic slider does not imply logarithmic sampling.
 
-The throughput chart uses a linear x-axis spanning roughly 0.25–2× benchmark
-throughput, clipped to hard limits and extended to include the selected value.
-This reveals the inverse-throughput relation; a green vertical strip marks the
-plausible interval, while the slider stays logarithmic. Conditional bands outside
-that interval are hypothetical scenarios, not benchmark validation.
+Each sweep fixes its horizontal-axis value and samples all other uncertain inputs.
+Every draw solves its own initial price and retirement with perfect foreknowledge.
+The band shows 5th–95th percentiles of stipulated scenarios, not a confidence
+interval. PCG32 seed 42, sequence 54, 2,048 reused draws give deterministic curves.
+Selected sliders affect the point and line, not the precomputed conditional band.
+Cashflows use selected values and show equipment at month 0, separate rent and
+electricity, and any terminal debt payoff. There is no favorable-reference region.
 
-Three illustrative OpenRouter provider routes per model appear as horizontal
-price references, from an October 18, 2026 snapshot. For nominal 8192/1024 lengths,
-equivalent workload revenue is `output tariff + 8 × uncached input tariff`, in
-USD per million output tokens. GPT-OSS references: Near AI, DeepInfra, Nebius.
-Qwen references: Alibaba, DeepInfra, Parasail. Exact tariffs, route precision,
-source and date are stored in the widget's `market-prices.json`. These selected
-examples neither describe the full market range nor guarantee the selected
-streaming target. Hardware, precision, service quality, margins, actual token
-ratios, caching and fees limit comparability. Prices do not establish costs or
-validate the model. References stay fixed when financial inputs or speed targets
-change; cashflows use the solved revenue as before.
+## Research artifacts and historical figures
 
-## 12. Evolving workload mix and historical figures
-
-The project covers one compute-hardware cohort's economically useful life. No
-compute replacement is modeled within the project. Terminal value represents
-net proceeds from transferring reusable non-compute facility assets to a new
-project; compute equipment retains zero residual value.
-
-The selected LLM should anchor initial operations, rather than imply unchanged
-weights and workload over the entire life. Future effective prices and throughput
-must describe the same evolving service mix. The widget now fixes their annual changes jointly through the selected trajectory;
-only the remaining uncertain inputs are independently sampled, as described in
-section 11. Adaptation (30% erosion, 20% throughput growth) is the default.
-
-The [trajectory research and recommendations](research/trajectory_recommendations.md)
-collect dated public price/benchmark evidence, distinguish observed improvements
-from scenario judgments, propose paired rate sensitivities, and outline figure
-ideas for the author's Trends section. Detailed provider and throughput evidence
-are linked there. The three scenarios from the main recommendation table are now
-implemented; the harder-service-mix alternative is not. The Trends section contains
-three historical figures and factual captions, leaving interpretation to the author.
+[Trajectory recommendations](research/trajectory_recommendations.md) collect dated
+price and benchmark evidence, distinguishing observed improvements from scenario
+judgments. The three main scenarios are implemented; the harder-service-mix
+alternative is not. The post's Trends section retains historical figures and factual
+captions, with interpretation left to the author.
 
 `plot_historical_trends.py` regenerates SVG/PNG figures from saved CSV/JSON inputs
 in `data/` without network access (requires matplotlib). Epoch's source is pinned
 to a repository commit; its cost records are retrospective release-date comparisons,
 not archived launch tariffs. Provider tariff observations and separate H100 gains
-retain their own dates and comparison qualifications.
+retain their own dates and comparison qualifications. These historical evidence
+plots are independent of the switch from facility ownership to colocation.
+
+Earlier deterministic comparison plots and Python calculations retain their original
+facility-ownership assumptions for reproducibility. Their price estimates must not
+be presented as current widget outputs. Current numerical checks run with
+`npm --prefix widgets/ai_datacenter_project_finance test`; generated conditional bands
+are rebuilt with `npm --prefix widgets/ai_datacenter_project_finance run precompute`.

@@ -13,7 +13,7 @@ questions of cost become important:
 We can't know for sure, particularly looking at frontier models from public data.
 
 Instead, this post helps you explore the cost factors for yourself.
-We'll make a simple estimate of the costs of building an AI datacenter and serving inference on a language model (assuming the model is already trained).
+We'll make a simple estimate of the costs of buying equipment, renting datacenter space and serving inference on a language model (assuming the model is already trained).
 We'll then compare this estimate to actual market prices for inference on open-weights models.
 
 This post is meant for technical- or business-minded readers seeking an introduction to the infrastructure behind their chat / coding agent interface, and what it costs to run.
@@ -25,34 +25,47 @@ This post is meant for technical- or business-minded readers seeking an introduc
 TODO "visual abstract" diagram explaining the cost-estimate method to a reader at a glance.
 
 To understand the factors that influence cost, we'll use a *project finance*
-model of an AI datacenter. The project starts with capital expenses (CAPEX: GPUs,
-networking equipment, land, concrete, construction worker's wages, etc.).
-During the construction period the project makes no revenue, so CAPEX is
-covered by a mix of cash from the project's equity investors and loans.
+model of an inference provider that owns its GPU servers and rents space in an
+existing datacenter. The project pays upfront for servers, networking equipment
+and deployment, using a mix of equity and loans. A brief commissioning period
+separates equipment payment from the start of inference revenue; rent and loan
+interest accrue during that delay.
 
-Then, in the operational period, the project makes revenue by selling
-inference (tokens) and pays operating costs, like electricity and
-maintenance work. The *throughput* and *utilization* of the computing equipment
-determine how many tokens the project serves each month.
+During operation, the project sells inference and pays colocation rent,
+electricity and other operating costs. Rent is charged per reserved kW of IT
+capacity. Electricity is charged separately on consumed power, multiplied by PUE
+to include cooling and electrical losses. The *throughput* and *utilization* of
+the computing equipment determine how many tokens the project serves each month.
 
-Finally, the IT equipment reaches the end of its useful life and the project ends.
-We assume investors sell off the project's remaining assets (perhaps to another project
-that will re-use the site).
-To keep the model simple, it neglects taxes and government incentives.
+Over time, the price per output token and throughput change.
+Price decreases, representing market competition from newer, better hardware and more capable models.
+Throughput increases as software improvements squeeze more performance out of the hardware.
+Both are modeled as a fixed rate compounding monthly, selected via the "price and throughput trajectory" dropdown.
+Empirically, from 2024-26, prices have fallen rapidly (holding model-intelligence-class constant) and throughput has increased somewhat (holding hardware constant),
+see [Trends in the key factors](#trends-in-the-key-factors).
 
-We set up the above cashflows as a system of equations, and solve for one unknown:
-the price-per-token needed to cover operating costs, make debt payments, and pay back investors at their expected *internal rate of return* (IRR).
+The project ends when its equipment retires. To keep the model simple, we assume
+the lease can end at any time without penalty, equipment has no resale value,
+and remaining debt is repaid at retirement. We exclude taxes and government incentives.
+
+We jointly solve for the retirement time and the initial price per output
+token which meet investors' equity return hurdle at the minimum price. This assumes perfect
+foreknowledge of the selected price and throughput trajectory, within a maximum
+operating life.
 
 This method is based on [Lazard's Levelized-Cost-of-Energy (LCOE)](https://www.lazard.com/research-insights/levelized-cost-of-energyplus-lcoeplus/) analysis,
 the industry-standard method for modeling the cost of energy generation.
 Lazard's LCOE estimates USD/MW-hr to pay back an energy project;
 this post estimates USD/MTok to pay back a datacenter project.
+Unlike Lazard's method, which assumes constant price and capacity,
+this method assumes price and throughput vary with time.
+While Lazard's uses a fixed facility lifetime, this method solves for the optimal lifetime given a fixed rate of price decline.
 
 ??? info "Training costs not included"
     This method only accounts for the costs of inference, not the costs of research and model training.
     That's accurate for open-weights inference providers: they get the model weights for free.
     Within this method, one way to simulate paying back training costs is to require a higher IRR.
-    Another way is to assume only a fraction of the datacenter's operating capacity is sold for revenue, with the remainder used internally for training.
+    Another way is to assume only a fraction of the project's capacity is sold for revenue, with the remainder used internally for training.
 
 ### Key factors: throughput and cost of computing hardware
 
@@ -72,7 +85,7 @@ There is public benchmark data for throughput of open-weights models, on open-so
 Recent public benchmarks have throughput on the order of 0.1-10 MTok/s/MW (benchmarks run in mid-2026 on late-2024 B200 hardware).
 However, it is not publicly known how the architecture of these open models compares to frontier models. We should assume open inference engines (like vLLM) provide a lower bound on performance for frontier providers, who have both the incentive and resources to develop more efficient inference engines.
 
-*Capital expense* also has a large impact on cost, and is better-constrained by public data than throughput. Token cost scales linearly with CAPEX. CAPEX is dominated by GPU costs: B200 GPUs (released late 2024) cost about $26M/MW, the rest of the datacenter might cost around $10-16M/MW.
+*Capital expense* also has a large impact on cost, and is better-constrained by public data than throughput. The widget uses about $29M/MW of installed IT capacity for B200 servers, networking and deployment. Facility construction is paid for through colocation rent rather than project capital.
 
 ### Electricity availability matters more than cost
 
